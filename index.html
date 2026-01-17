@@ -1725,7 +1725,7 @@ const selectResult = (item) => {
           IN / LƯU PDF
         </button>
 
-{/* --- 2. NÚT XEM TRƯỚC / XEM BẢN MẪU (ĐÃ ĐỔI ICON MẮT/MẮT GẠCH CHÉO) --- */}
+{/* --- 2. NÚT XEM TRƯỚC / XEM BẢN MẪU (MÀU: XANH KHI XEM, ĐỎ KHI ĐÓNG) --- */}
 {(() => {
     // Biến kiểm tra xem có nội dung hay không
     const isEmpty = !config.text || config.text.trim().length === 0;
@@ -1746,8 +1746,8 @@ const selectResult = (item) => {
             }}
             className={`md:hidden w-full py-3 font-bold rounded-xl border shadow-sm flex items-center justify-center gap-2 active:scale-95 transition-all mt-3 ${
                 showMobilePreview 
-                    ? 'bg-indigo-100 text-indigo-700 border-indigo-300' 
-                    : (isEmpty ? 'bg-green-50 text-green-700 border-green-200' : 'bg-white text-indigo-600 border-indigo-200')
+                    ? 'bg-red-50 text-red-700 border-red-200'      // KHI ĐANG MỞ -> MÀU ĐỎ
+                    : 'bg-green-50 text-green-700 border-green-200' // KHI ĐANG ĐÓNG -> MÀU XANH
             }`}
         >
             {showMobilePreview ? (
