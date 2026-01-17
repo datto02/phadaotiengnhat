@@ -583,35 +583,47 @@ const StrokeAnimationModal = ({ kanji, onClose }) => {
         if (targetDiv) targetDiv.innerHTML = '';
 
         const writerOptions = {
-            width: 200,
-            height: 200,
-            padding: 10,
+            width: 220,
+            height: 220,
+            padding: 15,
             showOutline: true,
-            strokeAnimationSpeed: 1,
-            delayBetweenStrokes: 300,
+            strokeAnimationSpeed: 1.5,
+            delayBetweenStrokes: 200,
             strokeColor: '#4f46e5',
-            radicalColor: '#f43f5e', // Làm nổi bật bộ thủ bằng màu hồng đỏ
-            // TỰ ĐỘNG NẠP DỮ LIỆU TỪ KHO NHẬT BẢN
-            charDataLoader: (char, onComplete) => {
-                // Ưu tiên 1: Kho dữ liệu Kanji chuyên dụng cho tiếng Nhật (JP)
-                fetch(`https://cdn.jsdelivr.net/npm/hanzi-writer-data-jp@1.0/data/${char}.json`)
-                    .then(res => {
-                        if (!res.ok) throw new Error();
-                        return res.json();
-                    })
-                    .then(onComplete)
-                    .catch(() => {
-                        // Ưu tiên 2: Nếu JP không có, thử kho animCJK (Hỗ trợ tốt Kana)
-                        fetch(`https://cdn.jsdelivr.net/gh/parsimonhi/animCJK@master/data/${char}.json`)
-                            .then(res => res.json())
-                            .then(onComplete)
-                            .catch(() => {
-                                // Ưu tiên 3: Cuối cùng mới dùng kho mặc định
-                                fetch(`https://cdn.jsdelivr.net/npm/hanzi-writer-data@2.0/${char}.json`)
-                                    .then(res => res.json())
-                                    .then(onComplete);
-                            });
-                    });
+            radicalColor: '#f43f5e',
+            // --- CHIẾN THUẬT NẠP DỮ LIỆU 4 TẦNG ---
+            charDataLoader: async (char, onComplete) => {
+                const hex = char.codePointAt(0).toString(16).toLowerCase().padStart(5, '0');
+                
+                // Danh sách các kho dữ liệu theo thứ tự ưu tiên
+                const urls = [
+                    // 1. Kho chuyên biệt cho Kanji Nhật Bản (Chuẩn nhất)
+                    `https://cdn.jsdelivr.net/npm/hanzi-writer-data-jp@1.0/data/${char}.json`,
+                    // 2. Kho animCJK (Rất mạnh về Hiragana/Katakana)
+                    `https://cdn.jsdelivr.net/gh/parsimonhi/animCJK@master/data/${char}.json`,
+                    // 3. Kho MakeMeAHanzi (Chứa nhiều chữ hiếm)
+                    `https://cdn.jsdelivr.net/gh/skishore/makemeahanzi@master/data/${char}.json`,
+                    // 4. Kho mặc định của Hanzi-writer
+                    `https://cdn.jsdelivr.net/npm/hanzi-writer-data@2.0/${char}.json`
+                ];
+
+                for (const url of urls) {
+                    try {
+                        const res = await fetch(url);
+                        if (res.ok) {
+                            const data = await res.json();
+                            onComplete(data);
+                            return; // Thành công thì dừng lại ngay
+                        }
+                    } catch (e) { continue; }
+                }
+                
+                // Nếu tất cả 4 nguồn đều thất bại
+                targetDiv.innerHTML = `
+                    <div class="flex flex-col items-center justify-center h-full text-gray-400">
+                        <svg class="w-12 h-12 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 9.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                        <p class="text-[11px] font-bold">KHÔNG CÓ DỮ LIỆU NÉT</p>
+                    </div>`;
             }
         };
 
@@ -619,29 +631,38 @@ const StrokeAnimationModal = ({ kanji, onClose }) => {
             writerRef.current = HanziWriter.create(targetId, kanji, writerOptions);
             writerRef.current.animateCharacter();
         } catch (e) {
-            console.error("Lỗi:", e);
+            console.error("Lỗi khởi tạo:", e);
         }
     }, [kanji]);
 
     if (!kanji) return null;
 
     return (
-        <div className="fixed inset-0 z-[110] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 animate-in fade-in duration-200 no-print" onClick={onClose}>
-            <div className="bg-white rounded-2xl shadow-2xl p-6 relative animate-in zoom-in-95 duration-200 flex flex-col items-center" onClick={e => e.stopPropagation()}>
-                <button onClick={onClose} className="absolute top-3 right-3 text-gray-400 hover:text-red-500 transition-colors">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+        <div className="fixed inset-0 z-[110] flex items-center justify-center bg-black/70 backdrop-blur-md p-4 animate-in fade-in duration-300 no-print" onClick={onClose}>
+            <div className="bg-white rounded-3xl shadow-2xl p-8 relative animate-in zoom-in-95 duration-200 flex flex-col items-center max-w-xs w-full border border-white/20" onClick={e => e.stopPropagation()}>
+                {/* Nút đóng */}
+                <button onClick={onClose} className="absolute top-4 right-4 p-2 bg-gray-50 hover:bg-red-50 text-gray-400 hover:text-red-500 rounded-full transition-all active:scale-90">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
                 </button>
-                <h3 className="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2 font-sans uppercase tracking-tighter">
-                    <span className="text-3xl font-['Klee_One'] text-indigo-600">{kanji}</span>
-                    Thứ tự nét vẽ
-                </h3>
-                <div id={targetId} className="bg-indigo-50/50 rounded-xl border-2 border-dashed border-indigo-100 cursor-pointer p-2 shadow-inner" onClick={() => writerRef.current?.animateCharacter()}></div>
-                <div className="mt-4 flex flex-col items-center gap-1">
-                    <p className="text-[10px] text-gray-400 font-medium italic">Nguồn dữ liệu: KanjiVG & HanziWriter JP</p>
-                    <button onClick={() => writerRef.current?.animateCharacter()} className="mt-1 px-4 py-1.5 bg-indigo-600 text-white text-[10px] font-bold rounded-full hover:bg-indigo-700 transition active:scale-95 flex items-center gap-1">
-                         <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="M21 12a9 9 0 1 1-9-9c2.52 0 4.93 1 6.74 2.74L21 12z"/><path d="M21 3v9h-9"/></svg>
-                         XEM LẠI NÉT VẼ
+
+                {/* Tiêu đề */}
+                <div className="text-center mb-6">
+                    <h3 className="text-[10px] font-black text-indigo-400 uppercase tracking-[0.2em] mb-1">Stroke Order Animation</h3>
+                    <div className="flex items-center justify-center gap-3">
+                        <span className="text-5xl font-['Klee_One'] text-indigo-600 font-bold">{kanji}</span>
+                    </div>
+                </div>
+
+                {/* Khung hiển thị */}
+                <div id={targetId} className="bg-indigo-50/50 rounded-2xl border-2 border-dashed border-indigo-100 cursor-pointer shadow-inner overflow-hidden w-[220px] h-[220px]" onClick={() => writerRef.current?.animateCharacter()}></div>
+                
+                {/* Nút điều khiển nhanh */}
+                <div className="mt-6 flex flex-col items-center gap-3 w-full">
+                    <button onClick={() => writerRef.current?.animateCharacter()} className="w-full py-3 bg-indigo-600 hover:bg-indigo-700 text-white text-[11px] font-black rounded-xl transition-all shadow-lg shadow-indigo-100 active:scale-95 flex items-center justify-center gap-2 uppercase tracking-wider">
+                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="M21 12a9 9 0 1 1-9-9c2.52 0 4.93 1 6.74 2.74L21 12z"/><path d="M21 3v9h-9"/></svg>
+                         Phát lại nét vẽ
                     </button>
+                    <p className="text-[9px] text-gray-400 font-medium tracking-tight">Dữ liệu tổng hợp từ KanjiVG, animCJK & JP-Data</p>
                 </div>
             </div>
         </div>
