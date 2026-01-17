@@ -571,6 +571,32 @@ const GridBox = ({ char, type, config, index, svgData, failed, onKanjiClick }) =
           </div>
         );
       };
+      const KanjiStrokeDecomposition = ({ paths, loading }) => {
+  if (loading) return <div className="flex gap-2 animate-pulse"><div className="w-10 h-10 bg-gray-200 rounded"></div></div>;
+
+  return (
+    <div className="flex flex-wrap gap-2 mt-4">
+      {paths.map((_, i) => (
+        <div key={i} className="w-12 h-12 border border-slate-200 rounded-md bg-slate-50 p-1">
+          <svg viewBox="0 0 109 109" className="w-full h-full">
+            {/* Vẽ lại tất cả các nét từ nét 0 đến nét hiện tại (i) */}
+            {paths.slice(0, i + 1).map((d, index) => (
+              <path 
+                key={index} 
+                d={d} 
+                fill="none" 
+                stroke={index === i ? "#ef4444" : "#334155"} // Nét mới nhất màu đỏ, nét cũ màu đen/xám
+                strokeWidth="3" 
+                strokeLinecap="round" 
+                strokeLinejoin="round" 
+              />
+            ))}
+          </svg>
+        </div>
+      ))}
+    </div>
+  );
+};
 const StrokeAnimationModal = ({ kanji, onClose }) => {
     const writerRef = useRef(null);
     const [paths, setPaths] = useState([]);
