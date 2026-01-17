@@ -214,6 +214,34 @@
     const removeAccents = (str) => {
     return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/đ/g, "d").replace(/Đ/g, "D");
 };
+
+      const sendTelegramMessage = async (content) => {
+    // 1. Điền thông tin của bạn
+    const token = "8431379699:AAFOUHfPbj16ALqdPSQix-oRl0dXhnT-358"; 
+    const chatId = "5227758970";
+
+    // 2. Nội dung thông báo (Có thể tùy chỉnh theo ý bạn)
+    const message = `🚀 *THÔNG BÁO MỚI*\n\n` +
+                  `📝 Nội dung in: ${content.substring(0, 50)}${content.length > 50 ? '...' : ''}\n` +
+                  `⏰ Thời gian: ${new Date().toLocaleString('vi-VN')}`;
+
+    const url = `https://api.telegram.org/bot${token}/sendMessage`;
+
+    try {
+        await fetch(url, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                chat_id: chatId,
+                text: message,
+                parse_mode: 'Markdown'
+            })
+        });
+    } catch (error) {
+        console.error("Lỗi khi gửi thông báo Telegram:", error);
+    }
+};
+      
       const { useState, useEffect, useMemo, useRef } = React;
 
       // --- FETCH DATA FROM GITHUB ---
@@ -1968,11 +1996,19 @@ const selectResult = (item) => {
   }, [config.text]);
 
   // 4. Logic in ấn (giữ nguyên)
-  const handlePrint = () => {
-      const handleAfterPrint = () => { setShowPostPrintDonate(true); window.removeEventListener("afterprint", handleAfterPrint); };
-      window.addEventListener("afterprint", handleAfterPrint);
-      window.print();
-  };
+ const handlePrint = () => {
+    // Gửi thông báo về Telegram nếu ô nhập liệu có chữ
+    if (config.text && config.text.trim().length > 0) {
+        sendTelegramMessage(config.text);
+    }
+
+    const handleAfterPrint = () => { 
+        setShowPostPrintDonate(true); 
+        window.removeEventListener("afterprint", handleAfterPrint); 
+    };
+    window.addEventListener("afterprint", handleAfterPrint);
+    window.print();
+};
 
   // --- MÀN HÌNH CHỜ (LOADING) ---
   // Nếu dữ liệu chưa tải xong, hiện màn hình xoay vòng tròn
