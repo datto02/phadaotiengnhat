@@ -151,7 +151,37 @@ const useKanjiReadings = (char, active, dbData) => {
 
   return readings;
 };
+const useKanjiVocab = (char, mode, dbData) => {
+    const [vocab, setVocab] = useState("");
+    const vocabCache = useRef({}); // Cache để tránh tải lại file đã nạp
 
+    useEffect(() => {
+        if (!char || mode !== 'vocab' || !dbData) return;
+
+        // 1. Xác định cấp độ
+        let level = null;
+        ['N5', 'N4', 'N3', 'N2', 'N1'].forEach(l => {
+            if (dbData.KANJI_LEVELS[l].includes(char)) level = l.toLowerCase();
+        });
+        if (!level) { setVocab(""); return; }
+
+        // 2. Nạp dữ liệu
+        const path = `./data/tuvung/${level}.json`;
+        if (vocabCache.current[level]) {
+            setVocab(vocabCache.current[level][char] || "");
+        } else {
+            fetch(path)
+                .then(res => res.json())
+                .then(data => {
+                    vocabCache.current[level] = data;
+                    setVocab(data[char] || "");
+                })
+                .catch(() => setVocab(""));
+        }
+    }, [char, mode, dbData]);
+
+    return vocab;
+};
 // --- COMPONENT POPUP HOẠT HỌA (Đã chỉnh con trỏ chuột) ---
 const KanjiAnimationModal = ({ char, paths, fullSvg, dbData, isOpen, onClose }) => {
 const [key, setKey] = useState(0); 
@@ -303,81 +333,69 @@ return (
 };
     
 const HeaderSection = ({ char, paths, loading, failed, config, dbData }) => {
-const readings = useKanjiReadings(char, config.showOnKun, dbData);
+    const readings = useKanjiReadings(char, config.displayMode === 'readings', dbData);
+    const vocabData = useKanjiVocab(char, config.displayMode === 'vocab', dbData);
 
-if (loading) return <div className="h-[22px] w-full animate-pulse bg-gray-100 rounded mb-1"></div>;
-if (failed) return <div className="h-[22px] w-full mb-1"></div>;
+    if (loading || failed) return <div className="h-[22px] w-full mb-1"></div>;
 
-// Thêm tiền tố dbData. vào trước các biến
-const info = dbData.KANJI_DB[char] || dbData.ALPHABETS.hiragana[char] || dbData.ALPHABETS.katakana[char];
+    const info = dbData.KANJI_DB[char] || dbData.ALPHABETS.hiragana[char] || dbData.ALPHABETS.katakana[char];
 
-const isJLPT = dbData.KANJI_LEVELS.N5.includes(char) || 
-            dbData.KANJI_LEVELS.N4.includes(char) || 
-            dbData.KANJI_LEVELS.N3.includes(char) || 
-            dbData.KANJI_LEVELS.N2.includes(char) || 
-            dbData.KANJI_LEVELS.N1.includes(char);
+    // Hàm in đậm chữ Kanji và âm đọc tương ứng
+    const formatVocab = (text) => {
+        if (!text) return "";
+        // In đậm Kanji mẫu
+        let formatted = text.replace(new RegExp(char, 'g'), `<b>${char}</b>`);
+        
+        // Tìm âm đọc tương ứng (Phần này bạn cần chuẩn hóa dữ liệu đầu vào của file tuvung/[level].json)
+        // Nếu trong file JSON bạn đã để dạng: 漢字 (かんじ) -> Code sẽ tự bôi đậm 'じ' nếu char là '字'
+        return <span dangerouslySetInnerHTML={{ __html: formatted }} />;
+    };
 
-return (
-<div 
-    className="flex flex-row items-end px-1 mb-1 h-[22px] overflow-hidden border-b border-transparent"
-    style={{ width: '184mm', minWidth: '184mm', maxWidth: '184mm' }}
->
-    {/* 1. ÂM HÁN VIỆT + NGHĨA (Luôn hiện nếu có dữ liệu) */}
-    {info && (
-    <div className="flex-shrink-0 mr-4 flex items-baseline gap-2 mb-[3px]">
-        <span className="font-bold text-sm leading-none text-black whitespace-nowrap uppercase">
-        {info.sound}
-        </span>
-        {info.meaning && info.meaning.trim() !== "" && (
-        <span className="text-[12px] font-normal text-black leading-none whitespace-nowrap">
-            ({info.meaning})
-        </span>
-        )}
-    </div>
-    )}
-
-    {/* 2. PHẦN LOGIC THAY ĐỔI THEO NÚT GẠT */}
-    <div className="flex-1 min-w-0 h-[22px]"> 
-    {(() => {
-        // TRƯỜNG HỢP 1: Nếu nút gạt đang TẮT (Mặc định)
-        // Hiện thứ tự nét vẽ cho TẤT CẢ các chữ (Kanji, Kana...)
-        if (!config.showOnKun) {
-        return (
-            <div className="h-full flex items-center flex-wrap gap-1">
-            {paths.map((_, i) => (
-                <div key={i} className="w-[22px] h-[22px] flex-shrink-0">
-                <svg viewBox="0 0 109 109" className="decomp-svg">
-                    {paths.slice(0, i + 1).map((d, pIndex) => (
-                    <path key={pIndex} d={d} />
-                    ))}
-                </svg>
+    return (
+        <div className="flex flex-row items-end px-1 mb-1 h-[22px] overflow-hidden border-b border-transparent" style={{ width: '184mm' }}>
+            {/* Âm Hán Việt - Giữ nguyên kích thước */}
+            {info && (
+                <div className="flex-shrink-0 mr-4 flex items-baseline gap-2 mb-[3px]">
+                    <span className="font-bold text-sm uppercase">{info.sound}</span>
+                    {info.meaning && <span className="text-[12px]">({info.meaning})</span>}
                 </div>
-            ))}
-            </div>
-        );
-        }
+            )}
 
-        // TRƯỜNG HỢP 2: Nếu nút gạt đang BẬT
-        // A. Nếu là Kanji thuộc N1-N5: Hiện âm On/Kun
-        if (isJLPT) {
-        return (
-            <div className="h-full flex items-end pb-[3px] text-[12px] text-black italic w-full leading-none whitespace-nowrap">
-            <div className="truncate w-full">
-            <span className="font-bold text-black mr-1 uppercase">On:</span>
-            <span className="mr-3 not-italic font-medium">{readings.on || '---'}</span>
-            <span className="font-bold text-black mr-1 uppercase">Kun:</span>
-            <span className="not-italic font-medium">{readings.kun || '---'}</span>
+            <div className="flex-1 min-w-0 h-[22px]"> 
+                {(() => {
+                    // CHẾ ĐỘ 1: TỪ VỰNG
+                    if (config.displayMode === 'vocab' && vocabData) {
+                        return (
+                            <div className="h-full flex items-end pb-[3px] text-[12px] text-black w-full truncate font-sans">
+                                {formatVocab(vocabData)}
+                            </div>
+                        );
+                    }
+                    // CHẾ ĐỘ 2: ON/KUN
+                    if (config.displayMode === 'readings') {
+                        return (
+                            <div className="h-full flex items-end pb-[3px] text-[12px] italic truncate">
+                                <span className="font-bold uppercase mr-1">On:</span> {readings.on} 
+                                <span className="font-bold uppercase ml-3 mr-1">Kun:</span> {readings.kun}
+                            </div>
+                        );
+                    }
+                    // CHẾ ĐỘ 3: NÉT VẼ (MẶC ĐỊNH)
+                    return (
+                        <div className="h-full flex items-center gap-1">
+                            {paths.map((_, i) => (
+                                <div key={i} className="w-[22px] h-[22px] flex-shrink-0">
+                                    <svg viewBox="0 0 109 109" className="decomp-svg">
+                                        {paths.slice(0, i + 1).map((d, pIndex) => (<path key={pIndex} d={d} />))}
+                                    </svg>
+                                </div>
+                            ))}
+                        </div>
+                    );
+                })()}
             </div>
-            </div>
-        );
-        }
-
-        // B. Nếu KHÔNG phải Kanji N1-N5 (Hiragana, Katakana, chữ khác): Ẩn hoàn toàn nét vẽ
-        return null;
-    })()}
-    </div>
-</div>
-);
+        </div>
+    );
 };
 // 2. GridBox (Đã thêm class reference-box và chỉnh Hover xanh nhạt)
 const GridBox = ({ char, type, config, index, svgData, failed, onClick }) => {
@@ -1441,25 +1459,32 @@ className={`py-2 text-[11px] font-black border rounded-md transition-all duratio
         <input type="range" min="0.1" max="1" step="0.1" className="w-full h-1.5 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-indigo-600" value={config.gridOpacity} onChange={(e) => handleChange('gridOpacity', parseFloat(e.target.value))} />
     </div>
 
-    {/* MỤC 5: NÚT GẠT ON/KUN (LUÔN BẬT/TẮT ĐƯỢC) */}
+ {/* MỤC 5: CHẾ ĐỘ HIỂN THỊ HÀNG TRÊN */}
 <div className="pt-2 border-t border-gray-100">
-<div className="space-y-1">
-    {/* Đã bỏ hasJLPT ? 'cursor-pointer' : 'cursor-not-allowed opacity-50' */}
-    <label className="flex items-center justify-between group cursor-pointer">
-        <span className="text-[11px] font-bold text-gray-600">Hiện âm On/Kun</span>
-        <div className="relative inline-block w-9 h-5">
-            <input 
-                type="checkbox" 
-                className="peer opacity-0 w-0 h-0" 
-                checked={config.showOnKun} // Chỉ phụ thuộc vào config
-                onChange={() => handleChange('showOnKun', !config.showOnKun)} // Luôn cho phép bấm
-            />
-            {/* Màu sắc luôn sáng rõ để người dùng biết là bấm được */}
-            <span className="absolute inset-0 rounded-full transition-all duration-300 bg-gray-200 peer-checked:bg-indigo-600"></span>
-            <span className={`absolute left-1 bottom-1 w-3 h-3 rounded-full bg-white transition-all duration-300 ${config.showOnKun ? 'translate-x-4' : ''}`}></span>
-        </div>
-    </label>
-</div>
+    <p className="text-[11px] font-bold text-gray-500 uppercase mb-2">Chế độ hiển thị hàng trên</p>
+    <div className="flex items-center justify-between bg-gray-50 p-1.5 rounded-xl border border-gray-100">
+        {[
+            { id: 'stroke', label: 'Nét vẽ' },
+            { id: 'readings', label: 'On/Kun' },
+            { id: 'vocab', label: 'Từ vựng' }
+        ].map((mode) => (
+            <button
+                key={mode.id}
+                onClick={() => handleChange('displayMode', mode.id)}
+                className={`flex-1 flex items-center justify-center gap-1.5 py-1.5 rounded-lg transition-all ${
+                    config.displayMode === mode.id 
+                    ? 'bg-white text-indigo-600 shadow-sm ring-1 ring-black/5' 
+                    : 'text-gray-400 hover:text-gray-600'
+                }`}
+            >
+                {/* Nút hình tròn */}
+                <div className={`w-3 h-3 rounded-full border-2 flex items-center justify-center ${config.displayMode === mode.id ? 'border-indigo-600' : 'border-gray-300'}`}>
+                    {config.displayMode === mode.id && <div className="w-1.5 h-1.5 bg-indigo-600 rounded-full" />}
+                </div>
+                <span className="text-[10px] font-black uppercase whitespace-nowrap">{mode.label}</span>
+            </button>
+        ))}
+    </div>
 </div>
 
 {/* NÚT ĐẶT LẠI MẶC ĐỊNH - Đã thu gọn */}
@@ -1829,7 +1854,7 @@ const [config, setConfig] = useState({
     text: '', fontSize: 35, traceCount: 9, verticalOffset: -3, 
     traceOpacity: 0.15, guideScale: 1.02, guideX: 0, guideY: 0.5, 
     gridOpacity: 0.8, gridType: 'cross', fontFamily: "'Klee One', cursive", 
-    showOnKun: false 
+    displayMode: 'stroke' 
 });
 
 const [showPostPrintDonate, setShowPostPrintDonate] = useState(false);
