@@ -17,36 +17,45 @@ return null;
 
     // --- UTILS & DATA FETCHING ---
 
-    const getHex = (char) => char.codePointAt(0).toString(16).toLowerCase().padStart(5, '0');
+    // Hàm chuyển chữ sang mã Hex 5 ký tự (ví dụ: '一' -> '04e00')
+const getHex = (char) => {
+    let hex = char.codePointAt(0).toString(16).toLowerCase();
+    while (hex.length < 5) {
+        hex = '0' + hex;
+    }
+    return hex;
+};
 
     
 
     
-    const fetchKanjiData = async (char) => {
+   // --- HÀM CHỈ TẢI DỮ LIỆU TỪ MÁY (OFFLINE) ---
+const fetchKanjiData = async (char) => {
     const hex = getHex(char);
-    
-    const sources = [
-        `https://cdn.jsdelivr.net/gh/KanjiVG/kanjivg@master/kanji/${hex}.svg`,
-        `https://cdn.jsdelivr.net/gh/KanjiVG/kanjivg@master/kanji/${hex}-Kaisho.svg`,
-        `https://cdn.jsdelivr.net/gh/parsimonhi/animCJK@master/svgsKana/${hex}.svg`,
-        `https://cdn.jsdelivr.net/gh/parsimonhi/animCJK@master/svgsJa/${hex}.svg`
-    ];
 
-    for (const url of sources) {
-        try {
+    // Đường dẫn trỏ thẳng vào thư mục data/svg của bạn
+    const url = `./data/svg/${hex}.svg`;
+
+    console.log(`Đang tìm file offline: ${url}`); // Kiểm tra trong Console
+
+    try {
         const res = await fetch(url);
+
+        // Kiểm tra xem file có tồn tại và đúng là SVG không
         if (res.ok) {
             const text = await res.text();
-            return { success: true, svg: text, source: url };
+            if (text.includes('<svg')) {
+                return { success: true, svg: text, source: url };
+            }
         }
-        } catch (e) {
-        continue;
-        }
+        console.warn(`Không tìm thấy file: ${url}`);
+    } catch (e) {
+        console.error(`Lỗi hệ thống khi tải file: ${url}`, e);
     }
-    
-    return { success: false };
-    };
 
+    // Nếu không tìm thấy, trả về lỗi (khung vẽ sẽ trắng)
+    return { success: false };
+};
     
     const useKanjiSvg = (char) => {
     const [state, setState] = useState({ 
