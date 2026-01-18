@@ -6,7 +6,6 @@ return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/đ/g, "d").
  // --- FETCH DATA FROM GITHUB ---
 const fetchDataFromGithub = async () => {
   try {
-    // Tải song song cả 2 file database
     const [dbResponse, onkunResponse] = await Promise.all([
       fetch('./data/kanji_db.json'),
       fetch('./data/onkun.json')
