@@ -1,6 +1,6 @@
-import { fetchDataFromGithub } from './api.js';
-import { defaultConfig } from './constants.js';
-import { Page, Sidebar, KanjiAnimationModal } from './components.js';
+import { fetchDataFromGithub } from './js/api.js';
+import { defaultConfig } from './js/constants.js';
+import { Page, Sidebar, KanjiAnimationModal } from './js/components.js';
 
 const { useState, useEffect, useMemo } = React;
 
