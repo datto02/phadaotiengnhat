@@ -7,7 +7,7 @@ const { useState, useEffect, useMemo, useRef } = React;
 
 // 1. const KanjiAnimationModal = ...
 // --- COMPONENT POPUP HOẠT HỌA (Đã chỉnh con trỏ chuột) ---
-const KanjiAnimationModal = ({ char, paths, fullSvg, dbData, isOpen, onClose }) => {
+export const KanjiAnimationModal = ({ char, paths, fullSvg, dbData, isOpen, onClose }) => {
 const [key, setKey] = useState(0); 
 const [strokeNumbers, setStrokeNumbers] = useState([]); 
 const [speedConfig, setSpeedConfig] = useState({ duration: 3, delay: 0.6 });
@@ -156,7 +156,7 @@ return (
 );
 };
    
-const HeaderSection = ({ char, paths, loading, failed, config, dbData }) => {
+export const HeaderSection = ({ char, paths, loading, failed, config, dbData }) => {
 const readings = useKanjiReadings(char, config.showOnKun, dbData);
 
 if (loading) return <div className="h-[22px] w-full animate-pulse bg-gray-100 rounded mb-1"></div>;
@@ -234,7 +234,7 @@ return (
 );
 };
 // 2. GridBox (Đã thêm class reference-box và chỉnh Hover xanh nhạt)
-const GridBox = ({ char, type, config, index, svgData, failed, onClick }) => {
+export const GridBox = ({ char, type, config, index, svgData, failed, onClick }) => {
 const isReference = type === 'reference';
 const showTrace = index < config.traceCount;
 const { gridType, gridOpacity } = config; 
@@ -305,7 +305,7 @@ return (
 };
 
 // 3. WorkbookRow (Cập nhật truyền props cho Modal mới)
-    const WorkbookRow = ({ char, config, dbData }) => {
+    export const WorkbookRow = ({ char, config, dbData }) => {
     const { loading, paths, fullSvg, failed } = useKanjiSvg(char);
     const boxes = Array.from({ length: 12 }, (_, i) => i);
     const gridBorderColor = `rgba(0, 0, 0, ${config.gridOpacity})`;
@@ -352,7 +352,7 @@ return (
 };
 
     // 4. Page Layout (Đã cập nhật giao diện Bản Mẫu)
-    const Page = ({ chars, config, dbData }) => {
+    export const Page = ({ chars, config, dbData }) => {
     // Kiểm tra xem có phải đang ở chế độ bản mẫu (không có text) hay không
     const isSample = !config.text || config.text.trim().length === 0;
 
@@ -411,7 +411,7 @@ return (
     );
     };
 // 5. Sidebar (Phiên bản: Final)
-    const Sidebar = ({ config, onChange, onPrint, isMenuOpen, setIsMenuOpen, isConfigOpen, setIsConfigOpen, isCafeModalOpen, setIsCafeModalOpen, showMobilePreview, setShowMobilePreview, dbData }) => {
+    export const Sidebar = ({ config, onChange, onPrint, isMenuOpen, setIsMenuOpen, isConfigOpen, setIsConfigOpen, isCafeModalOpen, setIsCafeModalOpen, showMobilePreview, setShowMobilePreview, dbData }) => {
     const scrollRef = useRef(null);
     const [searchResults, setSearchResults] = useState([]);
     const [activeIndex, setActiveIndex] = useState(0); 
