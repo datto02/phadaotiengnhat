@@ -3,16 +3,28 @@ return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/đ/g, "d").
 };
     const { useState, useEffect, useMemo, useRef } = React;
 
-    // --- FETCH DATA FROM GITHUB ---
-const fetchDataFromGithub = async () => {
-try {
-const response = await fetch('./data/kanji_db.json');
-if (!response.ok) throw new Error('Không thể tải dữ liệu');
-return await response.json();
-} catch (error) {
-console.error("Lỗi tải dữ liệu:", error);
-return null;
-}
+ const fetchDataFromGithub = async () => {
+    try {
+        // Tải đồng thời cả 2 file
+        const [dbRes, onkunRes] = await Promise.all([
+            fetch('./data/kanji_db.json'),
+            fetch('./data/onkun.json')
+        ]);
+
+        if (!dbRes.ok || !onkunRes.ok) throw new Error('Không thể tải dữ liệu');
+
+        const dbData = await dbRes.json();
+        const onkunData = await onkunRes.json();
+
+        // Trả về một object chứa cả 2 nguồn dữ liệu
+        return { 
+            ...dbData, 
+            ONKUN_DB: onkunData 
+        };
+    } catch (error) {
+        console.error("Lỗi tải dữ liệu:", error);
+        return null;
+    }
 };
 
     // --- UTILS & DATA FETCHING ---
@@ -108,27 +120,25 @@ const fetchKanjiData = async (char) => {
     return state;
     };
 
-const useKanjiReadings = (char, active) => {
-const [readings, setReadings] = useState({ on: '', kun: '' });
+const useKanjiReadings = (char, active, dbData) => {
+    return useMemo(() => {
+        // Nếu không có dữ liệu hoặc không bật chế độ hiện âm, trả về rỗng
+        if (!char || !active || !dbData || !dbData.ONKUN_DB) {
+            return { on: '', kun: '' };
+        }
 
-useEffect(() => {
-    if (!char || !active) return;
-    
-    // Gọi API lấy dữ liệu từ web
-    fetch(`https://kanjiapi.dev/v1/kanji/${char}`)
-        .then(res => res.json())
-        .then(data => {
-            if (data) {
-                setReadings({
-                    on: data.on_readings?.join(', ') || '---',
-                    kun: data.kun_readings?.join(', ') || '---'
-                });
-            }
-        })
-        .catch(() => setReadings({ on: '---', kun: '---' }));
-}, [char, active]);
+        const entry = dbData.ONKUN_DB[char];
 
-return readings;
+        if (entry) {
+            return {
+                // Lưu ý: Tên field theo đúng file json bạn cung cấp
+                on: entry.readings_on?.join(', ') || '---',
+                kun: entry.readings_kun?.join(', ') || '---'
+            };
+        }
+
+        return { on: '---', kun: '---' };
+    }, [char, active, dbData]);
 };
 
 // --- COMPONENT POPUP HOẠT HỌA (Đã chỉnh con trỏ chuột) ---
@@ -281,7 +291,7 @@ return (
 };
     
 const HeaderSection = ({ char, paths, loading, failed, config, dbData }) => {
-const readings = useKanjiReadings(char, config.showOnKun);
+const readings = useKanjiReadings(char, config.showOnKun, dbData);
 
 if (loading) return <div className="h-[22px] w-full animate-pulse bg-gray-100 rounded mb-1"></div>;
 if (failed) return <div className="h-[22px] w-full mb-1"></div>;
