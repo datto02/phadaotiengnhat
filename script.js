@@ -218,7 +218,7 @@ return (
             </button>
 
             <div className="flex items-center justify-center gap-5 mb-3 mt-2 w-full px-2">
-                <h3 className="text-5xl font-black text-indigo-600 font-jp-custom leading-none">
+                <h3 className="text-5xl font-black text-indigo-600 font-['Klee_One'] leading-none">
                     {char}
                 </h3>
                 <div className="flex flex-col items-start justify-center h-full pt-1">
@@ -1126,7 +1126,7 @@ return (
         }`}
     >
         {/* Chữ hiển thị */}
-        <span className="text-2xl font-jp-custom text-black group-hover:scale-110 transition-transform">
+        <span className="text-2xl font-['Klee_One'] text-black group-hover:scale-110 transition-transform">
             {item.char}
         </span>
 
@@ -1250,7 +1250,7 @@ LÀM SẠCH
                 </div>
                 </div>
                 <textarea 
-                className={`w-full h-[104px] p-3 pr-1 border border-gray-300 rounded-lg resize-none text-lg bg-white text-black placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 shadow-inner input-scrollbar ${(isWarningMode && !localText) ? 'font-sans' : "font-jp-custom"}`}
+                className={`w-full h-[104px] p-3 pr-1 border border-gray-300 rounded-lg resize-none text-lg bg-white text-black placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 shadow-inner input-scrollbar ${(isWarningMode && !localText) ? 'font-sans' : "font-['Klee_One']"}`}
                 placeholder={getDynamicPlaceholder()} 
                 value={localText} 
                 onChange={handleInputText} 
@@ -1829,7 +1829,7 @@ const [isMenuOpen, setIsMenuOpen] = useState(false);
 const [config, setConfig] = useState({ 
     text: '', fontSize: 35, traceCount: 9, verticalOffset: -3, 
     traceOpacity: 0.15, guideScale: 1.02, guideX: 0, guideY: 0.5, 
-    fontFamily: "'UD Digi Kyokasho', 'UD Digi Kyokasho N-B', 'UD デジタル 教科書体 N-B', 'Klee One', cursive", 
+    gridOpacity: 0.8, gridType: 'cross', fontFamily: "'Klee One', cursive", 
     showOnKun: false 
 });
 
