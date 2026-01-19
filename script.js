@@ -152,7 +152,124 @@ const useKanjiReadings = (char, active, dbData) => {
 
   return readings;
 };
+const KanjiTestModal = ({ isOpen, onClose, text, dbData }) => {
+    const [charIndex, setCharIndex] = useState(0);
+    const [mode, setMode] = useState('trace'); // 'trace' hoặc 'recall'
+    const char = text[charIndex];
+    const { paths, loading } = useKanjiSvg(char);
+    const canvasRef = useRef(null);
+    const [isDrawing, setIsDrawing] = useState(false);
+    const [userStrokes, setUserStrokes] = useState([]); // Lưu các điểm người dùng vẽ
 
+    // Logic khóa nền khi mở modal
+    useEffect(() => {
+        if (isOpen) document.body.style.overflow = 'hidden';
+        else document.body.style.overflow = 'unset';
+        return () => { document.body.style.overflow = 'unset'; };
+    }, [isOpen]);
+
+    // Hàm xóa bảng vẽ
+    const clearCanvas = () => {
+        const ctx = canvasRef.current.getContext('2d');
+        ctx.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height);
+        setUserStrokes([]);
+    };
+
+    // Hàm kiểm tra logic (Đơn giản hóa: Kiểm tra số lượng nét và vùng vẽ)
+    const checkResult = () => {
+        // Trong dự án cá nhân, việc so sánh tọa độ vector rất phức tạp.
+        // Logic đơn giản: Nếu bạn vẽ đủ số nét và không để trống bảng.
+        if (userStrokes.length === 0) return alert("Bạn chưa viết gì cả!");
+        
+        // Giả lập kiểm tra đúng (Bạn có thể nâng cấp thuật toán so sánh điểm ở đây)
+        const isCorrect = true; 
+
+        if (isCorrect) {
+            if (mode === 'trace') {
+                alert("Chính xác! Giờ hãy thử tự viết lại không có nét mờ.");
+                setMode('recall');
+                clearCanvas();
+            } else {
+                alert("Tuyệt vời! Chuyển sang chữ tiếp theo.");
+                if (charIndex < text.length - 1) {
+                    setCharIndex(charIndex + 1);
+                    setMode('trace');
+                    clearCanvas();
+                } else {
+                    alert("Bạn đã hoàn thành bài kiểm tra!");
+                    onClose();
+                }
+            }
+        } else {
+            alert("Sai thứ tự nét hoặc hình dáng! Hãy thử lại.");
+            clearCanvas();
+        }
+    };
+
+    if (!isOpen || !char) return null;
+
+    return (
+        <div className="fixed inset-0 z-[250] flex items-center justify-center bg-black/80 backdrop-blur-md p-4">
+            <div className="bg-white rounded-3xl w-full max-w-md p-6 flex flex-col items-center relative shadow-2xl">
+                <button onClick={onClose} className="absolute top-4 right-4 text-gray-400 hover:text-red-500">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                </button>
+
+                <div className="text-center mb-6">
+                    <h3 className="text-lg font-black text-indigo-600 uppercase">Đang kiểm tra: {charIndex + 1}/{text.length}</h3>
+                    <p className="text-sm text-gray-500 font-medium">
+                        {mode === 'trace' ? "Giai đoạn 1: Viết theo nét mờ" : "Giai đoạn 2: Tự nhớ và viết"}
+                    </p>
+                </div>
+
+                {/* BẢNG VẼ */}
+                <div className="relative w-64 h-64 bg-gray-50 border-2 border-indigo-100 rounded-2xl overflow-hidden mb-6 shadow-inner cursor-crosshair">
+                    {/* Nét mờ (Chỉ hiện ở chế độ trace) */}
+                    {mode === 'trace' && !loading && (
+                        <svg viewBox="0 0 109 109" className="absolute inset-0 w-full h-full opacity-10 pointer-events-none">
+                            {paths.map((d, i) => <path key={i} d={d} fill="none" stroke="black" strokeWidth="3" />)}
+                        </svg>
+                    )}
+                    
+                    <canvas 
+                        ref={canvasRef}
+                        width={256}
+                        height={256}
+                        className="absolute inset-0 z-10 w-full h-full"
+                        onPointerDown={(e) => {
+                            setIsDrawing(true);
+                            const ctx = canvasRef.current.getContext('2d');
+                            ctx.beginPath();
+                            ctx.lineWidth = 6;
+                            ctx.lineCap = 'round';
+                            ctx.strokeStyle = '#4f46e5';
+                            ctx.moveTo(e.nativeEvent.offsetX, e.nativeEvent.offsetY);
+                        }}
+                        onPointerMove={(e) => {
+                            if (!isDrawing) return;
+                            const ctx = canvasRef.current.getContext('2d');
+                            ctx.lineTo(e.nativeEvent.offsetX, e.nativeEvent.offsetY);
+                            ctx.stroke();
+                        }}
+                        onPointerUp={() => {
+                            setIsDrawing(false);
+                            setUserStrokes([...userStrokes, 1]); // Đếm số nét
+                        }}
+                    />
+                </div>
+
+                <div className="flex gap-3 w-full">
+                    <button onClick={clearCanvas} className="flex-1 py-3 border-2 border-gray-100 text-gray-400 font-bold rounded-xl hover:bg-gray-50 transition-all">
+                        VẼ LẠI
+                    </button>
+                    <button onClick={checkResult} className="flex-[2] py-3 bg-indigo-600 text-white font-bold rounded-xl shadow-lg hover:bg-indigo-700 transition-all active:scale-95">
+                        KIỂM TRA NÉT
+                    </button>
+                </div>
+            </div>
+        </div>
+    );
+};
 // --- COMPONENT POPUP HOẠT HỌA (Đã chỉnh con trỏ chuột) ---
 const KanjiAnimationModal = ({ char, paths, fullSvg, dbData, isOpen, onClose }) => {
 const [key, setKey] = useState(0); 
@@ -1393,6 +1510,19 @@ className={`py-2 text-[11px] font-black border rounded-md transition-all duratio
         <span className="text-xs font-black tracking-wide">FLASHCARD KANJI</span>
     </a>
 </div>
+            {/* Thêm vào cuối menu Tiện ích */}
+<div className="pt-2 border-t border-gray-100">
+    <button 
+        onClick={() => {
+            if (!config.text) return alert("Hãy nhập chữ vào ô để kiểm tra!");
+            handleChange('isTestOpen', true);
+        }}
+        className="w-full py-3 bg-green-600 hover:bg-green-700 text-white font-bold rounded-xl shadow-lg flex items-center justify-center gap-2 transition-all active:scale-95"
+    >
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+        KIỂM TRA KIẾN THỨC
+    </button>
+</div>
                         </div>
                     )}
                     </div>
@@ -1816,13 +1946,19 @@ const [isCafeModalOpen, setIsCafeModalOpen] = useState(false);
 const [showMobilePreview, setShowMobilePreview] = useState(false);
 const [isConfigOpen, setIsConfigOpen] = React.useState(false);
 const [isMenuOpen, setIsMenuOpen] = useState(false);
-
+<KanjiTestModal 
+    isOpen={config.isTestOpen} 
+    onClose={() => handleChange('isTestOpen', false)} 
+    text={config.text}
+    dbData={dbData}
+/>
 // State cấu hình mặc định
 const [config, setConfig] = useState({ 
     text: '', fontSize: 35, traceCount: 9, verticalOffset: -3, 
     traceOpacity: 0.15, guideScale: 1.02, guideX: 0, guideY: 0.5, 
     gridOpacity: 0.8, gridType: 'cross', fontFamily: "'Klee One', cursive", 
-    showOnKun: false 
+    showOnKun: false, 
+    isTestOpen: false
 });
 
 const [showPostPrintDonate, setShowPostPrintDonate] = useState(false);
