@@ -12,6 +12,10 @@ line-height: 0;
 user-select: none;
 }
 
+.font-jp-custom {
+  font-family: 'UD Digi Kyokasho', 'UD Digi Kyokasho N-B', 'UD デジタル 教科書体 N-B', 'UD デジタル 教科書体 N-R', 'Klee One', serif !important;
+}
+
 /* --- DECOMPOSITION SVG STYLE --- */
 .decomp-svg {
 width: 100%;
