@@ -385,9 +385,16 @@ const GridBox = ({ char, type, config, index, svgData, failed, onClick }) => {
     const [ctx, setCtx] = useState(null);
     const lastPoint = useRef(null);
 
-    // Xác định các biến còn thiếu
     const isReference = type === 'reference';
     const gridColor = `rgba(0, 0, 0, ${config.gridOpacity})`;
+
+    // Lấy danh sách các nét vẽ (paths) từ chuỗi SVG để vẽ chữ mờ
+    const paths = useMemo(() => {
+        if (!svgData) return [];
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(svgData, "image/svg+xml");
+        return Array.from(doc.querySelectorAll('path')).map(p => p.getAttribute('d')).filter(d => d);
+    }, [svgData]);
 
     useEffect(() => {
         if (canvasRef.current && config.isWritingMode) {
@@ -398,29 +405,74 @@ const GridBox = ({ char, type, config, index, svgData, failed, onClick }) => {
         }
     }, [config.isWritingMode]);
 
-    // ... (Giữ nguyên các hàm draw, startDrawing, stopDrawing)
-    
+    // --- LOGIC VẼ CANVAS (Bổ sung lại) ---
+    const getPos = (e) => {
+        const rect = canvasRef.current.getBoundingClientRect();
+        const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+        const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+        return {
+            x: (clientX - rect.left) * (canvasRef.current.width / rect.width),
+            y: (clientY - rect.top) * (canvasRef.current.height / rect.height)
+        };
+    };
+
+    const startDrawing = (e) => {
+        if (!config.isWritingMode || config.writingLocked && e.type.startsWith('mouse')) return; 
+        const pos = getPos(e);
+        lastPoint.current = pos;
+        ctx.beginPath();
+        ctx.moveTo(pos.x, pos.y);
+    };
+
+    const draw = (e) => {
+        if (!config.isWritingMode || !lastPoint.current) return;
+        const pos = getPos(e);
+        ctx.globalCompositeOperation = config.writingTool === 'eraser' ? 'destination-out' : 'source-over';
+        ctx.strokeStyle = config.writingBrushColor;
+        ctx.lineWidth = config.writingTool === 'eraser' ? 20 : config.writingBrushSize * 2;
+
+        const midPoint = { x: (lastPoint.current.x + pos.x) / 2, y: (lastPoint.current.y + pos.y) / 2 };
+        ctx.quadraticCurveTo(lastPoint.current.x, lastPoint.current.y, midPoint.x, midPoint.y);
+        ctx.stroke();
+        lastPoint.current = pos;
+    };
+
+    const stopDrawing = () => { lastPoint.current = null; };
+
     return (
         <div 
             onClick={onClick}
             className={`relative w-[16mm] h-[16mm] border-r border-b box-border flex justify-center items-center overflow-hidden bg-transparent ${isReference ? 'reference-box cursor-pointer hover:bg-indigo-50' : ''}`} 
             style={{ borderColor: gridColor }}
         >
-            {/* Nội dung Kanji hoặc Trace hiển thị ở đây */}
-            {isReference && char && <span style={{ fontSize: `${config.fontSize}pt`, fontFamily: config.fontFamily }}>{char}</span>}
-            
+            {/* 1. KHUNG Ô LƯỚI (ĐƯỜNG KẺ CHỮ THẬP) */}
+            <svg className="absolute inset-0 w-full h-full pointer-events-none opacity-20" viewBox="0 0 100 100" preserveAspectRatio="none">
+                <line x1="50" y1="0" x2="50" y2="100" stroke="black" strokeWidth="0.5" strokeDasharray="4 4" />
+                <line x1="0" y1="50" x2="100" y2="50" stroke="black" strokeWidth="0.5" strokeDasharray="4 4" />
+            </svg>
+
+            {/* 2. HIỂN THỊ CHỮ MẪU HOẶC CHỮ MỜ */}
+            <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                {isReference ? (
+                    // Ô đầu tiên: Hiện chữ đen đậm
+                    <span style={{ fontSize: `${config.fontSize}pt`, fontFamily: config.fontFamily }}>{char}</span>
+                ) : (
+                    // Các ô tiếp theo: Hiện các nét vẽ mờ (Trace) dựa trên số lượng config.traceCount
+                    index <= config.traceCount && (
+                        <svg viewBox="0 0 109 109" className="w-[85%] h-[85%]" style={{ opacity: config.traceOpacity }}>
+                            {paths.map((d, i) => <path key={i} d={d} fill="none" stroke="black" strokeWidth="3" />)}
+                        </svg>
+                    )
+                )}
+            </div>
+
+            {/* 3. LỚP CANVAS ĐỂ VẼ TAY */}
             {config.isWritingMode && (
                 <canvas 
-                    ref={canvasRef}
-                    width={100} height={100}
+                    ref={canvasRef} width={100} height={100}
                     className="absolute inset-0 z-[50] w-full h-full touch-none"
-                    onMouseDown={startDrawing}
-                    onMouseMove={draw}
-                    onMouseUp={stopDrawing}
-                    onMouseLeave={stopDrawing}
-                    onTouchStart={startDrawing}
-                    onTouchMove={draw}
-                    onTouchEnd={stopDrawing}
+                    onMouseDown={startDrawing} onMouseMove={draw} onMouseUp={stopDrawing} onMouseLeave={stopDrawing}
+                    onTouchStart={startDrawing} onTouchMove={draw} onTouchEnd={stopDrawing}
                 />
             )}
         </div>
