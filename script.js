@@ -163,7 +163,10 @@ const FlashcardModal = ({ isOpen, onClose, text, dbData }) => {
     const [isFinished, setIsFinished] = React.useState(false);
     const [exitDirection, setExitDirection] = React.useState(null);
     const [showHint, setShowHint] = React.useState(true);
-
+    const [dragX, setDragX] = React.useState(0); // Tọa độ di chuyển thực tế
+    const [startX, setStartX] = React.useState(0); // Tọa độ điểm bắt đầu chạm
+    const [isDragging, setIsDragging] = React.useState(false); // Trạng thái đang giữ chuột/tay
+    
     React.useEffect(() => {
         if (isOpen && text) {
             const chars = Array.from(text).filter(c => c.trim());
@@ -219,6 +222,32 @@ React.useEffect(() => {
         document.body.style.touchAction = 'auto';
     };
 }, [isOpen]);
+    // --- LOGIC VUỐT (SWIPE) ---
+const handleDragStart = (e) => {
+    if (exitDirection) return;
+    setIsDragging(true);
+    const clientX = e.type.includes('mouse') ? e.clientX : e.touches[0].clientX;
+    setStartX(clientX);
+};
+
+const handleDragMove = (e) => {
+    if (!isDragging || exitDirection) return;
+    const clientX = e.type.includes('mouse') ? e.clientX : e.touches[0].clientX;
+    const currentDrag = clientX - startX;
+    setDragX(currentDrag);
+};
+
+const handleDragEnd = () => {
+    if (!isDragging) return;
+    setIsDragging(false);
+
+    if (dragX > 80) {
+        handleNext(true); // Vuốt phải -> Đã biết
+    } else if (dragX < -80) {
+        handleNext(false); // Vuốt trái -> Đang học
+    }
+    setDragX(0);
+};
     if (!isOpen || queue.length === 0) return null;
 
     const handleNext = (isKnown) => {
@@ -292,17 +321,35 @@ React.useEffect(() => {
                 {!isFinished ? (
                     <>
                         {/* --- THẺ 3D --- */}
-                        <div className={`relative transition-all duration-150 ease-out ${
-                            exitDirection === 'left' ? '-translate-x-10 -rotate-6 opacity-0' : 
-                            exitDirection === 'right' ? 'translate-x-10 rotate-6 opacity-0' : ''
-                        }`}>
-                            <div 
-                                onClick={() => {
-                                    setIsFlipped(!isFlipped);
-                                    if (currentIndex === 0) setShowHint(false);
-                                }}
-                                className={`relative w-64 h-80 cursor-pointer transition-all duration-500 [transform-style:preserve-3d] ${isFlipped ? '[transform:rotateY(180deg)]' : ''}`}
-                            >
+                       <div 
+    className={`relative transition-all duration-200 ease-out ${
+        exitDirection === 'left' ? '-translate-x-10 -rotate-6 opacity-0' : 
+        exitDirection === 'right' ? 'translate-x-10 rotate-6 opacity-0' : ''
+    }`}
+    style={{ 
+        transform: !exitDirection && dragX !== 0 
+            ? `translateX(${dragX}px) rotate(${dragX * 0.05}deg)` 
+            : '',
+        transition: isDragging ? 'none' : 'all 0.2s ease-out'
+    }}
+>
+                           <div 
+    onClick={() => {
+        // Chỉ lật nếu người dùng chạm nhẹ (không phải đang kéo)
+        if (Math.abs(dragX) < 5) {
+            setIsFlipped(!isFlipped);
+            if (currentIndex === 0) setShowHint(false);
+        }
+    }}
+    onMouseDown={handleDragStart}
+    onMouseMove={handleDragMove}
+    onMouseUp={handleDragEnd}
+    onMouseLeave={handleDragEnd}
+    onTouchStart={handleDragStart}
+    onTouchMove={handleDragMove}
+    onTouchEnd={handleDragEnd}
+    className={`relative w-64 h-80 cursor-pointer transition-all duration-500 [transform-style:preserve-3d] ${isFlipped ? '[transform:rotateY(180deg)]' : ''}`}
+>
                                 <div className="absolute inset-0 bg-white rounded-[2rem] shadow-2xl flex items-center justify-center border-4 border-white [backface-visibility:hidden] overflow-hidden">
                                     <span className="text-8xl font-['Klee_One'] text-gray-800 leading-none transform -translate-y-5">{currentChar}</span>
                                     {currentIndex === 0 && showHint && (
