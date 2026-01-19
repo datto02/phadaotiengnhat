@@ -152,7 +152,149 @@ const useKanjiReadings = (char, active, dbData) => {
 
   return readings;
 };
+const FlashcardModal = ({ isOpen, onClose, text, dbData }) => {
+    const [queue, setQueue] = React.useState([]);
+    const [currentIndex, setCurrentIndex] = React.useState(0);
+    const [isFlipped, setIsFlipped] = React.useState(false);
+    const [unknownIndices, setUnknownIndices] = React.useState([]);
+    const [isFinished, setIsFinished] = React.useState(false);
 
+    // Khởi tạo danh sách học
+    React.useEffect(() => {
+        if (isOpen && text) {
+            const chars = Array.from(text).filter(c => c.trim());
+            setQueue(chars);
+            setCurrentIndex(0);
+            setIsFlipped(false);
+            setUnknownIndices([]);
+            setIsFinished(false);
+        }
+    }, [isOpen, text]);
+    
+    if (!isOpen || queue.length === 0) return null;
+
+    const currentChar = queue[currentIndex];
+    const info = dbData?.KANJI_DB?.[currentChar] || dbData?.ALPHABETS?.hiragana?.[currentChar] || dbData?.ALPHABETS?.katakana?.[currentChar] || {};
+    const readings = dbData?.ONKUN_DB?.[currentChar] || {};
+
+    const handleNext = (isKnown) => {
+        if (!isKnown) {
+            setUnknownIndices(prev => [...prev, currentIndex]);
+        }
+        
+        if (currentIndex < queue.length - 1) {
+            setCurrentIndex(prev => prev + 1);
+            setIsFlipped(false);
+        } else {
+            setIsFinished(true);
+        }
+    };
+
+    const restartAll = () => {
+        setCurrentIndex(0);
+        setIsFlipped(false);
+        setUnknownIndices([]);
+        setIsFinished(false);
+    };
+
+    const reviewUnknown = () => {
+        const newQueue = unknownIndices.map(idx => queue[idx]);
+        setQueue(newQueue);
+        setCurrentIndex(0);
+        setIsFlipped(false);
+        setUnknownIndices([]);
+        setIsFinished(false);
+    };
+
+    return (
+        <div className="fixed inset-0 z-[300] flex items-center justify-center bg-black/80 backdrop-blur-md animate-in fade-in duration-300">
+            <div className="w-full max-w-sm p-6 flex flex-col items-center">
+                
+                {/* Header: Tiến độ */}
+                {!isFinished && (
+                    <div className="w-full flex justify-between items-center mb-8 text-white/60 text-sm font-bold">
+                        <span>THẺ {currentIndex + 1} / {queue.length}</span>
+                        <button onClick={onClose} className="hover:text-white">ĐÓNG [X]</button>
+                    </div>
+                )}
+
+                {!isFinished ? (
+                    <>
+                        {/* Thẻ Flashcard */}
+                        <div 
+                            onClick={() => setIsFlipped(!isFlipped)}
+                            className={`relative w-72 h-96 cursor-pointer transition-all duration-500 [transform-style:preserve-3d] ${isFlipped ? '[transform:rotateY(180deg)]' : ''}`}
+                        >
+                            {/* Mặt trước: Chữ Kanji */}
+                            <div className="absolute inset-0 bg-white rounded-3xl shadow-2xl flex items-center justify-center border-4 border-indigo-100 [backface-visibility:hidden]">
+                                <span className="text-8xl font-['Klee_One'] text-gray-800">{currentChar}</span>
+                                <p className="absolute bottom-6 text-gray-300 text-xs font-bold uppercase tracking-widest">Chạm để lật</p>
+                            </div>
+
+                            {/* Mặt sau: Thông tin */}
+                            <div className="absolute inset-0 bg-indigo-600 rounded-3xl shadow-2xl flex flex-col items-center justify-center p-6 text-white [backface-visibility:hidden] [transform:rotateY(180deg)]">
+                                <h3 className="text-4xl font-bold mb-2 uppercase">{info.sound || '---'}</h3>
+                                <p className="text-xl opacity-90 mb-6 font-medium">{info.meaning || ''}</p>
+                                
+                                <div className="w-full space-y-3 pt-4 border-t border-white/20">
+                                    {readings.readings_on && (
+                                        <div>
+                                            <p className="text-[10px] font-black opacity-50 uppercase">Onyomi</p>
+                                            <p className="text-sm">{readings.readings_on.join(', ')}</p>
+                                        </div>
+                                    )}
+                                    {readings.readings_kun && (
+                                        <div>
+                                            <p className="text-[10px] font-black opacity-50 uppercase">Kunyomi</p>
+                                            <p className="text-sm">{readings.readings_kun.join(', ')}</p>
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Nút điều khiển */}
+                        <div className="flex gap-4 mt-10 w-full">
+                            <button 
+                                onClick={() => handleNext(false)}
+                                className="flex-1 py-4 bg-red-500/20 hover:bg-red-500 text-red-500 hover:text-white border border-red-500/50 rounded-2xl font-bold transition-all active:scale-95"
+                            >
+                                CHƯA THUỘC
+                            </button>
+                            <button 
+                                onClick={() => handleNext(true)}
+                                className="flex-1 py-4 bg-green-500/20 hover:bg-green-500 text-green-500 hover:text-white border border-green-500/50 rounded-2xl font-bold transition-all active:scale-95"
+                            >
+                                ĐÃ THUỘC
+                            </button>
+                        </div>
+                    </>
+                ) : (
+                    /* Màn hình kết thúc vòng học */
+                    <div className="bg-white rounded-3xl p-8 w-full text-center shadow-2xl animate-in zoom-in-95">
+                        <div className="text-5xl mb-4">🎉</div>
+                        <h3 className="text-2xl font-black text-gray-800 mb-2">HOÀN THÀNH!</h3>
+                        <p className="text-gray-500 mb-6">Bạn đã thuộc <b>{queue.length - unknownIndices.length}</b>/{queue.length} chữ.</p>
+                        
+                        <div className="space-y-3">
+                            {unknownIndices.length > 0 && (
+                                <button onClick={reviewUnknown} className="w-full py-3 bg-indigo-600 text-white rounded-xl font-bold shadow-lg shadow-indigo-100 active:scale-95 transition-all">
+                                    ÔN LẠI {unknownIndices.length} CHỮ CHƯA THUỘC
+                                </button>
+                            )}
+                            <button onClick={restartAll} className="w-full py-3 bg-gray-100 text-gray-700 rounded-xl font-bold hover:bg-gray-200 active:scale-95 transition-all">
+                                HỌC LẠI TỪ ĐẦU
+                            </button>
+                            <button onClick={onClose} className="w-full py-3 text-gray-400 font-bold hover:text-gray-600 transition-all">
+                                THOÁT
+                            </button>
+                        </div>
+                    </div>
+                )}
+            </div>
+        </div>
+    );
+};
 // --- COMPONENT POPUP HOẠT HỌA (Đã chỉnh con trỏ chuột) ---
 const KanjiAnimationModal = ({ char, paths, fullSvg, dbData, isOpen, onClose }) => {
 const [key, setKey] = useState(0); 
@@ -559,7 +701,7 @@ return (
     };
 
 // 5. Sidebar (Phiên bản: Final)
-    const Sidebar = ({ config, onChange, onPrint, isMenuOpen, setIsMenuOpen, isConfigOpen, setIsConfigOpen, isCafeModalOpen, setIsCafeModalOpen, showMobilePreview, setShowMobilePreview, dbData }) => {
+    const Sidebar = ({ config, onChange, onPrint, isMenuOpen, setIsMenuOpen, isConfigOpen, setIsConfigOpen, isCafeModalOpen, setIsCafeModalOpen, showMobilePreview, setShowMobilePreview, dbData, setIsFlashcardOpen }) => {
     const scrollRef = useRef(null);
     const [searchResults, setSearchResults] = useState([]);
     const [activeIndex, setActiveIndex] = useState(0); 
@@ -1376,22 +1518,24 @@ className={`py-2 text-[11px] font-black border rounded-md transition-all duratio
 ))}
                             </div>
                         </div>
-                        {/* Phần Quizlet nằm ở cuối cùng */}
 <div className="pt-4 border-t border-gray-100">
     <div className="flex items-center gap-2 mb-2">
         <p className="text-[10px] font-bold text-gray-400 uppercase tracking-tight">ÔN TẬP</p>
         <span className="flex-1 border-b border-gray-50"></span>
     </div>
-    <a 
-        href="https://quizlet.com/join/mE5CzMyT7?i=4yxqkk&x=1bqt" 
-        target="_blank" 
+    <button 
+        onClick={() => {
+            if (!config.text) return alert("Vui lòng nhập chữ vào ô để học flashcard!");
+            setIsFlashcardOpen(true);
+            setIsUtilsOpen(false);
+        }}
         className="w-full py-3 bg-[#4255ff] hover:bg-[#3243cc] text-white rounded-xl flex items-center justify-center gap-2 shadow-md transition-all active:scale-95 group"
     >
         <span className="bg-white p-0.5 rounded flex items-center justify-center group-hover:rotate-12 transition-transform">
             <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#4255ff" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
         </span>
-        <span className="text-xs font-black tracking-wide">FLASHCARD KANJI</span>
-    </a>
+        <span className="text-xs font-black tracking-wide uppercase">Flashcard chữ đã nhập</span>
+    </button>
 </div>
                         </div>
                     )}
@@ -1824,6 +1968,7 @@ const [isCafeModalOpen, setIsCafeModalOpen] = useState(false);
 const [showMobilePreview, setShowMobilePreview] = useState(false);
 const [isConfigOpen, setIsConfigOpen] = React.useState(false);
 const [isMenuOpen, setIsMenuOpen] = useState(false);
+const [isFlashcardOpen, setIsFlashcardOpen] = useState(false);
 
 // State cấu hình mặc định
 const [config, setConfig] = useState({ 
@@ -1901,6 +2046,7 @@ return (
         isConfigOpen={isConfigOpen} setIsConfigOpen={setIsConfigOpen}
         isCafeModalOpen={isCafeModalOpen} setIsCafeModalOpen={setIsCafeModalOpen} 
         showMobilePreview={showMobilePreview} setShowMobilePreview={setShowMobilePreview}
+        setIsFlashcardOpen={setIsFlashcardOpen}
         
         dbData={dbData} // <--- QUAN TRỌNG: Truyền dữ liệu xuống Sidebar
     />
@@ -1937,6 +2083,13 @@ return (
         </div>
     </div>
     )}
+        
+<FlashcardModal 
+    isOpen={isFlashcardOpen} 
+    onClose={() => setIsFlashcardOpen(false)} 
+    text={config.text} 
+    dbData={dbData} 
+/>
     </div>
 );
 };
