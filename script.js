@@ -381,13 +381,16 @@ return (
 );
 };
 const GridBox = ({ char, type, config, index, svgData, failed, onClick }) => {
-    // ... code cũ giữ nguyên ...
     const canvasRef = useRef(null);
     const [ctx, setCtx] = useState(null);
     const lastPoint = useRef(null);
 
+    // Xác định các biến còn thiếu
+    const isReference = type === 'reference';
+    const gridColor = `rgba(0, 0, 0, ${config.gridOpacity})`;
+
     useEffect(() => {
-        if (canvasRef.current) {
+        if (canvasRef.current && config.isWritingMode) {
             const context = canvasRef.current.getContext('2d');
             context.lineCap = 'round';
             context.lineJoin = 'round';
@@ -395,52 +398,17 @@ const GridBox = ({ char, type, config, index, svgData, failed, onClick }) => {
         }
     }, [config.isWritingMode]);
 
-    const getPos = (e) => {
-        const rect = canvasRef.current.getBoundingClientRect();
-        const clientX = e.touches ? e.touches[0].clientX : e.clientX;
-        const clientY = e.touches ? e.touches[0].clientY : e.clientY;
-        return {
-            x: (clientX - rect.left) * (canvasRef.current.width / rect.width),
-            y: (clientY - rect.top) * (canvasRef.current.height / rect.height)
-        };
-    };
-
-    const startDrawing = (e) => {
-        if (!config.isWritingMode) return;
-        const pos = getPos(e);
-        lastPoint.current = pos;
-        ctx.beginPath();
-        ctx.moveTo(pos.x, pos.y);
-    };
-
-    const draw = (e) => {
-        if (!config.isWritingMode || !lastPoint.current) return;
-        const pos = getPos(e);
-        
-        ctx.globalCompositeOperation = config.writingTool === 'eraser' ? 'destination-out' : 'source-over';
-        ctx.strokeStyle = config.writingBrushColor;
-        ctx.lineWidth = config.writingTool === 'eraser' ? 20 : config.writingBrushSize * 2;
-
-        // Vẽ đường cong Quadratic để tạo độ mượt tuyệt đối
-        const midPoint = {
-            x: (lastPoint.current.x + pos.x) / 2,
-            y: (lastPoint.current.y + pos.y) / 2
-        };
-        ctx.quadraticCurveTo(lastPoint.current.x, lastPoint.current.y, midPoint.x, midPoint.y);
-        ctx.stroke();
-        
-        lastPoint.current = pos;
-    };
-
-    const stopDrawing = () => {
-        lastPoint.current = null;
-    };
-
+    // ... (Giữ nguyên các hàm draw, startDrawing, stopDrawing)
+    
     return (
-        <div className={`relative w-[16mm] h-[16mm] border-r border-b box-border flex justify-center items-center overflow-hidden bg-transparent ${isReference ? 'reference-box cursor-pointer hover:bg-indigo-50 transition-colors duration-200' : ''}`} style={{ borderColor: gridColor }}>
-            {/* ... code cũ hiển thị Kanji/Trace ... */}
-
-            {/* LỚP CANVAS VẼ TAY */}
+        <div 
+            onClick={onClick}
+            className={`relative w-[16mm] h-[16mm] border-r border-b box-border flex justify-center items-center overflow-hidden bg-transparent ${isReference ? 'reference-box cursor-pointer hover:bg-indigo-50' : ''}`} 
+            style={{ borderColor: gridColor }}
+        >
+            {/* Nội dung Kanji hoặc Trace hiển thị ở đây */}
+            {isReference && char && <span style={{ fontSize: `${config.fontSize}pt`, fontFamily: config.fontFamily }}>{char}</span>}
+            
             {config.isWritingMode && (
                 <canvas 
                     ref={canvasRef}
@@ -1910,125 +1878,84 @@ const WritingToolbar = ({ config, onChange }) => {
         </div>
     );
 };
-    const App = () => {
-// --- Các state cũ giữ nguyên ---
-const [isCafeModalOpen, setIsCafeModalOpen] = useState(false);
-const [showMobilePreview, setShowMobilePreview] = useState(false);
-const [isConfigOpen, setIsConfigOpen] = React.useState(false);
-const [isMenuOpen, setIsMenuOpen] = useState(false);
+const App = () => {
+    const [isCafeModalOpen, setIsCafeModalOpen] = useState(false);
+    const [showMobilePreview, setShowMobilePreview] = useState(false);
+    const [isConfigOpen, setIsConfigOpen] = useState(false);
+    const [isMenuOpen, setIsMenuOpen] = useState(false);
+    const [dbData, setDbData] = useState(null);
+    const [isDbLoaded, setIsDbLoaded] = useState(false);
 
-// State cấu hình mặc định
-const [config, setConfig] = useState({ 
-    text: '', fontSize: 35, traceCount: 9, verticalOffset: -3, 
-    traceOpacity: 0.15, guideScale: 1.02, guideX: 0, guideY: 0.5, 
-    gridOpacity: 0.8, gridType: 'cross', fontFamily: "'Klee One', cursive", 
-    showOnKun: false 
-});
-const [config, setConfig] = useState({
-    // ... các config cũ giữ nguyên
-    isWritingMode: false,
-    writingBrushSize: 3,
-    writingBrushColor: '#000000',
-    writingTool: 'pen', // 'pen' hoặc 'eraser'
-    writingZoom: 100,
-    writingLocked: false
-});
-const [showPostPrintDonate, setShowPostPrintDonate] = useState(false);
-
-// --- PHẦN MỚI: State chứa dữ liệu tải về ---
-const [dbData, setDbData] = useState(null);
-const [isDbLoaded, setIsDbLoaded] = useState(false);
-
-// 1. Dùng useEffect để tải dữ liệu ngay khi mở web
-useEffect(() => {
-    fetchDataFromGithub().then(data => {
-        if (data) {
-            setDbData(data);      // Lưu dữ liệu vào state
-            setIsDbLoaded(true); // Báo hiệu đã tải xong
-        }
+    // GỘP CHUNG CONFIG
+    const [config, setConfig] = useState({
+        text: '', 
+        fontSize: 35, 
+        traceCount: 9, 
+        traceOpacity: 0.15,
+        gridOpacity: 0.8, 
+        fontFamily: "'Klee One', cursive",
+        showOnKun: false,
+        isWritingMode: false,
+        writingBrushSize: 3,
+        writingBrushColor: '#000000',
+        writingTool: 'pen',
+        writingZoom: 100,
+        writingLocked: false
     });
-}, []);
 
-// 2. Logic xử lý cuộn trang khi hiện popup (giữ nguyên)
-useEffect(() => {
-    if (showPostPrintDonate) document.body.style.overflow = 'hidden';
-    else document.body.style.overflow = 'unset';
-    return () => { document.body.style.overflow = 'unset'; };
-}, [showPostPrintDonate]);
+    useEffect(() => {
+        fetchDataFromGithub().then(data => {
+            if (data) {
+                setDbData(data);
+                setIsDbLoaded(true);
+            }
+        });
+    }, []);
 
-/*useEffect(() => {
-    if (!config.text || config.text.trim().length === 0) setShowMobilePreview(false);
-}, [config.text]); */
-// ------------------------------
+    const handlePrint = () => window.print();
 
-// 3. Logic phân trang (giữ nguyên)
-const pages = useMemo(() => {
-    const contentToShow = (config.text && config.text.trim().length > 0) ? config.text : "日本語"; 
-    const chars = Array.from(contentToShow).filter(c => c.trim().length > 0);
-    const chunks = [];
-    const ROWS_PER_PAGE = 10;
-    for (let i = 0; i < chars.length; i += ROWS_PER_PAGE) { chunks.push(chars.slice(i, i + ROWS_PER_PAGE)); }
-    if (chunks.length === 0) return [[]];
-    return chunks;
-}, [config.text]);
-
-// 4. Logic in ấn (giữ nguyên)
-const handlePrint = () => {
-    const handleAfterPrint = () => { setShowPostPrintDonate(true); window.removeEventListener("afterprint", handleAfterPrint); };
-    window.addEventListener("afterprint", handleAfterPrint);
-    window.print();
-};
-
-// --- MÀN HÌNH CHỜ (LOADING) ---
-// Nếu dữ liệu chưa tải xong, hiện màn hình xoay vòng tròn
-if (!isDbLoaded) {
-    return (
+    if (!isDbLoaded) return (
         <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50">
             <div className="w-16 h-16 border-4 border-indigo-200 border-t-indigo-600 rounded-full animate-spin mb-4"></div>
-            <p className="text-gray-500 font-bold animate-pulse">Đang tải dữ liệu Kanji...</p>
+            <p>Đang tải dữ liệu Kanji...</p>
         </div>
     );
-}
 
-// --- GIAO DIỆN CHÍNH (Khi đã có dữ liệu) ---
-return (
-    <div className={`min-h-screen flex flex-col md:flex-row print-layout-reset ${config.writingLocked ? 'overflow-hidden fixed inset-0' : ''}`}>
-        
-        {/* THANH CÔNG CỤ TẬP VIẾT */}
-        {config.isWritingMode && (
-            <WritingToolbar config={config} onChange={setConfig} />
-        )}
+    const contentToShow = (config.text && config.text.trim().length > 0) ? config.text : "日本語"; 
+    const chars = Array.from(contentToShow).filter(c => c.trim().length > 0);
+    const pages = [];
+    for (let i = 0; i < chars.length; i += 10) { pages.push(chars.slice(i, i + 10)); }
 
-        {/* SIDEBAR - ẨN KHI TẬP VIẾT */}
-        {!config.isWritingMode && (
-            <div className="no-print z-50">
-                <Sidebar config={config} onChange={setConfig} onPrint={handlePrint} ... />
-            </div>
-        )}
+    return (
+        <div className={`min-h-screen flex flex-col md:flex-row ${config.writingLocked ? 'overflow-hidden fixed inset-0' : ''}`}>
+            {config.isWritingMode && <WritingToolbar config={config} onChange={setConfig} />}
+            
+            {!config.isWritingMode && (
+                <Sidebar 
+                    config={config} 
+                    onChange={setConfig} 
+                    onPrint={handlePrint}
+                    isMenuOpen={isMenuOpen}
+                    setIsMenuOpen={setIsMenuOpen}
+                    isConfigOpen={isConfigOpen}
+                    setIsConfigOpen={setIsConfigOpen}
+                    isCafeModalOpen={isCafeModalOpen}
+                    setIsCafeModalOpen={setIsCafeModalOpen}
+                    showMobilePreview={showMobilePreview}
+                    setShowMobilePreview={setShowMobilePreview}
+                    dbData={dbData}
+                />
+            )}
 
-        {/* VÙNG XEM TRƯỚC - CĂN GIỮA VÀ ZOOM */}
-        <div 
-            id="preview-area" 
-            className={`flex-1 bg-gray-100 p-4 md:p-8 overflow-auto flex flex-col items-center custom-scrollbar ${config.isWritingMode ? 'pt-20' : ''}`}
-            style={{ 
-                scrollBehavior: 'smooth',
-                touchAction: config.writingLocked ? 'none' : 'auto' 
-            }}
-        >
-            <div style={{ 
-                transform: `scale(${config.writingZoom / 100})`, 
-                transformOrigin: 'top center',
-                transition: 'transform 0.2s ease-out'
-            }}>
-                {pages.map((pageChars, index) => (
-                    <Page key={index} chars={pageChars} config={config} dbData={dbData} /> 
-                ))}
+            <div id="preview-area" className="flex-1 bg-gray-100 p-4 overflow-auto flex flex-col items-center">
+                <div style={{ transform: `scale(${config.writingZoom / 100})`, transformOrigin: 'top center' }}>
+                    {pages.map((pageChars, index) => (
+                        <Page key={index} chars={pageChars} config={config} dbData={dbData} />
+                    ))}
+                </div>
             </div>
         </div>
-
-        {/* ... Modal Anime & Donate giữ nguyên ... */}
-    </div>
-);
+    );
 };
     const root = ReactDOM.createRoot(document.getElementById('root'));
     root.render(<App />);
