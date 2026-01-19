@@ -380,77 +380,84 @@ return (
 </div>
 );
 };
-// 2. GridBox (Đã thêm class reference-box và chỉnh Hover xanh nhạt)
 const GridBox = ({ char, type, config, index, svgData, failed, onClick }) => {
-const isReference = type === 'reference';
-const showTrace = index < config.traceCount;
-const { gridType, gridOpacity } = config; 
+    // ... code cũ giữ nguyên ...
+    const canvasRef = useRef(null);
+    const [ctx, setCtx] = useState(null);
+    const lastPoint = useRef(null);
 
-const gridColor = `rgba(0, 0, 0, ${gridOpacity})`;
+    useEffect(() => {
+        if (canvasRef.current) {
+            const context = canvasRef.current.getContext('2d');
+            context.lineCap = 'round';
+            context.lineJoin = 'round';
+            setCtx(context);
+        }
+    }, [config.isWritingMode]);
 
-const refStyle = isReference ? {
-    '--guide-scale': config.guideScale,
-    '--guide-x': `${config.guideX}px`,
-    '--guide-y': `${config.guideY}px`
-} : {};
+    const getPos = (e) => {
+        const rect = canvasRef.current.getBoundingClientRect();
+        const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+        const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+        return {
+            x: (clientX - rect.left) * (canvasRef.current.width / rect.width),
+            y: (clientY - rect.top) * (canvasRef.current.height / rect.height)
+        };
+    };
 
-return (
-    <div 
-    // THÊM: class 'reference-box' (quan trọng để đổi màu chữ)
-    // SỬA: hover:bg-indigo-50 (nền xanh nhạt)
-    className={`relative w-[16mm] h-[16mm] border-r border-b box-border flex justify-center items-center overflow-hidden bg-transparent ${isReference ? 'reference-box cursor-pointer hover:bg-indigo-50 transition-colors duration-200' : ''}`}
-    style={{ borderColor: gridColor }}
-    onClick={isReference ? onClick : undefined} 
-    title={isReference ? "Bấm để xem cách viết" : ""}
-    >
-    
-    <div className="absolute inset-0 pointer-events-none z-0">
-        {gridType !== 'blank' && (
-        <svg width="100%" height="100%" viewBox="0 0 100 100" preserveAspectRatio="none">
-            <line x1="50" y1="0" x2="50" y2="100" stroke="black" strokeOpacity={gridOpacity} strokeWidth="0.5" strokeDasharray="4 4" />
-            <line x1="0" y1="50" x2="100" y2="50" stroke="black" strokeOpacity={gridOpacity} strokeWidth="0.5" strokeDasharray="4 4" />
-        </svg>
-        )}
-    </div>
+    const startDrawing = (e) => {
+        if (!config.isWritingMode) return;
+        const pos = getPos(e);
+        lastPoint.current = pos;
+        ctx.beginPath();
+        ctx.moveTo(pos.x, pos.y);
+    };
 
-    {char && (
-        <>
-        {isReference && (
-            <div className="relative z-20 w-full h-full flex items-center justify-center p-[1px]">
-                {!failed && svgData ? (
-                <div className="ref-wrapper" style={refStyle} dangerouslySetInnerHTML={{ __html: svgData }} />
-                ) : (
-                <span className="kanji-trace !text-black flex justify-center items-center h-full w-full"
-                    style={{ fontSize: `${config.fontSize}pt`, color: 'black', transform: `translateY(${config.verticalOffset}px)`, textShadow: 'none', webkitTextStroke: '0' }}>
-                    {char}
-                </span>
-                )}
-                
-                {/* Icon bàn tay gợi ý (ẩn đi vì đã có hiệu ứng đổi màu chữ làm tín hiệu) */}
-                <div className="absolute bottom-0.5 right-0.5 opacity-0 hover:opacity-0 text-indigo-400 pointer-events-none transition-opacity">
-                    <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8"/></svg>
-                </div>
-            </div>
-        )}
+    const draw = (e) => {
+        if (!config.isWritingMode || !lastPoint.current) return;
+        const pos = getPos(e);
+        
+        ctx.globalCompositeOperation = config.writingTool === 'eraser' ? 'destination-out' : 'source-over';
+        ctx.strokeStyle = config.writingBrushColor;
+        ctx.lineWidth = config.writingTool === 'eraser' ? 20 : config.writingBrushSize * 2;
 
-        {!isReference && showTrace && (
-            <span className="kanji-trace"
-            style={{
-                fontSize: `${config.fontSize}pt`,
-                transform: `translateY(${config.verticalOffset}px)`,
-                color: `rgba(0, 0, 0, ${config.traceOpacity})`,
-                fontFamily: config.fontFamily
-            }}
-            >
-            {char}
-            </span>
-        )}
-        </>
-    )}
-    </div>
-);
+        // Vẽ đường cong Quadratic để tạo độ mượt tuyệt đối
+        const midPoint = {
+            x: (lastPoint.current.x + pos.x) / 2,
+            y: (lastPoint.current.y + pos.y) / 2
+        };
+        ctx.quadraticCurveTo(lastPoint.current.x, lastPoint.current.y, midPoint.x, midPoint.y);
+        ctx.stroke();
+        
+        lastPoint.current = pos;
+    };
+
+    const stopDrawing = () => {
+        lastPoint.current = null;
+    };
+
+    return (
+        <div className={`relative w-[16mm] h-[16mm] border-r border-b box-border flex justify-center items-center overflow-hidden bg-transparent ${isReference ? 'reference-box cursor-pointer hover:bg-indigo-50 transition-colors duration-200' : ''}`} style={{ borderColor: gridColor }}>
+            {/* ... code cũ hiển thị Kanji/Trace ... */}
+
+            {/* LỚP CANVAS VẼ TAY */}
+            {config.isWritingMode && (
+                <canvas 
+                    ref={canvasRef}
+                    width={100} height={100}
+                    className="absolute inset-0 z-[50] w-full h-full touch-none"
+                    onMouseDown={startDrawing}
+                    onMouseMove={draw}
+                    onMouseUp={stopDrawing}
+                    onMouseLeave={stopDrawing}
+                    onTouchStart={startDrawing}
+                    onTouchMove={draw}
+                    onTouchEnd={stopDrawing}
+                />
+            )}
+        </div>
+    );
 };
-
 // 3. WorkbookRow (Cập nhật truyền props cho Modal mới)
     const WorkbookRow = ({ char, config, dbData }) => {
     const { loading, paths, fullSvg, failed } = useKanjiSvg(char);
@@ -1376,6 +1383,20 @@ className={`py-2 text-[11px] font-black border rounded-md transition-all duratio
 ))}
                             </div>
                         </div>
+{/* Thêm vào cuối cùng của menu Tiện ích */}
+<div className="pt-2 border-t border-gray-100">
+    <button 
+        onClick={() => {
+            if (!config.text) return alert("Hãy nhập nội dung trước khi tập viết!");
+            handleChange('isWritingMode', true);
+            setIsUtilsOpen(false);
+        }}
+        className="w-full py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-xl shadow-lg flex items-center justify-center gap-2 transition-all active:scale-95"
+    >
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+        TẬP VIẾT TAY
+    </button>
+</div>
                         {/* Phần Quizlet nằm ở cuối cùng */}
 <div className="pt-4 border-t border-gray-100">
     <div className="flex items-center gap-2 mb-2">
@@ -1818,6 +1839,77 @@ TÀI LIỆU HỌC TẬP
         </div>
     );
     };
+const WritingToolbar = ({ config, onChange }) => {
+    const [showSize, setShowSize] = useState(false);
+    const [showColor, setShowColor] = useState(false);
+
+    const colors = [
+        { name: 'Đen', code: '#000000' },
+        { name: 'Đỏ', code: '#ef4444' },
+        { name: 'Xanh dương', code: '#3b82f6' },
+        { name: 'Xanh lá', code: '#22c55e' }
+    ];
+
+    return (
+        <div className="fixed top-0 left-0 right-0 z-[300] flex flex-col items-center p-2 no-print">
+            {/* Thanh chính */}
+            <div className="bg-white/90 backdrop-blur-md shadow-2xl rounded-2xl border border-gray-200 p-1.5 flex items-center gap-1">
+                {/* Độ to */}
+                <button onClick={() => { setShowSize(!showSize); setShowColor(false); }} className={`p-2 rounded-xl transition-colors ${showSize ? 'bg-indigo-100 text-indigo-600' : 'hover:bg-gray-100 text-gray-600'}`}>
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><circle cx="12" cy="12" r="3" fill="currentColor"/><circle cx="12" cy="12" r="8"/></svg>
+                </button>
+                
+                {/* Tẩy */}
+                <button onClick={() => onChange({ ...config, writingTool: config.writingTool === 'eraser' ? 'pen' : 'eraser' })} className={`p-2 rounded-xl transition-colors ${config.writingTool === 'eraser' ? 'bg-red-100 text-red-600' : 'hover:bg-gray-100 text-gray-600'}`}>
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="m20 20-5-5Z"/><path d="M7 21h10a2 2 0 0 0 2-2V7l-7-4-7 4v12a2 2 0 0 0 2 2Z"/></svg>
+                </button>
+
+                {/* Đổi màu */}
+                <button onClick={() => { setShowColor(!showColor); setShowSize(false); }} className="p-2 rounded-xl hover:bg-gray-100 text-gray-600" style={{ color: config.writingBrushColor }}>
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="m2 22 1-1h3l9-9"/><path d="M3 21v-3l9-9"/><path d="M15 6 9 12"/><path d="M19 15V4a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v11a2 2 0 0 0 2 2h11a2 2 0 0 0 2-2z"/></svg>
+                </button>
+
+                <div className="w-px h-6 bg-gray-200 mx-1"></div>
+
+                {/* Phóng to/Thu nhỏ */}
+                <button onClick={() => onChange({ ...config, writingZoom: Math.min(config.writingZoom + 5, 200) })} className="p-2 rounded-xl hover:bg-gray-100 text-gray-600"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/></svg></button>
+                <button onClick={() => onChange({ ...config, writingZoom: Math.max(config.writingZoom - 5, 50) })} className="p-2 rounded-xl hover:bg-gray-100 text-gray-600"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="8" y1="11" x2="14" y2="11"/></svg></button>
+
+                {/* Khóa */}
+                <button onClick={() => onChange({ ...config, writingLocked: !config.writingLocked })} className={`p-2 rounded-xl transition-colors ${config.writingLocked ? 'bg-orange-100 text-orange-600' : 'hover:bg-gray-100 text-gray-600'}`}>
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                        {config.writingLocked ? <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/> : <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 9.9-1"/>}
+                    </svg>
+                </button>
+
+                {/* Thoát */}
+                <button onClick={() => onChange({ ...config, isWritingMode: false })} className="p-2 rounded-xl bg-red-50 text-red-500 hover:bg-red-500 hover:text-white transition-all">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+                </button>
+            </div>
+
+            {/* Thanh phụ điều chỉnh */}
+            {(showSize || showColor) && (
+                <div className="mt-2 bg-white rounded-xl shadow-xl border border-gray-100 p-3 animate-in fade-in zoom-in-95 duration-200 min-w-[200px]">
+                    {showSize && (
+                        <div className="flex items-center gap-3">
+                            <span className="text-[10px] font-bold text-gray-400 uppercase">Size</span>
+                            <input type="range" min="1" max="10" step="1" className="flex-1 h-1.5 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-indigo-600" value={config.writingBrushSize} onChange={(e) => onChange({ ...config, writingBrushSize: parseInt(e.target.value) })} />
+                            <span className="text-xs font-bold text-indigo-600 w-4">{config.writingBrushSize}</span>
+                        </div>
+                    )}
+                    {showColor && (
+                        <div className="flex justify-between items-center gap-2">
+                            {colors.map(c => (
+                                <button key={c.code} onClick={() => { onChange({ ...config, writingBrushColor: c.code, writingTool: 'pen' }); setShowColor(false); }} className={`w-8 h-8 rounded-full border-2 transition-transform hover:scale-110 ${config.writingBrushColor === c.code ? 'border-gray-400 scale-110 shadow-md' : 'border-transparent'}`} style={{ backgroundColor: c.code }} title={c.name} />
+                            ))}
+                        </div>
+                    )}
+                </div>
+            )}
+        </div>
+    );
+};
     const App = () => {
 // --- Các state cũ giữ nguyên ---
 const [isCafeModalOpen, setIsCafeModalOpen] = useState(false);
@@ -1832,7 +1924,15 @@ const [config, setConfig] = useState({
     gridOpacity: 0.8, gridType: 'cross', fontFamily: "'Klee One', cursive", 
     showOnKun: false 
 });
-
+const [config, setConfig] = useState({
+    // ... các config cũ giữ nguyên
+    isWritingMode: false,
+    writingBrushSize: 3,
+    writingBrushColor: '#000000',
+    writingTool: 'pen', // 'pen' hoặc 'eraser'
+    writingZoom: 100,
+    writingLocked: false
+});
 const [showPostPrintDonate, setShowPostPrintDonate] = useState(false);
 
 // --- PHẦN MỚI: State chứa dữ liệu tải về ---
@@ -1892,50 +1992,41 @@ if (!isDbLoaded) {
 
 // --- GIAO DIỆN CHÍNH (Khi đã có dữ liệu) ---
 return (
-    <div className="min-h-screen flex flex-col md:flex-row print-layout-reset">
-    <div className="no-print z-50">
-    <Sidebar 
-        config={config} onChange={setConfig} onPrint={handlePrint} 
-        isMenuOpen={isMenuOpen} setIsMenuOpen={setIsMenuOpen}
-        isConfigOpen={isConfigOpen} setIsConfigOpen={setIsConfigOpen}
-        isCafeModalOpen={isCafeModalOpen} setIsCafeModalOpen={setIsCafeModalOpen} 
-        showMobilePreview={showMobilePreview} setShowMobilePreview={setShowMobilePreview}
+    <div className={`min-h-screen flex flex-col md:flex-row print-layout-reset ${config.writingLocked ? 'overflow-hidden fixed inset-0' : ''}`}>
         
-        dbData={dbData} // <--- QUAN TRỌNG: Truyền dữ liệu xuống Sidebar
-    />
-    </div>
+        {/* THANH CÔNG CỤ TẬP VIẾT */}
+        {config.isWritingMode && (
+            <WritingToolbar config={config} onChange={setConfig} />
+        )}
 
-    <div id="preview-area" className={`flex-1 bg-gray-100 p-0 md:p-8 overflow-auto flex-col items-center min-h-screen print-layout-reset custom-scrollbar ${showMobilePreview ? 'flex' : 'hidden md:flex'}`}>
-    {pages.map((pageChars, index) => (
-        <Page 
-        key={index} 
-        chars={pageChars} 
-        config={config} 
-        
-        dbData={dbData} // <--- QUAN TRỌNG: Truyền dữ liệu xuống page 
-        /> 
-    ))}
-    </div>
-
-    {/* Popup Donate  */}
-    {showPostPrintDonate && (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 animate-in fade-in duration-300 no-print">
-        <div className="bg-white rounded-2xl shadow-2xl w-full max-w-sm overflow-hidden relative animate-in zoom-in-95 duration-300 border border-orange-100">
-        <button onClick={() => setShowPostPrintDonate(false)} className="absolute top-3 right-3 p-1.5 bg-gray-100 hover:bg-red-100 hover:text-red-500 rounded-full transition-colors z-10">
-            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
-        </button>
-        <div className="p-6 flex flex-col items-center text-center">
-            <h3 className="text-xl font-bold text-gray-800 mb-2">BẠN TẠO ĐƯỢC FILE CHƯA?</h3>
-            <p className="text-sm text-gray-500 mb-6 leading-relaxed">Nếu bạn thấy trang web hữu ích <br/> hãy mời mình một ly cafe nhé!</p>
-            <div className="bg-gradient-to-br from-orange-50 to-orange-100 p-3 rounded-xl shadow-inner border border-orange-200 mb-4">
-            <img src="https://i.ibb.co/JWGwcTL1/3381513652021492183.jpg" alt="QR Donate" className="w-40 h-auto rounded-lg mix-blend-multiply" />
+        {/* SIDEBAR - ẨN KHI TẬP VIẾT */}
+        {!config.isWritingMode && (
+            <div className="no-print z-50">
+                <Sidebar config={config} onChange={setConfig} onPrint={handlePrint} ... />
             </div>
-            <p className="text-[11px] font-bold text-orange-600 bg-orange-50 px-3 py-1 rounded-full mb-4">MB BANK: 99931082002</p>
-            <button onClick={() => setShowPostPrintDonate(false)} className="w-full py-2.5 bg-gray-800 hover:bg-gray-900 text-white text-sm font-bold rounded-xl transition-all shadow-lg active:scale-95">Lần sau nhé!</button>
+        )}
+
+        {/* VÙNG XEM TRƯỚC - CĂN GIỮA VÀ ZOOM */}
+        <div 
+            id="preview-area" 
+            className={`flex-1 bg-gray-100 p-4 md:p-8 overflow-auto flex flex-col items-center custom-scrollbar ${config.isWritingMode ? 'pt-20' : ''}`}
+            style={{ 
+                scrollBehavior: 'smooth',
+                touchAction: config.writingLocked ? 'none' : 'auto' 
+            }}
+        >
+            <div style={{ 
+                transform: `scale(${config.writingZoom / 100})`, 
+                transformOrigin: 'top center',
+                transition: 'transform 0.2s ease-out'
+            }}>
+                {pages.map((pageChars, index) => (
+                    <Page key={index} chars={pageChars} config={config} dbData={dbData} /> 
+                ))}
+            </div>
         </div>
-        </div>
-    </div>
-    )}
+
+        {/* ... Modal Anime & Donate giữ nguyên ... */}
     </div>
 );
 };
