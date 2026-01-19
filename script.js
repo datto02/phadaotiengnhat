@@ -1895,12 +1895,25 @@ const WritingToolbar = ({ config, onChange }) => {
                 <button onClick={() => onChange({ ...config, writingZoom: Math.min(config.writingZoom + 5, 200) })} className="p-2 rounded-xl hover:bg-gray-100 text-gray-600"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/></svg></button>
                 <button onClick={() => onChange({ ...config, writingZoom: Math.max(config.writingZoom - 5, 50) })} className="p-2 rounded-xl hover:bg-gray-100 text-gray-600"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="8" y1="11" x2="14" y2="11"/></svg></button>
 
-                {/* Khóa */}
-                <button onClick={() => onChange({ ...config, writingLocked: !config.writingLocked })} className={`p-2 rounded-xl transition-colors ${config.writingLocked ? 'bg-orange-100 text-orange-600' : 'hover:bg-gray-100 text-gray-600'}`}>
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                        {config.writingLocked ? <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/> : <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 9.9-1"/>}
-                    </svg>
-                </button>
+               {/* Nút Khóa (Đã sửa lỗi Adjacent JSX elements) */}
+<button 
+    onClick={() => onChange({ ...config, writingLocked: !config.writingLocked })} 
+    className={`p-2 rounded-xl transition-colors ${config.writingLocked ? 'bg-orange-100 text-orange-600' : 'hover:bg-gray-100 text-gray-600'}`}
+>
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+        {config.writingLocked ? (
+            <>
+                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+                <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+            </>
+        ) : (
+            <>
+                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+                <path d="M7 11V7a5 5 0 0 1 9.9-1"/>
+            </>
+        )}
+    </svg>
+</button>
 
                 {/* Thoát */}
                 <button onClick={() => onChange({ ...config, isWritingMode: false })} className="p-2 rounded-xl bg-red-50 text-red-500 hover:bg-red-500 hover:text-white transition-all">
