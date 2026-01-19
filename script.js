@@ -305,19 +305,19 @@ const FlashcardModal = ({ isOpen, onClose, text, dbData }) => {
                         <div className="w-64 mt-8 mb-6 relative h-6 flex items-center">
                             <div className="w-full h-1 bg-white/10 rounded-full relative">
                                 {/* Khung số tổng */}
-                                <div className="absolute right-0 top-1/2 -translate-y-1/2 h-5 min-w-[24px] rounded-md flex items-center justify-center border border-white/10">
-                                    <span className="text-[9px] font-black text-white/30 uppercase">{queue.length}</span>
+                                <div className="absolute right-0 top-1/2 -translate-y-1/2 h-5 min-w-[24px] rounded-md flex items-center justify-center bg-white">
+                             <span className="text-[9px] font-black text-black uppercase">{queue.length}</span>
                                 </div>
                                 
                                 {/* Nút chạy (Xanh lá tỏa sáng, số màu trắng) */}
                                 <div 
-                                    className="absolute top-1/2 -translate-y-1/2 h-5 min-w-[24px] px-1 bg-green-500 rounded-md flex items-center justify-center shadow-[0_0_15px_rgba(34,197,94,0.7)] transition-all duration-150 ease-out z-10"
-                                    style={{ 
-                                        left: `calc(${(currentIndex / (queue.length - 1 || 1)) * 100}% - ${currentIndex === queue.length - 1 ? '24px' : '0px'})` 
-                                    }}
-                                >
-                                    <span className="text-[9px] font-black text-white leading-none">{currentIndex + 1}</span>
-                                </div>
+    className="absolute top-1/2 -translate-y-1/2 h-5 min-w-[24px] px-1 bg-sky-400 rounded-md flex items-center justify-center shadow-[0_0_15px_rgba(56,189,248,0.8)] transition-all duration-150 ease-out z-10"
+    style={{ 
+        left: `calc(${(currentIndex / (queue.length - 1 || 1)) * 100}% - ${currentIndex === queue.length - 1 ? '24px' : '0px'})` 
+    }}
+>
+    <span className="text-[9px] font-black text-white leading-none">{currentIndex + 1}</span>
+</div>
                             </div>
                         </div>
 
