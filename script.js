@@ -307,7 +307,7 @@ const FlashcardModal = ({ isOpen, onClose, text, dbData }) => {
         setQueue([...passedPart, ...shuffledPool]);
         setIsFlipped(false);
         setBtnFeedback('shuffle');
-        setTimeout(() => setBtnFeedback(null), 500);
+        setTimeout(() => setBtnFeedback(null), 400);
     };
 
     const handleDragStart = (e) => {
@@ -398,7 +398,7 @@ const FlashcardModal = ({ isOpen, onClose, text, dbData }) => {
                                             onClick={handleShuffle} 
                                             className={`p-2.5 bg-black/5 hover:bg-black/10 active:scale-90 rounded-full transition-all flex items-center justify-center text-gray-400 hover:text-gray-700 ${btnFeedback === 'shuffle' ? 'bg-indigo-100 text-indigo-600' : ''}`}
                                         >
-                                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" className={`pointer-events-none ${btnFeedback === 'shuffle' ? 'animate-spin' : ''}`}><path d="m21 16-4 4-4-4"/><path d="M17 20V4"/><path d="m3 8 4-4 4 4"/><path d="M7 4v16"/></svg>
+                                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" className={`pointer-events-none ${btnFeedback === 'shuffle' ? 'animate-[spin_0.4s_linear_infinite]' : ''}`}><path d="m21 16-4 4-4-4"/><path d="M17 20V4"/><path d="m3 8 4-4 4 4"/><path d="M7 4v16"/></svg>
                                         </button>
                                     </div>
                                 </div>
@@ -446,7 +446,7 @@ const FlashcardModal = ({ isOpen, onClose, text, dbData }) => {
                             onClick={onClose} 
                             className="mt-8 text-white/40 hover:text-red-500 transition-all text-[13px] sm:text-[11px] font-black uppercase tracking-[0.2em] py-2 px-4 active:scale-95"
                         >
-                            Đóng [ESC]
+                            Đóng thẻ
                         </button>
                     </>
                 ) : (
