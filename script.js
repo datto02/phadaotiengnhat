@@ -1,4 +1,3 @@
-
 const removeAccents = (str) => {
 return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/đ/g, "d").replace(/Đ/g, "D");
 };
@@ -153,9 +152,6 @@ const useKanjiReadings = (char, active, dbData) => {
 
   return readings;
 };
-
-
-
 const FlashcardModal = ({ isOpen, onClose, text, dbData }) => {
     const [originalQueue, setOriginalQueue] = React.useState([]);
     const [queue, setQueue] = React.useState([]);
@@ -175,6 +171,31 @@ const FlashcardModal = ({ isOpen, onClose, text, dbData }) => {
     // --- STATE & HÀM TRỘN ---
     const [isShuffleOn, setIsShuffleOn] = React.useState(false);
 
+    // --- [MỚI] 1. CHẾ TẠO NGÒI NỔ (Hàm bắn pháo hoa) ---
+    const triggerConfetti = React.useCallback(() => {
+        if (typeof confetti === 'undefined') return;
+        const count = 200;
+        const defaults = { origin: { y: 0.6 }, zIndex: 1500 };
+
+        function fire(particleRatio, opts) {
+            confetti({ ...defaults, ...opts, particleCount: Math.floor(count * particleRatio) });
+        }
+
+        fire(0.25, { spread: 26, startVelocity: 55 });
+        fire(0.2, { spread: 60 });
+        fire(0.35, { spread: 100, decay: 0.91, scalar: 0.8 });
+        fire(0.1, { spread: 120, startVelocity: 25, decay: 0.92, scalar: 1.2 });
+        fire(0.1, { spread: 120, startVelocity: 45 });
+    }, []);
+
+    // --- [MỚI] 2. KÍCH HOẠT TỰ ĐỘNG KHI HOÀN THÀNH ---
+    React.useEffect(() => {
+        if (isFinished && isOpen) {
+            triggerConfetti();
+        }
+    }, [isFinished, isOpen, triggerConfetti]);
+
+
     // Hàm trộn mảng (Fisher-Yates)
     const shuffleArray = React.useCallback((array) => {
         const newArr = [...array];
@@ -184,59 +205,6 @@ const FlashcardModal = ({ isOpen, onClose, text, dbData }) => {
         }
         return newArr;
     }, []);
-
-    // --- [MỚI] HÀM BẮN PHÁO HOA 3D ---
-    const triggerConfetti = React.useCallback(() => {
-        // Tạo hiệu ứng nổ tại vị trí thanh tiến độ (khoảng 70% chiều cao màn hình - y: 0.7)
-        const count = 200;
-        const defaults = {
-            origin: { y: 0.7 }, // Bắn từ vị trí thanh tiến độ
-            zIndex: 1500 // Đè lên Modal
-        };
-
-        function fire(particleRatio, opts) {
-            confetti({
-                ...defaults,
-                ...opts,
-                particleCount: Math.floor(count * particleRatio)
-            });
-        }
-
-        // Bắn tổ hợp nhiều loại hạt để tạo hiệu ứng 3D dày đặc
-        fire(0.25, {
-            spread: 26,
-            startVelocity: 55,
-        });
-        fire(0.2, {
-            spread: 60,
-        });
-        fire(0.35, {
-            spread: 100,
-            decay: 0.91,
-            scalar: 0.8
-        });
-        fire(0.1, {
-            spread: 120,
-            startVelocity: 25,
-            decay: 0.92,
-            scalar: 1.2
-        });
-        fire(0.1, {
-            spread: 120,
-            startVelocity: 45,
-        });
-    }, []);
-
-    // --- [MỚI] EFFECT THEO DÕI TIẾN ĐỘ ĐỂ BẮN PHÁO ---
-    React.useEffect(() => {
-        // Logic: Nếu số thẻ đã qua > 0 VÀ chia hết cho 10 VÀ chưa kết thúc
-        // currentIndex là index của thẻ ĐANG hiển thị.
-        // Ví dụ: Vừa xong thẻ 9 -> sang thẻ 10 (index=10). Lúc này đã xong 10 thẻ.
-        if (currentIndex > 0 && currentIndex % 10 === 0 && !isFinished && isOpen) {
-            triggerConfetti();
-        }
-    }, [currentIndex, isFinished, isOpen, triggerConfetti]);
-
 
     // --- KHỞI TẠO SESSION ---
     const startNewSession = React.useCallback((chars) => {
@@ -257,6 +225,7 @@ const FlashcardModal = ({ isOpen, onClose, text, dbData }) => {
         if (isOpen && text) {
             const chars = Array.from(text).filter(c => c.trim());
             setOriginalQueue(chars);
+            // Nếu đang bật shuffle thì trộn ngay đầu vào
             const queueToLoad = isShuffleOn ? shuffleArray(chars) : chars;
             startNewSession(queueToLoad);
             setShowHint(true);
@@ -367,6 +336,7 @@ const FlashcardModal = ({ isOpen, onClose, text, dbData }) => {
         }
     };
 
+    // [QUAN TRỌNG] HÀM XỬ LÝ NÚT TRỘN (BẬT/TẮT)
     const handleToggleShuffle = (e) => {
         if (e) { e.preventDefault(); e.stopPropagation(); e.currentTarget.blur(); }
 
@@ -375,6 +345,7 @@ const FlashcardModal = ({ isOpen, onClose, text, dbData }) => {
         setBtnFeedback('shuffle');
         setTimeout(() => setBtnFeedback(null), 400);
 
+        // Chia mảng hiện tại thành 2 phần: Đã qua (passed) và Còn lại (remaining - bao gồm cả thẻ hiện tại)
         const passedPart = queue.slice(0, currentIndex);
         const remainingPart = queue.slice(currentIndex);
 
@@ -383,8 +354,12 @@ const FlashcardModal = ({ isOpen, onClose, text, dbData }) => {
         let newRemainingPart;
 
         if (nextState) {
+            // TRƯỜNG HỢP BẬT: Trộn ngay lập tức phần còn lại
             newRemainingPart = shuffleArray(remainingPart);
         } else {
+            // TRƯỜNG HỢP TẮT: Khôi phục thứ tự gốc của phần còn lại
+            // Logic: Duyệt qua originalQueue, nhặt ra những phần tử có mặt trong remainingPart
+            // Sử dụng bộ đếm (counts) để xử lý trường hợp có các ký tự trùng nhau
             const counts = {};
             remainingPart.forEach(c => { counts[c] = (counts[c] || 0) + 1; });
             
@@ -397,7 +372,9 @@ const FlashcardModal = ({ isOpen, onClose, text, dbData }) => {
             }
         }
 
+        // Cập nhật queue mới: Giữ nguyên phần đã qua + Phần còn lại đã xử lý
         setQueue([...passedPart, ...newRemainingPart]);
+        // Reset lật thẻ vì nội dung thẻ hiện tại có thể đã thay đổi
         setIsFlipped(false);
     };
 
@@ -485,6 +462,7 @@ const FlashcardModal = ({ isOpen, onClose, text, dbData }) => {
                                             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" className="pointer-events-none"><path d="M9 14 4 9l5-5"/><path d="M4 9h12a5 5 0 0 1 0 10H7"/></svg>
                                         </button>
                                         
+                                        {/* Nút Toggle Trộn thẻ */}
                                         <button 
                                             onClick={handleToggleShuffle} 
                                             className={`p-2.5 bg-black/5 hover:bg-black/10 active:scale-90 rounded-full transition-all flex items-center justify-center ${isShuffleOn ? 'bg-indigo-100 text-indigo-600' : 'text-gray-400 hover:text-gray-700'}`}
@@ -505,21 +483,25 @@ const FlashcardModal = ({ isOpen, onClose, text, dbData }) => {
                             </div>
                         </div>
 
-                        {/* THANH TIẾN TRÌNH (Vị trí nổ pháo hoa) */}
+                        {/* THANH TIẾN TRÌNH */}
                         <div className="w-64 mt-8 mb-6 relative h-6 flex items-center">
+                            {/* Thanh nền (Màu xám mờ) */}
                             <div className="w-full h-1 bg-white/10 rounded-full relative overflow-hidden">
+                                {/* [MỚI] Thanh đã đi qua (Tô màu xanh) */}
                                 <div 
                                     className="absolute top-0 left-0 h-full bg-sky-400 transition-all duration-300 ease-out"
                                     style={{ width: `${progressRatio * 100}%` }}
                                 />
                             </div>
 
+                            {/* [HỘP SỐ] Tổng số thẻ (Bên phải) */}
                             <div className="absolute right-0 top-1/2 -translate-y-1/2 w-full h-1 pointer-events-none">
                                 <div className="absolute right-0 top-1/2 -translate-y-1/2 h-7 w-9 rounded-md flex items-center justify-center bg-white shadow-sm z-0">
                                     <span className="text-[10px] font-black text-black leading-none">{queue.length}</span>
                                 </div>
                             </div>
 
+                            {/* [HỘP SỐ] Thẻ hiện tại (Cục trượt màu xanh) */}
                             <div className="absolute top-1/2 -translate-y-1/2 w-full h-1 pointer-events-none">
                                 <div 
                                     className="absolute top-1/2 -translate-y-1/2 h-7 w-9 bg-sky-400 rounded-md flex items-center justify-center shadow-[0_0_15px_rgba(56,189,248,0.8)] transition-all duration-300 ease-out z-10"
@@ -542,6 +524,7 @@ const FlashcardModal = ({ isOpen, onClose, text, dbData }) => {
                             </button>
                         </div>
 
+                        {/* NÚT ĐÓNG */}
                         <button 
                             onClick={onClose} 
                             className="mt-8 text-white/40 hover:text-red-500 transition-all text-[13px] sm:text-[11px] font-black uppercase tracking-[0.2em] py-2 px-4 active:scale-95"
@@ -552,20 +535,15 @@ const FlashcardModal = ({ isOpen, onClose, text, dbData }) => {
                 ) : (
                     <div className="bg-white rounded-[2rem] p-8 w-full max-w-[280px] text-center shadow-2xl border-4 border-indigo-50 animate-in zoom-in-95">
                         
-                        {/* --- THANH TỈ LỆ % (Giữ nguyên từ yêu cầu trước) --- */}
-                        <div className="w-full flex items-center gap-3 mb-5">
-                            <div className="flex-1 h-4 bg-red-500 rounded-full overflow-hidden relative shadow-inner">
-                                <div 
-                                    className="h-full bg-green-500 transition-all duration-1000 ease-out"
-                                    style={{ width: `${Math.round((knownCount / queue.length) * 100)}%` }}
-                                />
-                            </div>
-                            <span className="text-sm font-black text-gray-600 min-w-[2.5rem] text-right">
-                                {Math.round((knownCount / queue.length) * 100)}%
-                            </span>
+                        {/* --- [MỚI] ĐẶT NGÒI NỔ VÀO ĐÂY (Thêm onClick và cursor-pointer) --- */}
+                        <div 
+                            className="text-5xl mb-4 animate-bounce cursor-pointer hover:scale-125 transition-transform" 
+                            onClick={triggerConfetti}
+                            title="Bấm để bắn pháo hoa!"
+                        >
+                            🎉
                         </div>
-                        {/* --------------------------- */}
-
+                        
                         <h3 className="text-lg font-black text-gray-800 mb-1 uppercase">Hoàn thành</h3>
                         <p className="text-gray-400 mb-6 text-[11px] font-medium italic">Bạn đã học được {knownCount}/{queue.length} chữ.</p>
                         <div className="space-y-2">
