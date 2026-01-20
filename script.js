@@ -366,14 +366,13 @@ const FlashcardModal = ({ isOpen, onClose, text, dbData }) => {
         setDragX(clientX - startX);
     };
 
-   const handleDragEnd = () => {
-    if (!isDragging) return;
-    setIsDragging(false);
-    // Sửa 100 thành 70
-    if (dragX > 70) handleNext(true);
-    else if (dragX < -70) handleNext(false);
-    else setDragX(0); 
-};
+    const handleDragEnd = () => {
+        if (!isDragging) return;
+        setIsDragging(false);
+        if (dragX > 70) handleNext(true);
+        else if (dragX < -70) handleNext(false);
+        else setDragX(0);
+    };
 
     const dynamicBorder = () => {
         if (dragX > 70 || btnFeedback === 'right') return '#22c55e';
@@ -401,18 +400,15 @@ const FlashcardModal = ({ isOpen, onClose, text, dbData }) => {
                 {!isFinished ? (
                     <>
                         <div 
-    className="relative transition-all duration-200 ease-out"
-    style={{ 
-        // Logic giữ thẻ tại chỗ khi kéo
-        transform: `translateX(${dragX}px) rotate(${dragX * 0.05}deg)`,
-        
-        // Logic làm mờ khi thả tay (nếu đủ điều kiện next)
-        opacity: exitDirection ? 0 : 1,
-
-        // Logic tốc độ: mờ nhanh trong 0.15s
-        transition: isDragging ? 'none' : 'opacity 0.15s ease-out, transform 0.15s'
-    }}
->
+                            className={`relative transition-all duration-300 ease-in-out ${
+                             exitDirection === 'left' ? '-translate-x-16 -rotate-3' : 
+                             exitDirection === 'right' ? 'translate-x-16 rotate-3' : ''
+                            }`}
+                            style={{ 
+                               transform: !exitDirection && dragX !== 0 ? `translateX(${dragX}px) rotate(${dragX * 0.02}deg)` : '',
+                              transition: isDragging ? 'none' : 'all 0.25s ease-out'
+                            }}
+                        >
                             <div 
                                 onClick={() => { if (Math.abs(dragX) < 5) toggleFlip(); }}
                                 onMouseDown={handleDragStart}
