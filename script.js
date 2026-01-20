@@ -459,7 +459,12 @@ const FlashcardModal = ({ isOpen, onClose, text, dbData }) => {
                                 <button onClick={() => startNewSession(unknownIndices.map(idx => queue[idx]))} className="w-full py-3.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl font-black text-[11px] shadow-lg active:scale-95 transition-colors">ÔN LẠI {unknownIndices.length} THẺ ĐANG HỌC</button>
                             )}
                             <button onClick={() => startNewSession(originalQueue)} className="w-full py-3.5 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-xl font-black text-[11px] active:scale-95 transition-colors">HỌC LẠI TỪ ĐẦU</button>
-                            <button onClick={onClose} className="w-full py-3.5 text-gray-400 hover:text-red-600 font-bold text-[11px] uppercase tracking-widest transition-colors">THOÁT</button>
+                          <button 
+    onClick={onClose} 
+    className="w-full py-3.5 bg-white border-2 border-gray-200 text-gray-400 hover:text-red-600 hover:border-red-600 font-black text-[11px] uppercase tracking-widest rounded-xl transition-all active:scale-95"
+>
+    THOÁT
+</button>
                         </div>
                     </div>
                 )}
