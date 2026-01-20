@@ -213,79 +213,73 @@ const FlashcardModal = ({ isOpen, onClose, text, dbData }) => {
         };
     }, [isOpen]);
 
-// --- XỬ LÝ PHÍM TẮT ---
-React.useEffect(() => {
-    const handleKeyDown = (e) => {
-        // 1. Chỉ chạy khi Modal mở và chưa kết thúc
-        if (!isOpen || isFinished) return;
+    // --- CÁC HÀM XỬ LÝ LOGIC (PHẢI ĐỂ TRƯỚC USEEFFECT PHÍM TẮT) ---
+    const toggleFlip = React.useCallback(() => {
+        setIsFlipped(prev => !prev);
+        if (currentIndex === 0) setShowHint(false);
+    }, [currentIndex]);
 
-        // 2. CHẶN PHÍM TẮT khi đang gõ vào ô tìm kiếm hoặc textarea
-        if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+    const handleNext = React.useCallback((isKnown) => {
+        if (exitDirection || isFinished || queue.length === 0) return;
 
-        switch (e.key) {
-            case ' ': // Phím Cách
-            case 'ArrowUp':
-            case 'ArrowDown':
-                e.preventDefault();
-                toggleFlip();
-                break;
-            case 'ArrowLeft':
-                e.preventDefault();
-                handleNext(false); // Chưa biết
-                break;
-            case 'ArrowRight':
-                e.preventDefault();
-                handleNext(true); // Đã biết
-                break;
-            default:
-                break;
+        setIsFlipped(false);
+
+        if (isKnown) {
+            setKnownCount(prev => prev + 1);
+        } else {
+            setUnknownIndices(prev => [...prev, currentIndex]);
         }
-    };
+        setHistory(prev => [...prev, isKnown]);
 
-    window.addEventListener('keydown', handleKeyDown);
-    
-    // Cleanup: Xóa sự kiện cũ trước khi nạp sự kiện mới
-    return () => window.removeEventListener('keydown', handleKeyDown);
-}, [isOpen, isFinished, toggleFlip, handleNext]); // PHẢI CÓ toggleFlip và handleNext ở đây
-    
+        setBtnFeedback(isKnown ? 'right' : 'left');
+        setExitDirection(isKnown ? 'right' : 'left');
 
-   
-const handleNext = React.useCallback((isKnown) => {
-    // Chặn nếu đang bay hoặc đã kết thúc
-    if (exitDirection || isFinished || queue.length === 0) return;
+        setTimeout(() => {
+            setCurrentIndex((prevIndex) => {
+                if (prevIndex < queue.length - 1) {
+                    setExitDirection(null);
+                    setDragX(0);
+                    setBtnFeedback(null);
+                    return prevIndex + 1;
+                } else {
+                    setIsFinished(true);
+                    return prevIndex;
+                }
+            });
+        }, 150); // Đã giảm xuống 150ms theo yêu cầu
+    }, [currentIndex, queue, exitDirection, isFinished]);
 
-    // 1. Reset lật thẻ ngay lập tức
-    setIsFlipped(false);
+    // --- XỬ LÝ PHÍM TẮT ---
+    React.useEffect(() => {
+        const handleKeyDown = (e) => {
+            if (!isOpen || isFinished) return;
+            if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
 
-    // 2. Cập nhật dữ liệu ngay lập tức
-    if (isKnown) {
-        setKnownCount(prev => prev + 1);
-    } else {
-        // Lưu index hiện tại vào danh sách chưa biết
-        setUnknownIndices(prev => [...prev, currentIndex]);
-    }
-    setHistory(prev => [...prev, isKnown]);
-
-    // 3. Kích hoạt hiệu ứng bay
-    setBtnFeedback(isKnown ? 'right' : 'left');
-    setExitDirection(isKnown ? 'right' : 'left');
-
-    setTimeout(() => {
-        setCurrentIndex((prevIndex) => {
-            if (prevIndex < queue.length - 1) {
-                setExitDirection(null);
-                setDragX(0);
-                setBtnFeedback(null);
-                return prevIndex + 1;
-            } else {
-                setIsFinished(true);
-                return prevIndex;
+            switch (e.key) {
+                case ' ': // Phím Cách
+                case 'ArrowUp':
+                case 'ArrowDown':
+                    e.preventDefault();
+                    toggleFlip();
+                    break;
+                case 'ArrowLeft':
+                    e.preventDefault();
+                    handleNext(false); 
+                    break;
+                case 'ArrowRight':
+                    e.preventDefault();
+                    handleNext(true); 
+                    break;
+                default:
+                    break;
             }
-        });
-    }, 200);
-}, [currentIndex, queue, exitDirection, isFinished]); // ĐÂY LÀ DÒNG QUAN TRỌNG
-    
-    // --- QUAY LẠI THẺ TRƯỚC (ĐÃ GỘP VÀ FIX) ---
+        };
+
+        window.addEventListener('keydown', handleKeyDown);
+        return () => window.removeEventListener('keydown', handleKeyDown);
+    }, [isOpen, isFinished, toggleFlip, handleNext]);
+
+    // --- CÁC HÀM KHÁC GIỮ NGUYÊN ---
     const handleBack = (e) => {
         if (e) {
             e.preventDefault();
@@ -311,7 +305,6 @@ const handleNext = React.useCallback((isKnown) => {
         }
     };
 
-    // --- TRỘN THẺ (BAO GỒM THẺ HIỆN TẠI) ---
     const handleShuffle = (e) => {
         if (e) {
             e.preventDefault();
@@ -336,12 +329,6 @@ const handleNext = React.useCallback((isKnown) => {
         setTimeout(() => setBtnFeedback(null), 500);
     };
 
-const toggleFlip = React.useCallback(() => {
-    setIsFlipped(prev => !prev);
-    if (currentIndex === 0) setShowHint(false);
-}, [currentIndex]);
-    
-    // --- XỬ LÝ VUỐT (SWIPE) ---
     const handleDragStart = (e) => {
         if (exitDirection || isFinished) return;
         setIsDragging(true);
@@ -371,11 +358,10 @@ const toggleFlip = React.useCallback(() => {
 
     if (!isOpen || queue.length === 0) return null;
 
-  // Nếu chẳng may currentIndex vượt quá số lượng thẻ, lấy thẻ cuối cùng hoặc rỗng
-const currentChar = queue[currentIndex] || ''; 
-if (!currentChar && !isFinished && isOpen) {
-    setIsFinished(true); // Tự động kết thúc nếu rơi vào thẻ rỗng
-}
+    const currentChar = queue[currentIndex] || ''; 
+    if (!currentChar && !isFinished && isOpen) {
+        setIsFinished(true);
+    }
     const info = dbData?.KANJI_DB?.[currentChar] || dbData?.ALPHABETS?.hiragana?.[currentChar] || dbData?.ALPHABETS?.katakana?.[currentChar] || {};
 
     return (
@@ -388,7 +374,7 @@ if (!currentChar && !isFinished && isOpen) {
                 {!isFinished ? (
                     <>
                         <div 
-                    key={currentIndex}
+                            key={currentIndex}
                             className={`relative transition-all duration-200 ease-out ${
                                 exitDirection === 'left' ? '-translate-x-10 -rotate-6 opacity-0' : 
                                 exitDirection === 'right' ? 'translate-x-10 rotate-6 opacity-0' : ''
