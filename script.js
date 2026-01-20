@@ -676,34 +676,34 @@ exitDirection === 'right' ? 'translate-x-16 rotate-3' : ''
 
                         {/* THANH TIẾN TRÌNH */}
 
-                        <div className="w-64 mt-8 mb-6 relative h-6 flex items-center">
-
-                            <div className="w-full h-1 bg-white/10 rounded-full relative">
-
-                                <div className="absolute right-0 top-1/2 -translate-y-1/2 h-7 w-9 rounded-md flex items-center justify-center bg-white shadow-sm">
-
-                                    <span className="text-[10px] font-black text-black leading-none">{queue.length}</span>
-
-                                </div>
-
+                       <div className="w-64 mt-8 mb-6 relative h-6 flex items-center">
+                            {/* Thanh nền (Màu xám mờ) */}
+                            <div className="w-full h-1 bg-white/10 rounded-full relative overflow-hidden">
+                                {/* [MỚI] Thanh đã đi qua (Tô màu xanh) */}
                                 <div 
-
-                                    className="absolute top-1/2 -translate-y-1/2 h-7 w-9 bg-sky-400 rounded-md flex items-center justify-center shadow-[0_0_15px_rgba(56,189,248,0.8)] transition-all duration-300 ease-out z-10"
-
-                                    style={{ 
-
-                                        left: `calc(${progressRatio * 100}% - ${progressRatio * 36}px)` 
-
-                                    }}
-
-                                >
-
-                                    <span className="text-[10px] font-black text-white leading-none">{currentIndex + 1}</span>
-
-                                </div>
-
+                                    className="absolute top-0 left-0 h-full bg-sky-400 transition-all duration-300 ease-out"
+                                    style={{ width: `${progressRatio * 100}%` }}
+                                />
                             </div>
 
+                            {/* [HỘP SỐ] Tổng số thẻ (Bên phải) */}
+                            <div className="absolute right-0 top-1/2 -translate-y-1/2 w-full h-1 pointer-events-none">
+                                <div className="absolute right-0 top-1/2 -translate-y-1/2 h-7 w-9 rounded-md flex items-center justify-center bg-white shadow-sm z-0">
+                                    <span className="text-[10px] font-black text-black leading-none">{queue.length}</span>
+                                </div>
+                            </div>
+
+                            {/* [HỘP SỐ] Thẻ hiện tại (Cục trượt màu xanh) */}
+                            <div className="absolute top-1/2 -translate-y-1/2 w-full h-1 pointer-events-none">
+                                <div 
+                                    className="absolute top-1/2 -translate-y-1/2 h-7 w-9 bg-sky-400 rounded-md flex items-center justify-center shadow-[0_0_15px_rgba(56,189,248,0.8)] transition-all duration-300 ease-out z-10"
+                                    style={{ 
+                                        left: `calc(${progressRatio * 100}% - ${progressRatio * 36}px)` 
+                                    }}
+                                >
+                                    <span className="text-[10px] font-black text-white leading-none">{currentIndex + 1}</span>
+                                </div>
+                            </div>
                         </div>
 
 
