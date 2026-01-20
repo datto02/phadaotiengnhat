@@ -386,7 +386,7 @@ const FlashcardModal = ({ isOpen, onClose, text, dbData }) => {
                                     {currentIndex === 0 && showHint && (
                                         <p className="absolute bottom-14 text-indigo-400 text-[7px] font-black uppercase tracking-[0.4em] animate-pulse">Chạm để lật</p>
                                     )}
-                                    <div className="absolute bottom-5 left-0 right-0 px-6 flex justify-between items-center z-50">
+                                    <div className={`absolute bottom-5 left-0 right-0 px-6 items-center z-50 ${isFlipped ? 'hidden sm:flex' : 'flex'} justify-between`}>
                                         <button 
                                             onClick={handleBack} 
                                             className={`p-2.5 bg-black/5 hover:bg-black/10 active:scale-90 rounded-full transition-all flex items-center justify-center ${currentIndex === 0 ? 'opacity-10 cursor-not-allowed' : 'text-gray-400 hover:text-gray-700'}`}
