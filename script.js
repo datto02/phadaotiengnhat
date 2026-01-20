@@ -213,7 +213,7 @@ const FlashcardModal = ({ isOpen, onClose, text, dbData }) => {
         };
     }, [isOpen]);
 
-    // --- CÁC HÀM XỬ LÝ (TRƯỚC USEEFFECT PHÍM TẮT) ---
+    // --- CÁC HÀM XỬ LÝ LOGIC ---
     const toggleFlip = React.useCallback(() => {
         setIsFlipped(prev => !prev);
         if (currentIndex === 0) setShowHint(false);
@@ -265,13 +265,16 @@ const FlashcardModal = ({ isOpen, onClose, text, dbData }) => {
                     e.preventDefault();
                     handleNext(true); 
                     break;
+                case 'Escape':
+                    onClose();
+                    break;
                 default:
                     break;
             }
         };
         window.addEventListener('keydown', handleKeyDown);
         return () => window.removeEventListener('keydown', handleKeyDown);
-    }, [isOpen, isFinished, toggleFlip, handleNext]);
+    }, [isOpen, isFinished, toggleFlip, handleNext, onClose]);
 
     const handleBack = (e) => {
         if (e) { e.preventDefault(); e.stopPropagation(); }
@@ -342,7 +345,6 @@ const FlashcardModal = ({ isOpen, onClose, text, dbData }) => {
     }
     const info = dbData?.KANJI_DB?.[currentChar] || dbData?.ALPHABETS?.hiragana?.[currentChar] || dbData?.ALPHABETS?.katakana?.[currentChar] || {};
 
-    // Tỷ lệ tiến trình
     const progressRatio = currentIndex / (queue.length - 1 || 1);
 
     return (
@@ -412,18 +414,16 @@ const FlashcardModal = ({ isOpen, onClose, text, dbData }) => {
                             </div>
                         </div>
 
-                        {/* THANH TIẾN TRÌNH - ĐÃ FIX KHỚP NHAU VÀ CÂN CHỈNH Ô SỐ */}
+                        {/* THANH TIẾN TRÌNH */}
                         <div className="w-64 mt-8 mb-6 relative h-6 flex items-center">
                             <div className="w-full h-1 bg-white/10 rounded-full relative">
-                                {/* Ô số tổng - Fix cứng độ rộng w-9 */}
                                 <div className="absolute right-0 top-1/2 -translate-y-1/2 h-7 w-9 rounded-md flex items-center justify-center bg-white shadow-sm">
                                     <span className="text-[10px] font-black text-black leading-none">{queue.length}</span>
                                 </div>
-                                {/* Ô số hiện tại - Fix cứng w-9 và logic left để khớp khít 100% */}
                                 <div 
                                     className="absolute top-1/2 -translate-y-1/2 h-7 w-9 bg-sky-400 rounded-md flex items-center justify-center shadow-[0_0_15px_rgba(56,189,248,0.8)] transition-all duration-300 ease-out z-10"
                                     style={{ 
-                                        left: `calc(${progressRatio * 100}% - ${progressRatio * 36}px)` // 36px tương đương w-9
+                                        left: `calc(${progressRatio * 100}% - ${progressRatio * 36}px)` 
                                     }}
                                 >
                                     <span className="text-[10px] font-black text-white leading-none">{currentIndex + 1}</span>
@@ -431,7 +431,7 @@ const FlashcardModal = ({ isOpen, onClose, text, dbData }) => {
                             </div>
                         </div>
 
-                        {/* CÁC NÚT BẤM - ĐÃ FIX SÁT SỐ (Tăng padding và kích thước badge) */}
+                        {/* NÚT ĐIỀU HƯỚNG */}
                         <div className="flex gap-3 w-full px-8">
                             <button onClick={() => handleNext(false)} className="flex-1 py-3 bg-red-500/10 active:bg-red-500 text-red-500 active:text-white border border-red-500/20 rounded-xl font-black text-[10px] transition-all flex items-center justify-center gap-2 uppercase">
                                 ĐANG HỌC <span className="bg-red-600 text-white min-w-[28px] h-6 px-2 rounded-md flex items-center justify-center text-[10px] font-bold shadow-sm">{unknownIndices.length}</span>
@@ -441,7 +441,11 @@ const FlashcardModal = ({ isOpen, onClose, text, dbData }) => {
                             </button>
                         </div>
 
-                        <button onClick={onClose} className="mt-8 text-white/20 hover:text-red-400 transition-colors text-[9px] font-black uppercase tracking-widest">
+                        {/* NÚT ĐÓNG ĐÃ TỐI ƯU CHO ĐIỆN THOẠI */}
+                        <button 
+                            onClick={onClose} 
+                            className="mt-8 text-white/40 hover:text-red-400 transition-all text-[13px] sm:text-[11px] font-black uppercase tracking-[0.2em] py-2 px-4 active:scale-95"
+                        >
                             Đóng [ESC]
                         </button>
                     </>
