@@ -246,30 +246,41 @@ React.useEffect(() => {
 }, [isOpen, isFinished, toggleFlip, handleNext]); // <--- ĐÂY LÀ DÒNG QUAN TRỌNG NHẤT
 
    
+const handleNext = React.useCallback((isKnown) => {
+    // Thêm kiểm tra queue.length để tránh lỗi thẻ trắng
+    if (exitDirection || isFinished || queue.length === 0) return;
 
-  const handleNext = React.useCallback((isKnown) => {
-    if (exitDirection || isFinished) return;
-
+    // 1. Reset lật thẻ ngay lập tức để không lộ mặt sau thẻ sau
     setIsFlipped(false);
 
+    // 2. Cập nhật thống kê ngay (sử dụng currentIndex hiện tại)
     if (isKnown) setKnownCount(prev => prev + 1);
     else setUnknownIndices(prev => [...prev, currentIndex]);
     setHistory(prev => [...prev, isKnown]);
 
+    // Hiệu ứng bay
     setBtnFeedback(isKnown ? 'right' : 'left');
     setExitDirection(isKnown ? 'right' : 'left');
 
     setTimeout(() => {
-        if (currentIndex < queue.length - 1) {
-            setCurrentIndex(prev => prev + 1);
-            setExitDirection(null);
-            setDragX(0);
-            setBtnFeedback(null);
-        } else {
-            setIsFinished(true);
-        }
+        // --- DÙNG FUNCTIONAL UPDATE ĐỂ FIX LỖI KẾT THÚC SỚM VÀ THẺ TRẮNG ---
+        setCurrentIndex((prevIndex) => {
+            const isLastCard = prevIndex >= queue.length - 1;
+
+            if (!isLastCard) {
+                // Nếu chưa phải thẻ cuối: Chuyển sang thẻ tiếp theo
+                setExitDirection(null);
+                setDragX(0);
+                setBtnFeedback(null);
+                return prevIndex + 1;
+            } else {
+                // Nếu là thẻ cuối: Dừng lại và hiện màn hình kết thúc
+                setIsFinished(true);
+                return prevIndex; // Giữ nguyên index, không tăng thêm để tránh thẻ trắng
+            }
+        });
     }, 200);
-}, [currentIndex, queue, exitDirection, isFinished]); 
+}, [exitDirection, isFinished, currentIndex, queue.length]);
     
     // --- QUAY LẠI THẺ TRƯỚC (ĐÃ GỘP VÀ FIX) ---
     const handleBack = (e) => {
@@ -357,7 +368,11 @@ React.useEffect(() => {
 
     if (!isOpen || queue.length === 0) return null;
 
-    const currentChar = queue[currentIndex];
+  // Nếu chẳng may currentIndex vượt quá số lượng thẻ, lấy thẻ cuối cùng hoặc rỗng
+const currentChar = queue[currentIndex] || ''; 
+if (!currentChar && !isFinished && isOpen) {
+    setIsFinished(true); // Tự động kết thúc nếu rơi vào thẻ rỗng
+}
     const info = dbData?.KANJI_DB?.[currentChar] || dbData?.ALPHABETS?.hiragana?.[currentChar] || dbData?.ALPHABETS?.katakana?.[currentChar] || {};
 
     return (
