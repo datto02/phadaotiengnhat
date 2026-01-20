@@ -433,10 +433,10 @@ const FlashcardModal = ({ isOpen, onClose, text, dbData }) => {
 
                         {/* NÚT ĐIỀU HƯỚNG */}
                         <div className="flex gap-3 w-full px-8">
-                            <button onClick={() => handleNext(false)} className="flex-1 py-3 bg-red-500/10 active:bg-red-500 text-red-500 active:text-white border border-red-500/20 rounded-xl font-black text-[10px] transition-all flex items-center justify-center gap-2 uppercase">
+                            <button onClick={() => handleNext(false)} className="flex-1 py-3 bg-red-500/10 hover:bg-red-500/20 hover:text-red-600 active:bg-red-500 text-red-500 active:text-white border border-red-500/20 rounded-xl font-black text-[10px] transition-all flex items-center justify-center gap-2 uppercase">
                                 ĐANG HỌC <span className="bg-red-600 text-white min-w-[28px] h-6 px-2 rounded-md flex items-center justify-center text-[10px] font-bold shadow-sm">{unknownIndices.length}</span>
                             </button>
-                            <button onClick={() => handleNext(true)} className="flex-1 py-3 bg-green-500/10 active:bg-green-500 text-green-500 active:text-white border border-green-500/20 rounded-xl font-black text-[10px] transition-all flex items-center justify-center gap-2 uppercase">
+                            <button onClick={() => handleNext(true)} className="flex-1 py-3 bg-green-500/10 hover:bg-green-500/20 hover:text-green-600 active:bg-green-500 text-green-500 active:text-white border border-green-500/20 rounded-xl font-black text-[10px] transition-all flex items-center justify-center gap-2 uppercase">
                                 ĐÃ BIẾT <span className="bg-green-600 text-white min-w-[28px] h-6 px-2 rounded-md flex items-center justify-center text-[10px] font-bold shadow-sm">{knownCount}</span>
                             </button>
                         </div>
@@ -444,7 +444,7 @@ const FlashcardModal = ({ isOpen, onClose, text, dbData }) => {
                         {/* NÚT ĐÓNG ĐÃ TỐI ƯU CHO ĐIỆN THOẠI */}
                         <button 
                             onClick={onClose} 
-                            className="mt-8 text-white/40 hover:text-red-400 transition-all text-[13px] sm:text-[11px] font-black uppercase tracking-[0.2em] py-2 px-4 active:scale-95"
+                            className="mt-8 text-white/40 hover:text-red-500 transition-all text-[13px] sm:text-[11px] font-black uppercase tracking-[0.2em] py-2 px-4 active:scale-95"
                         >
                             Đóng [ESC]
                         </button>
@@ -456,10 +456,10 @@ const FlashcardModal = ({ isOpen, onClose, text, dbData }) => {
                         <p className="text-gray-400 mb-6 text-[11px] font-medium italic">Bạn đã học được {knownCount}/{queue.length} chữ.</p>
                         <div className="space-y-2">
                             {unknownIndices.length > 0 && (
-                                <button onClick={() => startNewSession(unknownIndices.map(idx => queue[idx]))} className="w-full py-3.5 bg-indigo-600 text-white rounded-xl font-black text-[11px] shadow-lg active:scale-95">ÔN LẠI {unknownIndices.length} THẺ ĐANG HỌC</button>
+                                <button onClick={() => startNewSession(unknownIndices.map(idx => queue[idx]))} className="w-full py-3.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl font-black text-[11px] shadow-lg active:scale-95 transition-colors">ÔN LẠI {unknownIndices.length} THẺ ĐANG HỌC</button>
                             )}
-                            <button onClick={() => startNewSession(originalQueue)} className="w-full py-3.5 bg-gray-100 text-gray-700 rounded-xl font-black text-[11px] active:scale-95">HỌC LẠI TỪ ĐẦU</button>
-                            <button onClick={onClose} className="w-full py-3.5 text-gray-400 font-bold text-[11px] uppercase tracking-widest">THOÁT</button>
+                            <button onClick={() => startNewSession(originalQueue)} className="w-full py-3.5 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-xl font-black text-[11px] active:scale-95 transition-colors">HỌC LẠI TỪ ĐẦU</button>
+                            <button onClick={onClose} className="w-full py-3.5 text-gray-400 hover:text-red-600 font-bold text-[11px] uppercase tracking-widest transition-colors">THOÁT</button>
                         </div>
                     </div>
                 )}
