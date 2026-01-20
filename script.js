@@ -229,31 +229,7 @@ React.useEffect(() => {
     }, 200);
 };
 
-const handleBack = (e) => {
-    if (e) {
-        e.preventDefault();
-        e.stopPropagation();
-    }
-    
-    // Kiểm tra lịch sử để hồi lại dữ liệu
-    if (currentIndex > 0 && history.length > 0) {
-        const lastIsKnown = history[history.length - 1];
-        
-        if (lastIsKnown === true) {
-            setKnownCount(prev => Math.max(0, prev - 1));
-        } else {
-            setUnknownIndices(prev => prev.slice(0, -1));
-        }
 
-        setHistory(prev => prev.slice(0, -1));
-        setCurrentIndex(prev => prev - 1);
-        
-        setIsFlipped(false);
-        setExitDirection(null);
-        setDragX(0);
-        setBtnFeedback(null);
-    }
-};
 
     // --- SỬA LỖI: QUAY LẠI THẺ TRƯỚC ---
     const handleBack = (e) => {
