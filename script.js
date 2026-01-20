@@ -221,20 +221,15 @@ const FlashcardModal = ({ isOpen, onClose, text, dbData }) => {
 
     const handleNext = React.useCallback((isKnown) => {
         if (exitDirection || isFinished || queue.length === 0) return;
-
         setIsFlipped(false);
-
-        // Cập nhật số lượng dựa trên lựa chọn
         if (isKnown) {
             setKnownCount(prev => prev + 1);
         } else {
             setUnknownIndices(prev => [...prev, currentIndex]);
         }
         setHistory(prev => [...prev, isKnown]);
-
         setBtnFeedback(isKnown ? 'right' : 'left');
         setExitDirection(isKnown ? 'right' : 'left');
-
         setTimeout(() => {
             setCurrentIndex((prevIndex) => {
                 if (prevIndex < queue.length - 1) {
@@ -247,7 +242,7 @@ const FlashcardModal = ({ isOpen, onClose, text, dbData }) => {
                     return prevIndex;
                 }
             });
-        }, 150); // 150ms mượt mà
+        }, 150); 
     }, [currentIndex, queue, exitDirection, isFinished]);
 
     // --- XỬ LÝ PHÍM TẮT ---
@@ -255,7 +250,6 @@ const FlashcardModal = ({ isOpen, onClose, text, dbData }) => {
         const handleKeyDown = (e) => {
             if (!isOpen || isFinished) return;
             if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
-
             switch (e.key) {
                 case ' ': 
                 case 'ArrowUp':
@@ -275,30 +269,21 @@ const FlashcardModal = ({ isOpen, onClose, text, dbData }) => {
                     break;
             }
         };
-
         window.addEventListener('keydown', handleKeyDown);
         return () => window.removeEventListener('keydown', handleKeyDown);
     }, [isOpen, isFinished, toggleFlip, handleNext]);
 
     const handleBack = (e) => {
-        if (e) {
-            e.preventDefault();
-            e.stopPropagation();
-        }
-        
+        if (e) { e.preventDefault(); e.stopPropagation(); }
         if (currentIndex > 0 && history.length > 0) {
             const lastIsKnown = history[history.length - 1];
-            
-            // Hoàn tác số lượng chính xác
             if (lastIsKnown === true) {
                 setKnownCount(prev => Math.max(0, prev - 1));
             } else {
                 setUnknownIndices(prev => prev.slice(0, -1));
             }
-
             setHistory(prev => prev.slice(0, -1));
             setCurrentIndex(prev => prev - 1);
-            
             setIsFlipped(false);
             setExitDirection(null);
             setDragX(0);
@@ -307,25 +292,17 @@ const FlashcardModal = ({ isOpen, onClose, text, dbData }) => {
     };
 
     const handleShuffle = (e) => {
-        if (e) {
-            e.preventDefault();
-            e.stopPropagation();
-        }
-
+        if (e) { e.preventDefault(); e.stopPropagation(); }
         const passedPart = queue.slice(0, currentIndex);
         const poolToShuffle = queue.slice(currentIndex);
-
         if (poolToShuffle.length <= 1) return;
-
         const shuffledPool = [...poolToShuffle];
         for (let i = shuffledPool.length - 1; i > 0; i--) {
             const j = Math.floor(Math.random() * (i + 1));
             [shuffledPool[i], shuffledPool[j]] = [shuffledPool[j], shuffledPool[i]];
         }
-
         setQueue([...passedPart, ...shuffledPool]);
         setIsFlipped(false);
-
         setBtnFeedback('shuffle');
         setTimeout(() => setBtnFeedback(null), 500);
     };
@@ -365,6 +342,7 @@ const FlashcardModal = ({ isOpen, onClose, text, dbData }) => {
     }
     const info = dbData?.KANJI_DB?.[currentChar] || dbData?.ALPHABETS?.hiragana?.[currentChar] || dbData?.ALPHABETS?.katakana?.[currentChar] || {};
 
+    // Tỷ lệ tiến trình
     const progressRatio = currentIndex / (queue.length - 1 || 1);
 
     return (
@@ -434,30 +412,32 @@ const FlashcardModal = ({ isOpen, onClose, text, dbData }) => {
                             </div>
                         </div>
 
-                        {/* THANH TIẾN TRÌNH VỚI BADGE RỘNG HƠN */}
+                        {/* THANH TIẾN TRÌNH - ĐÃ FIX KHỚP NHAU VÀ CÂN CHỈNH Ô SỐ */}
                         <div className="w-64 mt-8 mb-6 relative h-6 flex items-center">
                             <div className="w-full h-1 bg-white/10 rounded-full relative">
-                                <div className="absolute right-0 top-1/2 -translate-y-1/2 h-6 min-w-[28px] px-1.5 rounded-md flex items-center justify-center bg-white shadow-sm">
-                                    <span className="text-[10px] font-black text-black">{queue.length}</span>
+                                {/* Ô số tổng - Fix cứng độ rộng w-9 */}
+                                <div className="absolute right-0 top-1/2 -translate-y-1/2 h-7 w-9 rounded-md flex items-center justify-center bg-white shadow-sm">
+                                    <span className="text-[10px] font-black text-black leading-none">{queue.length}</span>
                                 </div>
+                                {/* Ô số hiện tại - Fix cứng w-9 và logic left để khớp khít 100% */}
                                 <div 
-                                    className="absolute top-1/2 -translate-y-1/2 h-6 min-w-[28px] px-1.5 bg-sky-400 rounded-md flex items-center justify-center shadow-[0_0_15px_rgba(56,189,248,0.8)] transition-all duration-300 ease-out z-10"
+                                    className="absolute top-1/2 -translate-y-1/2 h-7 w-9 bg-sky-400 rounded-md flex items-center justify-center shadow-[0_0_15px_rgba(56,189,248,0.8)] transition-all duration-300 ease-out z-10"
                                     style={{ 
-                                        left: `calc(${progressRatio * 100}% - ${progressRatio * 28}px)` 
+                                        left: `calc(${progressRatio * 100}% - ${progressRatio * 36}px)` // 36px tương đương w-9
                                     }}
                                 >
-                                    <span className="text-[10px] font-black text-white">{currentIndex + 1}</span>
+                                    <span className="text-[10px] font-black text-white leading-none">{currentIndex + 1}</span>
                                 </div>
                             </div>
                         </div>
 
-                        {/* CÁC NÚT BẤM VỚI BADGE THOÁNG HƠN */}
+                        {/* CÁC NÚT BẤM - ĐÃ FIX SÁT SỐ (Tăng padding và kích thước badge) */}
                         <div className="flex gap-3 w-full px-8">
                             <button onClick={() => handleNext(false)} className="flex-1 py-3 bg-red-500/10 active:bg-red-500 text-red-500 active:text-white border border-red-500/20 rounded-xl font-black text-[10px] transition-all flex items-center justify-center gap-2 uppercase">
-                                ĐANG HỌC <span className="bg-red-600 text-white min-w-[22px] h-5 px-1.5 rounded-md flex items-center justify-center text-[10px] font-bold">{unknownIndices.length}</span>
+                                ĐANG HỌC <span className="bg-red-600 text-white min-w-[28px] h-6 px-2 rounded-md flex items-center justify-center text-[10px] font-bold shadow-sm">{unknownIndices.length}</span>
                             </button>
                             <button onClick={() => handleNext(true)} className="flex-1 py-3 bg-green-500/10 active:bg-green-500 text-green-500 active:text-white border border-green-500/20 rounded-xl font-black text-[10px] transition-all flex items-center justify-center gap-2 uppercase">
-                                ĐÃ BIẾT <span className="bg-green-600 text-white min-w-[22px] h-5 px-1.5 rounded-md flex items-center justify-center text-[10px] font-bold">{knownCount}</span>
+                                ĐÃ BIẾT <span className="bg-green-600 text-white min-w-[28px] h-6 px-2 rounded-md flex items-center justify-center text-[10px] font-bold shadow-sm">{knownCount}</span>
                             </button>
                         </div>
 
