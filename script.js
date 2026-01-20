@@ -376,7 +376,7 @@ exitDirection === 'right' ? 'translate-x-16 rotate-3' : ''
                                 onTouchStart={handleDragStart}
                                 onTouchMove={handleDragMove}
                                 onTouchEnd={handleDragEnd}
-                                className={`relative w-64 h-80 cursor-pointer transition-all duration-500 [transform-style:preserve-3d] ${isFlipped ? '[transform:rotateY(180deg)]' : ''}`}
+                                className={`relative w-64 h-80 cursor-pointer transition-all duration-500 [transform-style:preserve-3d] will-change-transform ${isFlipped ? '[transform:rotateY(180deg)]' : ''}`}
                             >
                                 <div 
                                     className="absolute inset-0 bg-white rounded-[2rem] shadow-2xl flex items-center justify-center border-4 [backface-visibility:hidden] overflow-hidden"
