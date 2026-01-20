@@ -167,6 +167,20 @@ const FlashcardModal = ({ isOpen, onClose, text, dbData }) => {
     const [startX, setStartX] = React.useState(0); 
     const [isDragging, setIsDragging] = React.useState(false);
     const [btnFeedback, setBtnFeedback] = React.useState(null);
+   
+    const [btnFeedback, setBtnFeedback] = React.useState(null);
+
+    // --- [MỚI] STATE & HÀM TRỘN ---
+    const [isShuffleOn, setIsShuffleOn] = React.useState(false); // Mặc định là tắt
+
+    const shuffleArray = (array) => {
+        const newArr = [...array];
+        for (let i = newArr.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [newArr[i], newArr[j]] = [newArr[j], newArr[i]];
+        }
+        return newArr;
+    };
 
     // --- KHỞI TẠO SESSION ---
     const startNewSession = React.useCallback((chars) => {
@@ -182,14 +196,17 @@ const FlashcardModal = ({ isOpen, onClose, text, dbData }) => {
         setBtnFeedback(null);
     }, []);
 
-    React.useEffect(() => {
+   React.useEffect(() => {
         if (isOpen && text) {
             const chars = Array.from(text).filter(c => c.trim());
             setOriginalQueue(chars);
-            startNewSession(chars);
+            // [SỬA] Kiểm tra nếu đang bật trộn thì trộn ngay lập tức
+            const queueToLoad = isShuffleOn ? shuffleArray(chars) : chars;
+            startNewSession(queueToLoad);
             setShowHint(true);
         }
-    }, [isOpen, text, startNewSession]);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [isOpen, text, startNewSession]); // Bỏ qua isShuffleOn trong dependency để tránh reset khi bấm nút
 
     // --- KHÓA CUỘN NỀN ---
     React.useEffect(() => {
@@ -294,20 +311,10 @@ const FlashcardModal = ({ isOpen, onClose, text, dbData }) => {
         }
     };
 
-    const handleShuffle = (e) => {
+   // [SỬA] Hàm bật tắt chế độ trộn
+    const handleToggleShuffle = (e) => {
         if (e) { e.preventDefault(); e.stopPropagation(); e.currentTarget.blur(); }
-        const passedPart = queue.slice(0, currentIndex);
-        const poolToShuffle = queue.slice(currentIndex);
-        if (poolToShuffle.length <= 1) return;
-        const shuffledPool = [...poolToShuffle];
-        for (let i = shuffledPool.length - 1; i > 0; i--) {
-            const j = Math.floor(Math.random() * (i + 1));
-            [shuffledPool[i], shuffledPool[j]] = [shuffledPool[j], shuffledPool[i]];
-        }
-        setQueue([...passedPart, ...shuffledPool]);
-        setIsFlipped(false);
-        setBtnFeedback('shuffle');
-        setTimeout(() => setBtnFeedback(null), 400);
+        setIsShuffleOn(prev => !prev);
     };
 
     const handleDragStart = (e) => {
@@ -367,7 +374,7 @@ exitDirection === 'right' ? 'translate-x-16 rotate-3' : ''
                             }}
                         >
                             <div 
-                                onClick={() => { if (Math.abs(dragX) < 5) toggleFlip(); }}
+                               onClick={() => startNewSession(isShuffleOn ? shuffleArray(unknownIndices.map(idx => queue[idx])) : unknownIndices.map(idx => queue[idx]))}
                                 onMouseDown={handleDragStart}
                                 onMouseMove={handleDragMove}
                                 onMouseUp={handleDragEnd}
@@ -394,11 +401,13 @@ exitDirection === 'right' ? 'translate-x-16 rotate-3' : ''
                                             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" className="pointer-events-none"><path d="M9 14 4 9l5-5"/><path d="M4 9h12a5 5 0 0 1 0 10H7"/></svg>
                                         </button>
                                         <button 
-                                            onClick={handleShuffle} 
-                                            className={`p-2.5 bg-black/5 hover:bg-black/10 active:scale-90 rounded-full transition-all flex items-center justify-center text-gray-400 hover:text-gray-700 ${btnFeedback === 'shuffle' ? 'bg-indigo-100 text-indigo-600' : ''}`}
-                                        >
-                                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" className={`pointer-events-none ${btnFeedback === 'shuffle' ? 'animate-[spin_0.4s_linear_infinite]' : ''}`}><path d="m21 16-4 4-4-4"/><path d="M17 20V4"/><path d="m3 8 4-4 4 4"/><path d="M7 4v16"/></svg>
-                                        </button>
+   onClick={() => startNewSession(isShuffleOn ? shuffleArray(originalQueue) : originalQueue)}
+    className={`p-2.5 bg-black/5 hover:bg-black/10 active:scale-90 rounded-full transition-all flex items-center justify-center ${isShuffleOn ? 'bg-indigo-100 text-indigo-600' : 'text-gray-400 hover:text-gray-700'}`}
+>
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" className="pointer-events-none">
+        <path d="m21 16-4 4-4-4"/><path d="M17 20V4"/><path d="m3 8 4-4 4 4"/><path d="M7 4v16"/>
+    </svg>
+</button>
                                     </div>
                                 </div>
                                 <div 
