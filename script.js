@@ -199,7 +199,7 @@ const FlashcardModal = ({ isOpen, onClose, text, dbData }) => {
         setExitDirection(isKnown ? 'right' : 'left');
 
         setTimeout(() => {
-            // Lưu trạng thái thẻ hiện tại vào history trước khi chuyển
+            // Cập nhật thống kê và lịch sử
             if (isKnown) setKnownCount(prev => prev + 1);
             else setUnknownIndices(prev => [...prev, currentIndex]);
             
@@ -217,21 +217,28 @@ const FlashcardModal = ({ isOpen, onClose, text, dbData }) => {
         }, 200);
     };
 
-    // --- FIX: XỬ LÝ QUAY LẠI THẺ TRƯỚC ---
+    // --- SỬA LỖI: QUAY LẠI THẺ TRƯỚC ---
     const handleBack = (e) => {
-        if (e) e.stopPropagation(); // Ngăn lật thẻ
-        if (currentIndex > 0) {
+        if (e) {
+            e.preventDefault();
+            e.stopPropagation(); // Chặn tuyệt đối lật thẻ
+        }
+        
+        if (currentIndex > 0 && history.length > 0) {
             const lastIsKnown = history[history.length - 1];
             
-            // Hoàn tác dữ liệu của thẻ vừa đi qua
+            // 1. Hoàn tác số lượng đã biết/chưa biết
             if (lastIsKnown === true) {
-                setKnownCount(prev => prev - 1);
+                setKnownCount(prev => Math.max(0, prev - 1));
             } else {
                 setUnknownIndices(prev => prev.slice(0, -1));
             }
 
+            // 2. Cập nhật chỉ số và lịch sử
             setHistory(prev => prev.slice(0, -1));
             setCurrentIndex(prev => prev - 1);
+            
+            // 3. Reset trạng thái hiển thị
             setIsFlipped(false);
             setExitDirection(null);
             setDragX(0);
@@ -239,22 +246,32 @@ const FlashcardModal = ({ isOpen, onClose, text, dbData }) => {
         }
     };
 
-    // --- FIX: XỬ LÝ TRỘN CÁC THẺ CÒN LẠI ---
+    // --- SỬA LỖI: TRỘN CÁC THẺ CÒN LẠI ---
     const handleShuffle = (e) => {
-        if (e) e.stopPropagation(); // Ngăn lật thẻ
+        if (e) {
+            e.preventDefault();
+            e.stopPropagation(); // Chặn tuyệt đối lật thẻ
+        }
         
-        // Chỉ trộn từ thẻ tiếp theo trở đi
-        const currentPart = queue.slice(0, currentIndex + 1);
-        const remainingPart = queue.slice(currentIndex + 1);
-        
-        if (remainingPart.length <= 1) return; // Không đủ thẻ để trộn
+        // Trộn từ vị trí currentIndex + 1 đến hết queue
+        const nextIndex = currentIndex + 1;
+        if (nextIndex >= queue.length) return; 
 
-        const shuffledRemaining = [...remainingPart].sort(() => Math.random() - 0.5);
-        setQueue([...currentPart, ...shuffledRemaining]);
+        const currentPart = queue.slice(0, nextIndex);
+        const remainingPart = queue.slice(nextIndex);
         
-        // Hiệu ứng phản hồi nhẹ cho người dùng biết đã trộn
+        // Thuật toán xáo trộn Fisher-Yates
+        const shuffled = [...remainingPart];
+        for (let i = shuffled.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+        }
+        
+        setQueue([...currentPart, ...shuffled]);
+        
+        // Hiệu ứng phản hồi visual
         setBtnFeedback('shuffle');
-        setTimeout(() => setBtnFeedback(null), 300);
+        setTimeout(() => setBtnFeedback(null), 500);
     };
 
     const toggleFlip = () => {
@@ -289,26 +306,6 @@ const FlashcardModal = ({ isOpen, onClose, text, dbData }) => {
         if (dragX < -70 || btnFeedback === 'left') return '#ef4444';
         return 'white'; 
     };
-
-    const CardControls = () => (
-        <div className="absolute bottom-5 left-0 right-0 px-6 flex justify-between items-center z-20">
-            <button 
-                onClick={handleBack} 
-                className={`p-2.5 bg-black/5 hover:bg-black/10 active:scale-90 rounded-full transition-all ${currentIndex === 0 ? 'opacity-20 cursor-not-allowed' : 'text-gray-400 hover:text-gray-700'}`}
-                title="Quay lại thẻ trước"
-                disabled={currentIndex === 0}
-            >
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3"><path d="M9 14 4 9l5-5"/><path d="M4 9h12a5 5 0 0 1 0 10H7"/></svg>
-            </button>
-            <button 
-                onClick={handleShuffle} 
-                className="p-2.5 bg-black/5 hover:bg-black/10 active:scale-90 rounded-full transition-all text-gray-400 hover:text-gray-700"
-                title="Trộn các thẻ còn lại"
-            >
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" className={btnFeedback === 'shuffle' ? 'animate-spin' : ''}><path d="m21 16-4 4-4-4"/><path d="M17 20V4"/><path d="m3 8 4-4 4 4"/><path d="M7 4v16"/></svg>
-            </button>
-        </div>
-    );
 
     if (!isOpen || queue.length === 0) return null;
 
@@ -347,10 +344,29 @@ const FlashcardModal = ({ isOpen, onClose, text, dbData }) => {
                                     style={{ borderColor: dynamicBorder() }}
                                 >
                                     <span className="text-8xl font-['Klee_One'] text-gray-800 transform -translate-y-5">{currentChar}</span>
+                                    
                                     {currentIndex === 0 && showHint && (
                                         <p className="absolute bottom-14 text-indigo-400 text-[7px] font-black uppercase tracking-[0.4em] animate-pulse">Chạm để lật</p>
                                     )}
-                                    <CardControls />
+
+                                    {/* CARD CONTROLS - INLINED TO PREVENT RE-MOUNT ISSUES */}
+                                    <div className="absolute bottom-5 left-0 right-0 px-6 flex justify-between items-center z-50">
+                                        <button 
+                                            onClick={handleBack} 
+                                            className={`p-2.5 bg-black/5 hover:bg-black/10 active:scale-90 rounded-full transition-all flex items-center justify-center ${currentIndex === 0 ? 'opacity-10 cursor-not-allowed' : 'text-gray-400 hover:text-gray-700'}`}
+                                            title="Quay lại thẻ trước"
+                                            disabled={currentIndex === 0}
+                                        >
+                                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" className="pointer-events-none"><path d="M9 14 4 9l5-5"/><path d="M4 9h12a5 5 0 0 1 0 10H7"/></svg>
+                                        </button>
+                                        <button 
+                                            onClick={handleShuffle} 
+                                            className={`p-2.5 bg-black/5 hover:bg-black/10 active:scale-90 rounded-full transition-all flex items-center justify-center text-gray-400 hover:text-gray-700 ${btnFeedback === 'shuffle' ? 'bg-indigo-100 text-indigo-600' : ''}`}
+                                            title="Trộn các thẻ còn lại"
+                                        >
+                                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" className={`pointer-events-none ${btnFeedback === 'shuffle' ? 'animate-spin' : ''}`}><path d="m21 16-4 4-4-4"/><path d="M17 20V4"/><path d="m3 8 4-4 4 4"/><path d="M7 4v16"/></svg>
+                                        </button>
+                                    </div>
                                 </div>
 
                                 {/* MẶT SAU */}
