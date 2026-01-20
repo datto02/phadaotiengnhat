@@ -152,26 +152,6 @@ const useKanjiReadings = (char, active, dbData) => {
 
   return readings;
 };
-
-const shuffleArray = (array) => {
-    const newArr = [...array];
-    for (let i = newArr.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [newArr[i], newArr[j]] = [newArr[j], newArr[i]];
-    }
-    return newArr;
-};
-// --- 1. Đặt hàm này ở BÊN NGOÀI component FlashcardModal (hoặc trên cùng file) ---
-const shuffleArray = (array) => {
-    const newArr = [...array];
-    for (let i = newArr.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [newArr[i], newArr[j]] = [newArr[j], newArr[i]];
-    }
-    return newArr;
-};
-
-// --- 2. Component chính ---
 const FlashcardModal = ({ isOpen, onClose, text, dbData }) => {
     const [originalQueue, setOriginalQueue] = React.useState([]);
     const [queue, setQueue] = React.useState([]);
@@ -188,15 +168,9 @@ const FlashcardModal = ({ isOpen, onClose, text, dbData }) => {
     const [isDragging, setIsDragging] = React.useState(false);
     const [btnFeedback, setBtnFeedback] = React.useState(null);
 
-    // --- MỚI: State lưu trạng thái Bật/Tắt trộn ---
-    const [isShuffleOn, setIsShuffleOn] = React.useState(false);
-
-    // --- KHỞI TẠO SESSION (Đã sửa để hỗ trợ trộn) ---
-    const startNewSession = React.useCallback((chars, enableShuffle = false) => {
-        // Nếu enableShuffle = true thì trộn, không thì giữ nguyên
-        const finalQueue = enableShuffle ? shuffleArray(chars) : [...chars];
-        
-        setQueue(finalQueue);
+    // --- KHỞI TẠO SESSION ---
+    const startNewSession = React.useCallback((chars) => {
+        setQueue(chars);
         setCurrentIndex(0);
         setIsFlipped(false);
         setUnknownIndices([]);
@@ -212,11 +186,10 @@ const FlashcardModal = ({ isOpen, onClose, text, dbData }) => {
         if (isOpen && text) {
             const chars = Array.from(text).filter(c => c.trim());
             setOriginalQueue(chars);
-            // Khi mở, dùng trạng thái shuffle hiện tại để quyết định trộn hay không
-            startNewSession(chars, isShuffleOn);
+            startNewSession(chars);
             setShowHint(true);
         }
-    }, [isOpen, text, startNewSession]); // Bỏ isShuffleOn khỏi dependency để tránh reset khi toggle
+    }, [isOpen, text, startNewSession]);
 
     // --- KHÓA CUỘN NỀN ---
     React.useEffect(() => {
@@ -303,13 +276,8 @@ const FlashcardModal = ({ isOpen, onClose, text, dbData }) => {
         return () => window.removeEventListener('keydown', handleKeyDown);
     }, [isOpen, isFinished, toggleFlip, handleNext, onClose]);
 
-    // --- NÚT BACK (Đã sửa lỗi focus) ---
     const handleBack = (e) => {
-        if (e) { 
-            e.preventDefault(); 
-            e.stopPropagation(); 
-            e.currentTarget.blur(); // MỚI: Bỏ focus ngay lập tức
-        }
+        if (e) { e.preventDefault(); e.stopPropagation(); e.currentTarget.blur(); }
         if (currentIndex > 0 && history.length > 0) {
             const lastIsKnown = history[history.length - 1];
             if (lastIsKnown === true) {
@@ -326,35 +294,20 @@ const FlashcardModal = ({ isOpen, onClose, text, dbData }) => {
         }
     };
 
-    // --- NÚT TRỘN (Đã sửa thành Toggle Bật/Tắt & Fix lỗi Focus) ---
-    const handleToggleShuffle = (e) => {
-        if (e) { 
-            e.preventDefault(); 
-            e.stopPropagation();
-            e.currentTarget.blur(); // MỚI: Bỏ focus ngay lập tức
+    const handleShuffle = (e) => {
+        if (e) { e.preventDefault(); e.stopPropagation(); e.currentTarget.blur(); }
+        const passedPart = queue.slice(0, currentIndex);
+        const poolToShuffle = queue.slice(currentIndex);
+        if (poolToShuffle.length <= 1) return;
+        const shuffledPool = [...poolToShuffle];
+        for (let i = shuffledPool.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [shuffledPool[i], shuffledPool[j]] = [shuffledPool[j], shuffledPool[i]];
         }
-
-        setIsShuffleOn(prev => {
-            const newState = !prev; // Đảo trạng thái
-            
-            setQueue(currentQueue => {
-                const passedPart = currentQueue.slice(0, currentIndex);
-                const remainingPart = currentQueue.slice(currentIndex);
-
-                if (newState) {
-                    // Nếu BẬT: Trộn phần còn lại
-                    const shuffledRemaining = shuffleArray(remainingPart);
-                    return [...passedPart, ...shuffledRemaining];
-                } else {
-                    // Nếu TẮT: Giữ nguyên hiện tại
-                    return currentQueue;
-                }
-            });
-
-            setBtnFeedback('shuffle');
-            setTimeout(() => setBtnFeedback(null), 400);
-            return newState;
-        });
+        setQueue([...passedPart, ...shuffledPool]);
+        setIsFlipped(false);
+        setBtnFeedback('shuffle');
+        setTimeout(() => setBtnFeedback(null), 400);
     };
 
     const handleDragStart = (e) => {
@@ -405,12 +358,12 @@ const FlashcardModal = ({ isOpen, onClose, text, dbData }) => {
                     <>
                         <div 
                             className={`relative transition-all duration-300 ease-in-out ${
-                                exitDirection === 'left' ? '-translate-x-16 -rotate-3' : 
-                                exitDirection === 'right' ? 'translate-x-16 rotate-3' : ''
+                             exitDirection === 'left' ? '-translate-x-16 -rotate-3' : 
+exitDirection === 'right' ? 'translate-x-16 rotate-3' : ''
                             }`}
                             style={{ 
                                transform: !exitDirection && dragX !== 0 ? `translateX(${dragX}px) rotate(${dragX * 0.02}deg)` : '',
-                               transition: isDragging ? 'none' : 'all 0.25s ease-out'
+                              transition: isDragging ? 'none' : 'all 0.25s ease-out'
                             }}
                         >
                             <div 
@@ -435,22 +388,14 @@ const FlashcardModal = ({ isOpen, onClose, text, dbData }) => {
                                     <div className={`absolute bottom-5 left-0 right-0 px-6 items-center z-50 ${isFlipped ? 'hidden sm:flex' : 'flex'} justify-between`}>
                                         <button 
                                             onClick={handleBack} 
-                                            // MỚI: Thêm focus:outline-none
-                                            className={`p-2.5 bg-black/5 hover:bg-black/10 active:scale-90 rounded-full transition-all flex items-center justify-center focus:outline-none ${currentIndex === 0 ? 'opacity-10 cursor-not-allowed' : 'text-gray-400 hover:text-gray-700'}`}
+                                            className={`p-2.5 bg-black/5 hover:bg-black/10 active:scale-90 rounded-full transition-all flex items-center justify-center ${currentIndex === 0 ? 'opacity-10 cursor-not-allowed' : 'text-gray-400 hover:text-gray-700'}`}
                                             disabled={currentIndex === 0}
                                         >
                                             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" className="pointer-events-none"><path d="M9 14 4 9l5-5"/><path d="M4 9h12a5 5 0 0 1 0 10H7"/></svg>
                                         </button>
-                                        
-                                        {/* NÚT SHUFFLE ĐÃ SỬA GIAO DIỆN & LOGIC */}
                                         <button 
-                                            onClick={handleToggleShuffle} 
-                                            className={`p-2.5 rounded-full transition-all flex items-center justify-center focus:outline-none ${
-                                                isShuffleOn 
-                                                    ? 'bg-indigo-600 text-white hover:bg-indigo-700 shadow-lg shadow-indigo-200' 
-                                                    : 'bg-black/5 hover:bg-black/10 text-gray-400 hover:text-gray-700'
-                                            }`}
-                                            title={isShuffleOn ? "Tắt trộn ngẫu nhiên" : "Bật trộn ngẫu nhiên"}
+                                            onClick={handleShuffle} 
+                                            className={`p-2.5 bg-black/5 hover:bg-black/10 active:scale-90 rounded-full transition-all flex items-center justify-center text-gray-400 hover:text-gray-700 ${btnFeedback === 'shuffle' ? 'bg-indigo-100 text-indigo-600' : ''}`}
                                         >
                                             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" className={`pointer-events-none ${btnFeedback === 'shuffle' ? 'animate-[spin_0.4s_linear_infinite]' : ''}`}><path d="m21 16-4 4-4-4"/><path d="M17 20V4"/><path d="m3 8 4-4 4 4"/><path d="M7 4v16"/></svg>
                                         </button>
@@ -487,18 +432,18 @@ const FlashcardModal = ({ isOpen, onClose, text, dbData }) => {
 
                         {/* NÚT ĐIỀU HƯỚNG */}
                         <div className="flex gap-3 w-full px-8">
-                            <button onClick={() => handleNext(false)} className="flex-1 py-3 bg-red-500/10 hover:bg-red-500/20 hover:text-red-600 active:bg-red-500 text-red-500 active:text-white border border-red-500/20 rounded-xl font-black text-[10px] transition-all flex items-center justify-center gap-2 uppercase focus:outline-none">
+                            <button onClick={() => handleNext(false)} className="flex-1 py-3 bg-red-500/10 hover:bg-red-500/20 hover:text-red-600 active:bg-red-500 text-red-500 active:text-white border border-red-500/20 rounded-xl font-black text-[10px] transition-all flex items-center justify-center gap-2 uppercase">
                                 ĐANG HỌC <span className="bg-red-600 text-white min-w-[28px] h-6 px-2 rounded-md flex items-center justify-center text-[10px] font-bold shadow-sm">{unknownIndices.length}</span>
                             </button>
-                            <button onClick={() => handleNext(true)} className="flex-1 py-3 bg-green-500/10 hover:bg-green-500/20 hover:text-green-600 active:bg-green-500 text-green-500 active:text-white border border-green-500/20 rounded-xl font-black text-[10px] transition-all flex items-center justify-center gap-2 uppercase focus:outline-none">
+                            <button onClick={() => handleNext(true)} className="flex-1 py-3 bg-green-500/10 hover:bg-green-500/20 hover:text-green-600 active:bg-green-500 text-green-500 active:text-white border border-green-500/20 rounded-xl font-black text-[10px] transition-all flex items-center justify-center gap-2 uppercase">
                                 ĐÃ BIẾT <span className="bg-green-600 text-white min-w-[28px] h-6 px-2 rounded-md flex items-center justify-center text-[10px] font-bold shadow-sm">{knownCount}</span>
                             </button>
                         </div>
 
-                        {/* NÚT ĐÓNG */}
+                        {/* NÚT ĐÓNG ĐÃ TỐI ƯU CHO ĐIỆN THOẠI */}
                         <button 
                             onClick={onClose} 
-                            className="mt-8 text-white/40 hover:text-red-500 transition-all text-[13px] sm:text-[11px] font-black uppercase tracking-[0.2em] py-2 px-4 active:scale-95 focus:outline-none"
+                            className="mt-8 text-white/40 hover:text-red-500 transition-all text-[13px] sm:text-[11px] font-black uppercase tracking-[0.2em] py-2 px-4 active:scale-95"
                         >
                             Đóng thẻ
                         </button>
@@ -510,27 +455,20 @@ const FlashcardModal = ({ isOpen, onClose, text, dbData }) => {
                         <p className="text-gray-400 mb-6 text-[11px] font-medium italic">Bạn đã học được {knownCount}/{queue.length} chữ.</p>
                         <div className="space-y-2">
                             {unknownIndices.length > 0 && (
-                                <button 
-                                    // MỚI: Truyền isShuffleOn vào để biết có cần trộn khi ôn lại không
-                                    onClick={() => startNewSession(unknownIndices.map(idx => queue[idx]), isShuffleOn)} 
-                                    className="w-full py-3.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl font-black text-[11px] shadow-lg active:scale-95 transition-colors focus:outline-none"
-                                >
-                                    ÔN LẠI {unknownIndices.length} THẺ ĐANG HỌC {isShuffleOn ? '(NGẪU NHIÊN)' : ''}
-                                </button>
+                                <button onClick={() => startNewSession(unknownIndices.map(idx => queue[idx]))} className="w-full py-3.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl font-black text-[11px] shadow-lg active:scale-95 transition-colors">ÔN LẠI {unknownIndices.length} THẺ ĐANG HỌC</button>
                             )}
                            <button 
-                            // MỚI: Truyền isShuffleOn vào
-                            onClick={() => startNewSession(originalQueue, isShuffleOn)} 
-                            className="w-full py-3.5 bg-blue-50 border-2 border-blue-100 text-blue-500 hover:bg-blue-100 hover:border-blue-300 hover:text-blue-700 rounded-xl font-black text-[11px] transition-all active:scale-95 focus:outline-none"
-                        >
-                            HỌC LẠI TỪ ĐẦU {isShuffleOn ? '(NGẪU NHIÊN)' : ''}
-                        </button>
+    onClick={() => startNewSession(originalQueue)} 
+    className="w-full py-3.5 bg-blue-50 border-2 border-blue-100 text-blue-500 hover:bg-blue-100 hover:border-blue-300 hover:text-blue-700 rounded-xl font-black text-[11px] transition-all active:scale-95"
+>
+    HỌC LẠI TỪ ĐẦU
+</button>
                           <button 
-                            onClick={onClose} 
-                            className="w-full py-3.5 bg-white border-2 border-gray-200 text-gray-400 hover:text-red-600 hover:border-red-600 font-black text-[11px] uppercase tracking-widest rounded-xl transition-all active:scale-95 focus:outline-none"
-                        >
-                            THOÁT
-                        </button>
+    onClick={onClose} 
+    className="w-full py-3.5 bg-white border-2 border-gray-200 text-gray-400 hover:text-red-600 hover:border-red-600 font-black text-[11px] uppercase tracking-widest rounded-xl transition-all active:scale-95"
+>
+    THOÁT
+</button>
                         </div>
                     </div>
                 )}
@@ -912,7 +850,7 @@ return (
                     </p>
                     <p className="flex items-center gap-2">
                         <span className="bg-gray-100 text-gray-600 w-5 h-5 flex items-center justify-center rounded-full text-[10px] font-bold">4</span>
-                        Tạo nhanh FLASHCARD trong 5 giây trong phần "tiện ích".
+                        Tạo nhanh FLASHCARD trong 5 giây ở phần "tiện ích".
                     </p>
                 </div>
             </div>
@@ -1781,7 +1719,7 @@ className={`py-2 text-[11px] font-black border rounded-md transition-all duratio
         <span className="bg-white p-0.5 rounded flex items-center justify-center group-hover:rotate-12 transition-transform">
             <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#4255ff" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
         </span>
-        <span className="text-xs font-black tracking-wide uppercase">Flashcard</span>
+        <span className="text-xs font-black tracking-wide uppercase">Tạo Flashcard</span>
     </button>
 </div>
                         </div>
