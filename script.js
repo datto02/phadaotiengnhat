@@ -400,7 +400,7 @@ const FlashcardModal = ({ isOpen, onClose, text, dbData }) => {
             <div className="w-full max-w-sm flex flex-col items-center">
                 {!isFinished ? (
                     <>
-                        <<div 
+                        <div 
     className="relative transition-all duration-200 ease-out"
     style={{ 
         // Logic giữ thẻ tại chỗ khi kéo
