@@ -168,17 +168,18 @@ const FlashcardModal = ({ isOpen, onClose, text, dbData }) => {
     const [isDragging, setIsDragging] = React.useState(false);
     const [btnFeedback, setBtnFeedback] = React.useState(null);
 
-    // --- [MỚI] STATE & HÀM TRỘN ---
+    // --- STATE & HÀM TRỘN ---
     const [isShuffleOn, setIsShuffleOn] = React.useState(false);
 
-    const shuffleArray = (array) => {
+    // Hàm trộn mảng (Fisher-Yates)
+    const shuffleArray = React.useCallback((array) => {
         const newArr = [...array];
         for (let i = newArr.length - 1; i > 0; i--) {
             const j = Math.floor(Math.random() * (i + 1));
             [newArr[i], newArr[j]] = [newArr[j], newArr[i]];
         }
         return newArr;
-    };
+    }, []);
 
     // --- KHỞI TẠO SESSION ---
     const startNewSession = React.useCallback((chars) => {
@@ -194,17 +195,18 @@ const FlashcardModal = ({ isOpen, onClose, text, dbData }) => {
         setBtnFeedback(null);
     }, []);
 
+    // Khởi tạo khi mở Modal
     React.useEffect(() => {
         if (isOpen && text) {
             const chars = Array.from(text).filter(c => c.trim());
             setOriginalQueue(chars);
-            // [SỬA] Logic: Nếu đang bật trộn thì trộn ngay đầu vào
+            // Nếu đang bật shuffle thì trộn ngay đầu vào
             const queueToLoad = isShuffleOn ? shuffleArray(chars) : chars;
             startNewSession(queueToLoad);
             setShowHint(true);
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [isOpen, text, startNewSession]); // Bỏ qua isShuffleOn để tránh reset khi toggle
+    }, [isOpen, text, startNewSession]); 
 
     // --- KHÓA CUỘN NỀN ---
     React.useEffect(() => {
@@ -309,10 +311,46 @@ const FlashcardModal = ({ isOpen, onClose, text, dbData }) => {
         }
     };
 
-    // [SỬA] Thay handleShuffle bằng handleToggleShuffle
+    // [QUAN TRỌNG] HÀM XỬ LÝ NÚT TRỘN (BẬT/TẮT)
     const handleToggleShuffle = (e) => {
         if (e) { e.preventDefault(); e.stopPropagation(); e.currentTarget.blur(); }
-        setIsShuffleOn(prev => !prev);
+
+        const nextState = !isShuffleOn;
+        setIsShuffleOn(nextState);
+        setBtnFeedback('shuffle');
+        setTimeout(() => setBtnFeedback(null), 400);
+
+        // Chia mảng hiện tại thành 2 phần: Đã qua (passed) và Còn lại (remaining - bao gồm cả thẻ hiện tại)
+        const passedPart = queue.slice(0, currentIndex);
+        const remainingPart = queue.slice(currentIndex);
+
+        if (remainingPart.length === 0) return;
+
+        let newRemainingPart;
+
+        if (nextState) {
+            // TRƯỜNG HỢP BẬT: Trộn ngay lập tức phần còn lại
+            newRemainingPart = shuffleArray(remainingPart);
+        } else {
+            // TRƯỜNG HỢP TẮT: Khôi phục thứ tự gốc của phần còn lại
+            // Logic: Duyệt qua originalQueue, nhặt ra những phần tử có mặt trong remainingPart
+            // Sử dụng bộ đếm (counts) để xử lý trường hợp có các ký tự trùng nhau
+            const counts = {};
+            remainingPart.forEach(c => { counts[c] = (counts[c] || 0) + 1; });
+            
+            newRemainingPart = [];
+            for (const char of originalQueue) {
+                if (counts[char] > 0) {
+                    newRemainingPart.push(char);
+                    counts[char]--;
+                }
+            }
+        }
+
+        // Cập nhật queue mới: Giữ nguyên phần đã qua + Phần còn lại đã xử lý
+        setQueue([...passedPart, ...newRemainingPart]);
+        // Reset lật thẻ vì nội dung thẻ hiện tại có thể đã thay đổi
+        setIsFlipped(false);
     };
 
     const handleDragStart = (e) => {
@@ -399,12 +437,12 @@ const FlashcardModal = ({ isOpen, onClose, text, dbData }) => {
                                             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" className="pointer-events-none"><path d="M9 14 4 9l5-5"/><path d="M4 9h12a5 5 0 0 1 0 10H7"/></svg>
                                         </button>
                                         
-                                        {/* [SỬA] Nút Toggle Trộn thẻ */}
+                                        {/* Nút Toggle Trộn thẻ */}
                                         <button 
                                             onClick={handleToggleShuffle} 
                                             className={`p-2.5 bg-black/5 hover:bg-black/10 active:scale-90 rounded-full transition-all flex items-center justify-center ${isShuffleOn ? 'bg-indigo-100 text-indigo-600' : 'text-gray-400 hover:text-gray-700'}`}
                                         >
-                                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" className="pointer-events-none"><path d="m21 16-4 4-4-4"/><path d="M17 20V4"/><path d="m3 8 4-4 4 4"/><path d="M7 4v16"/></svg>
+                                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" className={`pointer-events-none ${btnFeedback === 'shuffle' ? 'animate-[spin_0.4s_linear_infinite]' : ''}`}><path d="m21 16-4 4-4-4"/><path d="M17 20V4"/><path d="m3 8 4-4 4 4"/><path d="M7 4v16"/></svg>
                                         </button>
                                     </div>
                                 </div>
@@ -463,7 +501,6 @@ const FlashcardModal = ({ isOpen, onClose, text, dbData }) => {
                         <div className="space-y-2">
                             {unknownIndices.length > 0 && (
                                 <button 
-                                    // [SỬA] Áp dụng trộn nếu isShuffleOn = true
                                     onClick={() => startNewSession(isShuffleOn ? shuffleArray(unknownIndices.map(idx => queue[idx])) : unknownIndices.map(idx => queue[idx]))} 
                                     className="w-full py-3.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl font-black text-[11px] shadow-lg active:scale-95 transition-colors"
                                 >
@@ -471,7 +508,6 @@ const FlashcardModal = ({ isOpen, onClose, text, dbData }) => {
                                 </button>
                             )}
                             <button 
-                                // [SỬA] Áp dụng trộn nếu isShuffleOn = true
                                 onClick={() => startNewSession(isShuffleOn ? shuffleArray(originalQueue) : originalQueue)} 
                                 className="w-full py-3.5 bg-blue-50 border-2 border-blue-100 text-blue-500 hover:bg-blue-100 hover:border-blue-300 hover:text-blue-700 rounded-xl font-black text-[11px] transition-all active:scale-95"
                             >
