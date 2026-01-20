@@ -213,31 +213,32 @@ const FlashcardModal = ({ isOpen, onClose, text, dbData }) => {
         };
     }, [isOpen]);
 
-    // --- CHUYỂN THẺ TIẾP THEO ---
-    const handleNext = (isKnown) => {
-        if (exitDirection || isFinished) return;
+   const handleNext = (isKnown) => {
+    if (exitDirection || isFinished) return;
 
-        // Cập nhật thống kê ngay lập tức
-        if (isKnown) setKnownCount(prev => prev + 1);
-        else setUnknownIndices(prev => [...prev, currentIndex]);
-        setHistory(prev => [...prev, isKnown]);
+    // 1. Lật thẻ về mặt trước NGAY LẬP TỨC
+    setIsFlipped(false);
 
-        setBtnFeedback(isKnown ? 'right' : 'left');
-        setExitDirection(isKnown ? 'right' : 'left');
+    // 2. Cập nhật dữ liệu
+    if (isKnown) setKnownCount(prev => prev + 1);
+    else setUnknownIndices(prev => [...prev, currentIndex]);
+    setHistory(prev => [...prev, isKnown]);
 
-        setTimeout(() => {
-            if (currentIndex < queue.length - 1) {
-                setIsFlipped(false);
-                setCurrentIndex(prev => prev + 1);
-                setExitDirection(null);
-                setDragX(0);
-                setBtnFeedback(null);
-            } else {
-                setIsFinished(true);
-            }
-        }, 200);
-    };
+    setBtnFeedback(isKnown ? 'right' : 'left');
+    setExitDirection(isKnown ? 'right' : 'left');
 
+    setTimeout(() => {
+        if (currentIndex < queue.length - 1) {
+            // 3. Chỉ thay đổi chữ sau khi thẻ đã bay đi
+            setCurrentIndex(prev => prev + 1);
+            setExitDirection(null);
+            setDragX(0);
+            setBtnFeedback(null);
+        } else {
+            setIsFinished(true);
+        }
+    }, 200); // Bạn có thể tăng lên 250ms nếu muốn trễ hơn chút để chắc chắn không lộ
+};
     // --- QUAY LẠI THẺ TRƯỚC (ĐÃ GỘP VÀ FIX) ---
     const handleBack = (e) => {
         if (e) {
@@ -337,6 +338,7 @@ const FlashcardModal = ({ isOpen, onClose, text, dbData }) => {
                 {!isFinished ? (
                     <>
                         <div 
+                    key={currentIndex}
                             className={`relative transition-all duration-200 ease-out ${
                                 exitDirection === 'left' ? '-translate-x-10 -rotate-6 opacity-0' : 
                                 exitDirection === 'right' ? 'translate-x-10 rotate-6 opacity-0' : ''
