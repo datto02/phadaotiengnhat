@@ -1723,7 +1723,7 @@ else setFilterOptions(p => ({...p, katakana: true}));
     ref={searchInputRef}
     type="text" 
     value={searchTerm} 
-    className="w-full pl-10 pr-10 py-2.5 border border-indigo-200 rounded-lg text-[16px] focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-indigo-50 text-indigo-900 placeholder-indigo-400 font-bold font-sans" 
+    className="w-full pl-10 pr-10 py-2 border border-indigo-200 rounded-lg text-[16px] focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-indigo-50 text-indigo-900 placeholder-indigo-400 font-bold font-sans" 
     placeholder="Tìm Kanji theo âm Hán Việt" 
     onChange={(e) => handleSearchRealtime(e.target.value)} 
     onKeyDown={(e) => {
