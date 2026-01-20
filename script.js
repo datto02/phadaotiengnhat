@@ -440,7 +440,13 @@ const FlashcardModal = ({ isOpen, onClose, text, dbData }) => {
     if (currentIndex === 0) currentInfo.isFirst = true;
 
     const progressRatio = currentIndex / (queue.length - 1 || 1);
-
+// --- TÍNH TOÁN BIỂU ĐỒ TRÒN ---
+    const radius = 40; // Bán kính vòng tròn
+    const circumference = 2 * Math.PI * radius; // Chu vi
+    const totalCards = queue.length > 0 ? queue.length : 1; // Tránh chia cho 0
+    const percentage = Math.round((knownCount / totalCards) * 100);
+    // Tính độ dài nét vẽ (offset) dựa trên % đã học
+    const strokeDashoffset = circumference - (percentage / 100) * circumference;
     return (
         <div 
             className="fixed inset-0 z-[300] flex items-center justify-center bg-gray-900/95 backdrop-blur-xl animate-in fade-in duration-200 select-none touch-none"
@@ -541,7 +547,41 @@ const FlashcardModal = ({ isOpen, onClose, text, dbData }) => {
                 ) : (
                     // MÀN HÌNH HOÀN THÀNH
                     <div className="bg-white rounded-[2rem] p-8 w-full max-w-[280px] text-center shadow-2xl border-4 border-indigo-50 animate-in zoom-in-95">
-                        <div className="text-5xl mb-4 animate-bounce">🎉</div>
+                       {/* BIỂU ĐỒ TRÒN */}
+<div className="relative w-24 h-24 mb-6 flex items-center justify-center">
+    {/* SVG Chart */}
+    {/* -rotate-90: Xoay để bắt đầu từ 12h */}
+    {/* scale-x-[-1]: Lật ngược trục ngang để chạy ngược chiều kim đồng hồ */}
+    <svg className="w-full h-full transform -rotate-90 scale-x-[-1]" viewBox="0 0 100 100">
+        {/* Vòng tròn nền (Màu đỏ - Phần chưa thuộc) */}
+        <circle
+            cx="50"
+            cy="50"
+            r={radius}
+            fill="none"
+            stroke="#ef4444" 
+            strokeWidth="8"
+        />
+        {/* Vòng tròn tiến trình (Màu xanh - Phần đã thuộc) */}
+        <circle
+            cx="50"
+            cy="50"
+            r={radius}
+            fill="none"
+            stroke="#22c55e" 
+            strokeWidth="8"
+            strokeDasharray={circumference}
+            strokeDashoffset={strokeDashoffset}
+            strokeLinecap="round"
+            className="transition-all duration-1000 ease-out"
+        />
+    </svg>
+    
+    {/* Số phần trăm ở giữa (Cần lật lại text vì cha đang bị lật scale-x-[-1] nếu đặt trực tiếp, nên ta đặt absolute ra ngoài SVG) */}
+    <div className="absolute inset-0 flex items-center justify-center flex-col">
+        <span className="text-xl font-black text-gray-700">{percentage}%</span>
+    </div>
+</div>
                         <h3 className="text-lg font-black text-gray-800 mb-1 uppercase">Hoàn thành</h3>
                         <p className="text-gray-400 mb-6 text-[11px] font-medium italic">Bạn đã học được {knownCount}/{queue.length} chữ.</p>
                         <div className="space-y-2">
