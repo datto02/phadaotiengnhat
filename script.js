@@ -271,7 +271,8 @@ const ReviewListModal = ({ isOpen, onClose, srsData, onResetSRS }) => {
                 
                 {isHelpOpen ? (
                     // === GIAO DIỆN HƯỚNG DẪN (SRS GUIDE) - NỘI DUNG MỚI ===
-                    <div className="flex flex-col h-full">
+                    // ĐÃ SỬA: Thay div bao ngoài bằng Fragment <> để flex-1 hoạt động đúng với parent
+                    <>
                          <div className="p-4 border-b border-gray-100 flex justify-between items-center bg-indigo-50">
                             <h3 className="text-sm font-black text-indigo-700 uppercase flex items-center gap-2">
                                 🎓 CÁCH HỌC HIỆU QUẢ
@@ -325,7 +326,7 @@ const ReviewListModal = ({ isOpen, onClose, srsData, onResetSRS }) => {
                                 Đã hiểu, quay lại danh sách
                             </button>
                         </div>
-                    </div>
+                    </>
 
                 ) : !isConfirmOpen ? (
                     // === GIAO DIỆN 1: DANH SÁCH (Mặc định) ===
