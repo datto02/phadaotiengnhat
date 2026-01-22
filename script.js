@@ -4,40 +4,72 @@ return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/đ/g, "d").
     const { useState, useEffect, useMemo, useRef } = React;
 // --- BƯỚC 1: LOGIC TÍNH TOÁN NGÀY (THAY THẾ SRS_INTERVALS & calculateSRS CŨ) ---
 
-const FIXED_CYCLE = [1, 3, 5, 7]; // Chu kỳ ngày: 1 -> 3 -> 5 -> 7 -> Xong
+// --- BƯỚC 1: LOGIC SRS THÔNG MINH (ANKI STYLE - 2 NÚT) ---
 
 const calculateSRS = (currentData, quality) => {
   // quality: 0 (Đang học/Quên), 1 (Đã biết)
-  let { level = 0 } = currentData || {};
+  
+  // Mặc định: level (số ngày khoảng cách), easeFactor (hệ số IQ - mặc định 2.5)
+  let { level = 0, easeFactor = 2.5, nextReview } = currentData || {};
+  const now = Date.now();
 
-  // 1. TRƯỜNG HỢP: ĐANG HỌC (Hoặc bấm Quên)
+  // --- 1. CƠ CHẾ CHẶN HỌC SỚM (Anti-Early Review) ---
+  // Nếu thẻ đã có lịch hẹn (nextReview > 0) VÀ chưa đến giờ (nextReview > now)
+  if (nextReview && nextReview > now) {
+      // Nếu bấm "Đã biết" (1) -> Return nguyên trạng thái cũ (Không cho học vượt)
+      if (quality === 1) return currentData;
+      
+      // Nếu bấm "Đang học" (0) -> Vẫn chạy xuống dưới để Reset & Phạt (Chưa đến hạn mà đã quên)
+  }
+
+  // --- 2. XỬ LÝ NÚT BẤM ---
+
   if (quality === 0) {
+    // === BẤM NÚT "ĐANG HỌC" (ĐỎ) ===
+    
+    // PHẠT: Giảm hệ số IQ (tối thiểu là 1.3, không giảm sâu hơn)
+    easeFactor = Math.max(1.3, easeFactor - 0.2);
+    
     return {
-      level: 0,           // Về mức 0
-      nextReview: 0,      // 0 nghĩa là quá khứ rất xa -> Luôn hiện trong danh sách cần ôn
-      isDone: false       // Chưa xong
+      level: 0,           // Reset khoảng cách về 0
+      easeFactor: easeFactor, // Lưu hệ số mới (đã bị trừ)
+      nextReview: 0,      // 0 nghĩa là "Chưa xong", lát nữa hỏi lại ngay
+      isDone: false
+    };
+
+  } else {
+    // === BẤM NÚT "ĐÃ BIẾT" (XANH) ===
+
+    let newInterval;
+
+    // Tình huống A: Chữ này đang bị phạt (nextReview = 0) hoặc mới tinh (level = 0)
+    // -> Đặt lịch cứng là 1 ngày, KHÔNG nhân hệ số.
+    if (!nextReview || nextReview === 0 || level === 0) {
+        newInterval = 1; 
+    } 
+    // Tình huống B: Chữ này đang ôn tập định kỳ (Đã thuộc từ các hôm trước)
+    else {
+        // CÔNG THỨC ANKI: Ngày mới = Ngày cũ * Hệ số IQ
+        newInterval = Math.ceil(level * easeFactor);
+        
+        // THƯỞNG: Tăng IQ lên một chút (tối đa 2.5)
+        easeFactor = Math.min(2.5, easeFactor + 0.1); 
+    }
+
+    // --- XỬ LÝ 5 GIỜ SÁNG ---
+    const nextDate = new Date();
+    nextDate.setDate(nextDate.getDate() + newInterval);
+    nextDate.setHours(5, 0, 0, 0);
+
+    return {
+      level: newInterval, // Lưu khoảng cách ngày mới làm level
+      easeFactor: easeFactor,
+      nextReview: nextDate.getTime(),
+      isDone: false // Không bao giờ "Done" hẳn, chỉ đẩy ngày ra xa vô tận
     };
   }
-
-  // 2. TRƯỜNG HỢP: ĐÃ BIẾT (Bấm nút Đã biết)
-  // Nếu level hiện tại đã vượt quá chu kỳ (tức là đã xong 7 ngày) -> Hoàn thành
-  if (level >= FIXED_CYCLE.length) {
-    return { level, nextReview: null, isDone: true };
-  }
-
-  const daysToAdd = FIXED_CYCLE[level];
-  
-  // Logic tính 5 giờ sáng:
-  const nextDate = new Date();
-  nextDate.setDate(nextDate.getDate() + daysToAdd); // Cộng thêm số ngày (1, 3, 5, 7)
-  nextDate.setHours(5, 0, 0, 0); // Đặt về 05:00:00 sáng
-
-  return {
-    level: level + 1,        // Tăng cấp độ
-    nextReview: nextDate.getTime(),
-    isDone: false
-  };
 };
+
  // --- FETCH DATA FROM GITHUB --- 
 const fetchDataFromGithub = async () => {
   try { 
@@ -189,8 +221,108 @@ const useKanjiReadings = (char, active, dbData) => {
 };
 // --- BƯỚC 4: COPY ĐÈ ĐOẠN NÀY VÀO FLASHCARD MODAL ---
 // Chỉ thêm onSrsUpdate để lưu dữ liệu, giao diện giữ nguyên tuyệt đối
+// --- BƯỚC 2: COMPONENT BẢNG DANH SÁCH ÔN TẬP ---
+const ReviewListModal = ({ isOpen, onClose, srsData }) => {
+    // Logic khóa cuộn nền
+    React.useEffect(() => {
+        if (isOpen) document.body.style.overflow = 'hidden';
+        else document.body.style.overflow = 'unset';
+        return () => { document.body.style.overflow = 'unset'; };
+    }, [isOpen]);
 
-const FlashcardModal = ({ isOpen, onClose, text, dbData, onSrsUpdate }) => { // <--- Đã thêm onSrsUpdate vào đây
+    // Logic gom nhóm dữ liệu theo ngày
+    const groupedData = React.useMemo(() => {
+        const groups = { today: [] }; // 'today' chứa: Quá hạn + Hôm nay + Đang học dở (0)
+        const now = Date.now();
+
+        Object.entries(srsData || {}).forEach(([char, data]) => {
+            // Logic lọc: nextReview = 0 HOẶC nextReview <= now
+            // Lưu ý: data.isDone không còn dùng trong logic mới nhưng giữ để tương thích nếu có dữ liệu cũ
+            if ((!data.nextReview && data.nextReview !== 0) || (data.isDone === true)) return;
+
+            if (data.nextReview === 0 || data.nextReview <= now) {
+                groups.today.push(char);
+            } else {
+                // Nhóm ngày tương lai
+                const dateObj = new Date(data.nextReview);
+                const dateKey = `${dateObj.getDate().toString().padStart(2, '0')}/${(dateObj.getMonth() + 1).toString().padStart(2, '0')}`;
+                
+                if (!groups[dateKey]) groups[dateKey] = [];
+                groups[dateKey].push(char);
+            }
+        });
+        return groups;
+    }, [srsData, isOpen]);
+
+    if (!isOpen) return null;
+
+    // Sắp xếp ngày tương lai tăng dần
+    const futureDates = Object.keys(groupedData).filter(k => k !== 'today').sort((a, b) => {
+        const [d1, m1] = a.split('/').map(Number);
+        const [d2, m2] = b.split('/').map(Number);
+        return m1 === m2 ? d1 - d2 : m1 - m2;
+    });
+
+    return (
+        <div className="fixed inset-0 z-[400] flex items-center justify-center bg-gray-900/60 backdrop-blur-sm p-4 animate-in fade-in duration-200" onClick={onClose}>
+            <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md flex flex-col max-h-[80vh] animate-in zoom-in-95 duration-200 overflow-hidden" onClick={e => e.stopPropagation()}>
+                {/* Header */}
+                <div className="p-4 border-b border-gray-100 flex justify-between items-center bg-gray-50">
+                    <h3 className="text-sm font-bold text-gray-800 uppercase flex items-center gap-2">📅 LỊCH TRÌNH ÔN TẬP</h3>
+                    <button onClick={onClose} className="text-gray-400 hover:text-red-500 transition-colors">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                    </button>
+                </div>
+                {/* Body */}
+                <div className="p-4 overflow-y-auto custom-scrollbar space-y-4">
+                    {/* Phần CẦN ÔN NGAY */}
+                    <div className="bg-orange-50 rounded-xl p-3 border border-orange-100">
+                        <div className="flex items-center justify-between mb-2">
+                            <span className="text-xs font-black text-orange-600 uppercase">Cần ôn ngay</span>
+                            <span className="bg-orange-200 text-orange-700 text-[10px] font-bold px-1.5 rounded">{groupedData.today.length} chữ</span>
+                        </div>
+                        {groupedData.today.length > 0 ? (
+                            <div className="flex flex-wrap gap-1">
+                                {groupedData.today.map((char, i) => (
+                                    <span key={i} className="inline-block bg-white text-gray-800 border border-orange-200 rounded px-1.5 py-0.5 text-lg font-['Klee_One'] min-w-[32px] text-center shadow-sm">{char}</span>
+                                ))}
+                            </div>
+                        ) : (<p className="text-[11px] text-gray-400 italic">Không có bài tập tồn đọng. Giỏi lắm! 🎉</p>)}
+                    </div>
+                    {/* Phần TƯƠNG LAI */}
+                    {futureDates.length > 0 && (
+                        <div className="space-y-3">
+                             <div className="flex items-center gap-2 mt-2">
+                                <span className="h-[1px] flex-1 bg-gray-100"></span>
+                                <span className="text-[10px] font-bold text-gray-400 uppercase">Sắp tới</span>
+                                <span className="h-[1px] flex-1 bg-gray-100"></span>
+                            </div>
+                            {futureDates.map(date => (
+                                <div key={date} className="bg-gray-50 rounded-xl p-3 border border-gray-100">
+                                    <div className="flex items-center justify-between mb-2">
+                                        <span className="text-xs font-bold text-gray-600 flex items-center gap-1">
+                                            <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+                                            Ngày {date} (5:00 sáng)
+                                        </span>
+                                        <span className="bg-gray-200 text-gray-600 text-[10px] font-bold px-1.5 rounded">{groupedData[date].length} chữ</span>
+                                    </div>
+                                    <div className="flex flex-wrap gap-1">
+                                        {groupedData[date].map((char, i) => (
+                                            <span key={i} className="inline-block bg-white text-gray-500 border border-gray-200 rounded px-1.5 py-0.5 text-base font-['Klee_One'] min-w-[28px] text-center opacity-70">{char}</span>
+                                        ))}
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    )}
+                </div>
+            </div>
+        </div>
+    );
+};
+
+// --- BƯỚC 4: FLASHCARD MODAL (ĐÃ GẮN SỰ KIỆN LƯU DỮ LIỆU) ---
+const FlashcardModal = ({ isOpen, onClose, text, dbData, onSrsUpdate }) => { 
     const [originalQueue, setOriginalQueue] = React.useState([]);
     const [queue, setQueue] = React.useState([]);
     const [currentIndex, setCurrentIndex] = React.useState(0);
@@ -205,326 +337,102 @@ const FlashcardModal = ({ isOpen, onClose, text, dbData, onSrsUpdate }) => { // 
     const [startX, setStartX] = React.useState(0); 
     const [isDragging, setIsDragging] = React.useState(false);
     const [btnFeedback, setBtnFeedback] = React.useState(null);
-
-    // --- STATE & HÀM TRỘN ---
     const [isShuffleOn, setIsShuffleOn] = React.useState(false);
 
-    // --- [MỚI] 1. CHẾ TẠO NGÒI NỔ (Hàm bắn pháo hoa) ---
-    const triggerConfetti = React.useCallback(() => {
-        if (typeof confetti === 'undefined') return;
-        const count = 200;
-        const defaults = { origin: { y: 0.6 }, zIndex: 1500 };
+    // --- (Giữ nguyên các hàm bổ trợ: triggerConfetti, shuffleArray, startNewSession...) ---
+    // Bạn có thể copy lại các hàm này từ code cũ nếu muốn ngắn gọn, hoặc dùng đoạn dưới đây:
+    const triggerConfetti = React.useCallback(() => { if (typeof confetti === 'undefined') return; const count = 200; const defaults = { origin: { y: 0.6 }, zIndex: 1500 }; function fire(particleRatio, opts) { confetti({ ...defaults, ...opts, particleCount: Math.floor(count * particleRatio) }); } fire(0.25, { spread: 26, startVelocity: 55 }); fire(0.2, { spread: 60 }); fire(0.35, { spread: 100, decay: 0.91, scalar: 0.8 }); fire(0.1, { spread: 120, startVelocity: 25, decay: 0.92, scalar: 1.2 }); fire(0.1, { spread: 120, startVelocity: 45 }); }, []);
+    React.useEffect(() => { if (isFinished && isOpen) { triggerConfetti(); } }, [isFinished, triggerConfetti]);
+    const shuffleArray = React.useCallback((array) => { const newArr = [...array]; for (let i = newArr.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [newArr[i], newArr[j]] = [newArr[j], newArr[i]]; } return newArr; }, []);
+    const startNewSession = React.useCallback((chars) => { setQueue(chars); setCurrentIndex(0); setIsFlipped(false); setUnknownIndices([]); setKnownCount(0); setHistory([]); setIsFinished(false); setExitDirection(null); setDragX(0); setBtnFeedback(null); }, []);
+    
+    // --- Các useEffect cơ bản ---
+    React.useEffect(() => { if (isOpen && text) { const chars = Array.from(text).filter(c => c.trim()); setOriginalQueue(chars); const queueToLoad = isShuffleOn ? shuffleArray(chars) : chars; startNewSession(queueToLoad); setShowHint(true); } }, [isOpen, text, startNewSession]); 
+    React.useEffect(() => { if (isOpen) { const scrollBarWidth = window.innerWidth - document.documentElement.clientWidth; document.documentElement.style.overflow = 'hidden'; document.body.style.overflow = 'hidden'; document.body.style.paddingRight = `${scrollBarWidth}px`; document.body.style.touchAction = 'none'; } else { document.documentElement.style.overflow = ''; document.body.style.overflow = ''; document.body.style.paddingRight = ''; document.body.style.touchAction = ''; } return () => { document.documentElement.style.overflow = ''; document.body.style.overflow = ''; document.body.style.paddingRight = ''; document.body.style.touchAction = ''; }; }, [isOpen]);
+    
+    // --- Các hàm xử lý UI ---
+    const toggleFlip = React.useCallback(() => { setIsFlipped(prev => !prev); if (currentIndex === 0) setShowHint(false); }, [currentIndex]);
+    const handleNext = React.useCallback((isKnown) => { if (exitDirection || isFinished || queue.length === 0) return; setIsFlipped(false); if (isKnown) { setKnownCount(prev => prev + 1); } else { setUnknownIndices(prev => [...prev, currentIndex]); } setHistory(prev => [...prev, isKnown]); setBtnFeedback(isKnown ? 'right' : 'left'); setExitDirection(isKnown ? 'right' : 'left'); setTimeout(() => { setCurrentIndex((prevIndex) => { if (prevIndex < queue.length - 1) { setExitDirection(null); setDragX(0); setBtnFeedback(null); return prevIndex + 1; } else { setIsFinished(true); return prevIndex; } }); }, 150); }, [currentIndex, queue, exitDirection, isFinished]);
+    const handleBack = (e) => { if (e) { e.preventDefault(); e.stopPropagation(); e.currentTarget.blur(); } if (currentIndex > 0 && history.length > 0) { const lastIsKnown = history[history.length - 1]; if (lastIsKnown === true) { setKnownCount(prev => Math.max(0, prev - 1)); } else { setUnknownIndices(prev => prev.slice(0, -1)); } setHistory(prev => prev.slice(0, -1)); setCurrentIndex(prev => prev - 1); setIsFlipped(false); setExitDirection(null); setDragX(0); setBtnFeedback(null); } };
+    const handleToggleShuffle = (e) => { if (e) { e.preventDefault(); e.stopPropagation(); e.currentTarget.blur(); } const nextState = !isShuffleOn; setIsShuffleOn(nextState); setBtnFeedback('shuffle'); setTimeout(() => setBtnFeedback(null), 400); const passedPart = queue.slice(0, currentIndex); const remainingPart = queue.slice(currentIndex); if (remainingPart.length === 0) return; let newRemainingPart; if (nextState) { newRemainingPart = shuffleArray(remainingPart); } else { const counts = {}; remainingPart.forEach(c => { counts[c] = (counts[c] || 0) + 1; }); newRemainingPart = []; for (const char of originalQueue) { if (counts[char] > 0) { newRemainingPart.push(char); counts[char]--; } } } setQueue([...passedPart, ...newRemainingPart]); setIsFlipped(false); };
+    
+    // --- Các hàm Drag ---
+    const handleDragStart = (e) => { if (exitDirection || isFinished) return; setIsDragging(true); const clientX = e.type.includes('mouse') ? e.clientX : e.touches[0].clientX; setStartX(clientX); };
+    const handleDragMove = (e) => { if (!isDragging || exitDirection) return; const clientX = e.type.includes('mouse') ? e.clientX : e.touches[0].clientX; setDragX(clientX - startX); };
+    const dynamicBorder = () => { if (dragX > 70 || btnFeedback === 'right') return '#22c55e'; if (dragX < -70 || btnFeedback === 'left') return '#ef4444'; return 'white'; };
 
-        function fire(particleRatio, opts) {
-            confetti({ ...defaults, ...opts, particleCount: Math.floor(count * particleRatio) });
-        }
-
-        fire(0.25, { spread: 26, startVelocity: 55 });
-        fire(0.2, { spread: 60 });
-        fire(0.35, { spread: 100, decay: 0.91, scalar: 0.8 });
-        fire(0.1, { spread: 120, startVelocity: 25, decay: 0.92, scalar: 1.2 });
-        fire(0.1, { spread: 120, startVelocity: 45 });
-    }, []);
-
-    // --- [MỚI] 2. KÍCH HOẠT TỰ ĐỘNG KHI HOÀN THÀNH ---
-    React.useEffect(() => {
-        if (isFinished && isOpen) {
-            triggerConfetti();
-        }
-    }, [isFinished, triggerConfetti]);
-
-
-    // Hàm trộn mảng (Fisher-Yates)
-    const shuffleArray = React.useCallback((array) => {
-        const newArr = [...array];
-        for (let i = newArr.length - 1; i > 0; i--) {
-            const j = Math.floor(Math.random() * (i + 1));
-            [newArr[i], newArr[j]] = [newArr[j], newArr[i]];
-        }
-        return newArr;
-    }, []);
-
-    // --- KHỞI TẠO SESSION ---
-    const startNewSession = React.useCallback((chars) => {
-        setQueue(chars);
-        setCurrentIndex(0);
-        setIsFlipped(false);
-        setUnknownIndices([]);
-        setKnownCount(0);
-        setHistory([]);
-        setIsFinished(false);
-        setExitDirection(null);
-        setDragX(0);
-        setBtnFeedback(null);
-    }, []);
-
-    // Khởi tạo khi mở Modal
-    React.useEffect(() => {
-        if (isOpen && text) {
-            const chars = Array.from(text).filter(c => c.trim());
-            setOriginalQueue(chars);
-            // Nếu đang bật shuffle thì trộn ngay đầu vào
-            const queueToLoad = isShuffleOn ? shuffleArray(chars) : chars;
-            startNewSession(queueToLoad);
-            setShowHint(true);
-        }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [isOpen, text, startNewSession]); 
-
-    // --- KHÓA CUỘN NỀN ---
-    React.useEffect(() => {
-        if (isOpen) {
-            const scrollBarWidth = window.innerWidth - document.documentElement.clientWidth;
-            document.documentElement.style.overflow = 'hidden';
-            document.body.style.overflow = 'hidden';
-            document.body.style.paddingRight = `${scrollBarWidth}px`;
-            document.body.style.touchAction = 'none'; 
-        } else {
-            document.documentElement.style.overflow = '';
-            document.body.style.overflow = '';
-            document.body.style.paddingRight = '';
-            document.body.style.touchAction = '';
-        }
-        return () => {
-            document.documentElement.style.overflow = '';
-            document.body.style.overflow = '';
-            document.body.style.paddingRight = '';
-            document.body.style.touchAction = '';
-        };
-    }, [isOpen]);
-
-    // --- CÁC HÀM XỬ LÝ LOGIC ---
-    const toggleFlip = React.useCallback(() => {
-        setIsFlipped(prev => !prev);
-        if (currentIndex === 0) setShowHint(false);
-    }, [currentIndex]);
-
-    const handleNext = React.useCallback((isKnown) => {
-        if (exitDirection || isFinished || queue.length === 0) return;
-        setIsFlipped(false);
-        if (isKnown) {
-            setKnownCount(prev => prev + 1);
-        } else {
-            setUnknownIndices(prev => [...prev, currentIndex]);
-        }
-        setHistory(prev => [...prev, isKnown]);
-        setBtnFeedback(isKnown ? 'right' : 'left');
-        setExitDirection(isKnown ? 'right' : 'left');
-        setTimeout(() => {
-            setCurrentIndex((prevIndex) => {
-                if (prevIndex < queue.length - 1) {
-                    setExitDirection(null);
-                    setDragX(0);
-                    setBtnFeedback(null);
-                    return prevIndex + 1;
-                } else {
-                    setIsFinished(true);
-                    return prevIndex;
-                }
-            });
-        }, 150);
-    }, [currentIndex, queue, exitDirection, isFinished]);
-
-    // --- XỬ LÝ PHÍM TẮT ---
+    // --- SỬA LOGIC: PHÍM TẮT ---
     React.useEffect(() => {
         const handleKeyDown = (e) => {
             if (!isOpen || isFinished) return;
             if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
             switch (e.key) {
-                case ' ': 
-                case 'ArrowUp':
-                case 'ArrowDown':
-                    e.preventDefault();
-                    toggleFlip();
-                    break;
+                case ' ': case 'ArrowUp': case 'ArrowDown':
+                    e.preventDefault(); toggleFlip(); break;
                 case 'ArrowLeft':
                     e.preventDefault();
-                    // SỬA: Gọi onSrsUpdate(0) khi bấm phím
+                    // [LOGIC MỚI] Gọi hàm lưu dữ liệu: 0 = Đang học
                     if(onSrsUpdate) onSrsUpdate(queue[currentIndex], 0);
                     handleNext(false); 
                     break;
                 case 'ArrowRight':
                     e.preventDefault();
-                    // SỬA: Gọi onSrsUpdate(1) khi bấm phím
+                    // [LOGIC MỚI] Gọi hàm lưu dữ liệu: 1 = Đã biết
                     if(onSrsUpdate) onSrsUpdate(queue[currentIndex], 1);
                     handleNext(true); 
                     break;
-                case 'Escape':
-                    onClose();
-                    break;
-                default:
-                    break;
+                case 'Escape': onClose(); break;
+                default: break;
             }
         };
         window.addEventListener('keydown', handleKeyDown);
         return () => window.removeEventListener('keydown', handleKeyDown);
     }, [isOpen, isFinished, toggleFlip, handleNext, onClose, onSrsUpdate, queue, currentIndex]);
 
-    const handleBack = (e) => {
-        if (e) { e.preventDefault(); e.stopPropagation(); e.currentTarget.blur(); }
-        if (currentIndex > 0 && history.length > 0) {
-            const lastIsKnown = history[history.length - 1];
-            if (lastIsKnown === true) {
-                setKnownCount(prev => Math.max(0, prev - 1));
-            } else {
-                setUnknownIndices(prev => prev.slice(0, -1));
-            }
-            setHistory(prev => prev.slice(0, -1));
-            setCurrentIndex(prev => prev - 1);
-            setIsFlipped(false);
-            setExitDirection(null);
-            setDragX(0);
-            setBtnFeedback(null);
-        }
-    };
-
-    // [QUAN TRỌNG] HÀM XỬ LÝ NÚT TRỘN (BẬT/TẮT)
-    const handleToggleShuffle = (e) => {
-        if (e) { e.preventDefault(); e.stopPropagation(); e.currentTarget.blur(); }
-
-        const nextState = !isShuffleOn;
-        setIsShuffleOn(nextState);
-        setBtnFeedback('shuffle');
-        setTimeout(() => setBtnFeedback(null), 400);
-
-        // Chia mảng hiện tại thành 2 phần: Đã qua (passed) và Còn lại (remaining - bao gồm cả thẻ hiện tại)
-        const passedPart = queue.slice(0, currentIndex);
-        const remainingPart = queue.slice(currentIndex);
-
-        if (remainingPart.length === 0) return;
-
-        let newRemainingPart;
-
-        if (nextState) {
-            // TRƯỜNG HỢP BẬT: Trộn ngay lập tức phần còn lại
-            newRemainingPart = shuffleArray(remainingPart);
-        } else {
-            // TRƯỜNG HỢP TẮT: Khôi phục thứ tự gốc của phần còn lại
-            // Logic: Duyệt qua originalQueue, nhặt ra những phần tử có mặt trong remainingPart
-            // Sử dụng bộ đếm (counts) để xử lý trường hợp có các ký tự trùng nhau
-            const counts = {};
-            remainingPart.forEach(c => { counts[c] = (counts[c] || 0) + 1; });
-            
-            newRemainingPart = [];
-            for (const char of originalQueue) {
-                if (counts[char] > 0) {
-                    newRemainingPart.push(char);
-                    counts[char]--;
-                }
-            }
-        }
-
-        // Cập nhật queue mới: Giữ nguyên phần đã qua + Phần còn lại đã xử lý
-        setQueue([...passedPart, ...newRemainingPart]);
-        // Reset lật thẻ vì nội dung thẻ hiện tại có thể đã thay đổi
-        setIsFlipped(false);
-    };
-
-    const handleDragStart = (e) => {
-        if (exitDirection || isFinished) return;
-        setIsDragging(true);
-        const clientX = e.type.includes('mouse') ? e.clientX : e.touches[0].clientX;
-        setStartX(clientX);
-    };
-
-    const handleDragMove = (e) => {
-        if (!isDragging || exitDirection) return;
-        const clientX = e.type.includes('mouse') ? e.clientX : e.touches[0].clientX;
-        setDragX(clientX - startX);
-    };
-
+    // --- SỬA LOGIC: VUỐT (DRAG) ---
     const handleDragEnd = () => {
         if (!isDragging) return;
         setIsDragging(false);
         if (dragX > 70) {
-             // SỬA: Kéo sang phải = Đã biết (1)
+             // [LOGIC MỚI] Kéo phải = Đã biết (1)
              if(onSrsUpdate) onSrsUpdate(queue[currentIndex], 1);
              handleNext(true);
         }
         else if (dragX < -70) {
-             // SỬA: Kéo sang trái = Đang học (0)
+             // [LOGIC MỚI] Kéo trái = Đang học (0)
              if(onSrsUpdate) onSrsUpdate(queue[currentIndex], 0);
              handleNext(false);
         }
         else setDragX(0);
     };
 
-    const dynamicBorder = () => {
-        if (dragX > 70 || btnFeedback === 'right') return '#22c55e';
-        if (dragX < -70 || btnFeedback === 'left') return '#ef4444';
-        return 'white'; 
-    };
-
     if (!isOpen || queue.length === 0) return null;
-
     const currentChar = queue[currentIndex] || ''; 
-    if (!currentChar && !isFinished && isOpen) {
-        setIsFinished(true);
-    }
+    if (!currentChar && !isFinished && isOpen) { setIsFinished(true); }
     const info = dbData?.KANJI_DB?.[currentChar] || dbData?.ALPHABETS?.hiragana?.[currentChar] || dbData?.ALPHABETS?.katakana?.[currentChar] || {};
-
     const progressRatio = currentIndex / (queue.length - 1 || 1);
 
     return (
-        <div 
-            className="fixed inset-0 z-[300] flex items-center justify-center bg-gray-900/95 backdrop-blur-xl animate-in fade-in duration-200 select-none touch-none"
-            style={{ touchAction: 'none' }}
-            onClick={(e) => e.stopPropagation()} 
-        >
+        <div className="fixed inset-0 z-[300] flex items-center justify-center bg-gray-900/95 backdrop-blur-xl animate-in fade-in duration-200 select-none touch-none" style={{ touchAction: 'none' }} onClick={(e) => e.stopPropagation()}>
             <div className="w-full max-w-sm flex flex-col items-center">
                 {!isFinished ? (
                     <>
-                        <div 
-                            className={`relative transition-all duration-300 ease-in-out ${
-                             exitDirection === 'left' ? '-translate-x-16 -rotate-3' : 
-                             exitDirection === 'right' ? 'translate-x-16 rotate-3' : ''
-                            }`}
-                            style={{ 
-                               transform: !exitDirection && dragX !== 0 ? `translateX(${dragX}px) rotate(${dragX * 0.02}deg)` : '',
-                              transition: isDragging ? 'none' : 'all 0.25s ease-out'
-                            }}
-                        >
-                            <div 
-                                onClick={() => { if (Math.abs(dragX) < 5) toggleFlip(); }}
-                                onMouseDown={handleDragStart}
-                                onMouseMove={handleDragMove}
-                                onMouseUp={handleDragEnd}
-                                onMouseLeave={handleDragEnd}
-                                onTouchStart={handleDragStart}
-                                onTouchMove={handleDragMove}
-                                onTouchEnd={handleDragEnd}
-                                className={`relative w-64 h-80 cursor-pointer transition-all duration-500 [transform-style:preserve-3d] ${isFlipped ? '[transform:rotateY(180deg)]' : ''}`}
-                            >
-                                <div 
-                                    className="absolute inset-0 bg-white rounded-[2rem] shadow-2xl flex items-center justify-center border-4 [backface-visibility:hidden] overflow-hidden"
-                                    style={{ borderColor: dynamicBorder() }}
-                                >
+                        {/* --- PHẦN CARD (GIỮ NGUYÊN) --- */}
+                        <div className={`relative transition-all duration-300 ease-in-out ${exitDirection === 'left' ? '-translate-x-16 -rotate-3' : exitDirection === 'right' ? 'translate-x-16 rotate-3' : ''}`} style={{ transform: !exitDirection && dragX !== 0 ? `translateX(${dragX}px) rotate(${dragX * 0.02}deg)` : '', transition: isDragging ? 'none' : 'all 0.25s ease-out' }}>
+                            <div onClick={() => { if (Math.abs(dragX) < 5) toggleFlip(); }} onMouseDown={handleDragStart} onMouseMove={handleDragMove} onMouseUp={handleDragEnd} onMouseLeave={handleDragEnd} onTouchStart={handleDragStart} onTouchMove={handleDragMove} onTouchEnd={handleDragEnd} className={`relative w-64 h-80 cursor-pointer transition-all duration-500 [transform-style:preserve-3d] ${isFlipped ? '[transform:rotateY(180deg)]' : ''}`}>
+                                <div className="absolute inset-0 bg-white rounded-[2rem] shadow-2xl flex items-center justify-center border-4 [backface-visibility:hidden] overflow-hidden" style={{ borderColor: dynamicBorder() }}>
                                     <span className="text-8xl font-['Klee_One'] text-gray-800 transform -translate-y-5">{currentChar}</span>
-                                    {currentIndex === 0 && showHint && (
-                                        <p className="absolute bottom-14 text-indigo-400 text-[7px] font-black uppercase tracking-[0.4em] animate-pulse">Chạm để lật</p>
-                                    )}
+                                    {currentIndex === 0 && showHint && (<p className="absolute bottom-14 text-indigo-400 text-[7px] font-black uppercase tracking-[0.4em] animate-pulse">Chạm để lật</p>)}
                                     <div className={`absolute bottom-5 left-0 right-0 px-6 items-center z-50 ${isFlipped ? 'hidden sm:flex' : 'flex'} justify-between`}>
-                                        <button 
-                                            onClick={handleBack} 
-                                            className={`p-2.5 bg-black/5 hover:bg-black/10 active:scale-90 rounded-full transition-all flex items-center justify-center ${currentIndex === 0 ? 'opacity-10 cursor-not-allowed' : 'text-gray-400 hover:text-gray-700'}`}
-                                            disabled={currentIndex === 0}
-                                        >
+                                        <button onClick={handleBack} className={`p-2.5 bg-black/5 hover:bg-black/10 active:scale-90 rounded-full transition-all flex items-center justify-center ${currentIndex === 0 ? 'opacity-10 cursor-not-allowed' : 'text-gray-400 hover:text-gray-700'}`} disabled={currentIndex === 0}>
                                             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" className="pointer-events-none"><path d="M9 14 4 9l5-5"/><path d="M4 9h12a5 5 0 0 1 0 10H7"/></svg>
                                         </button>
-                                        
-                                        {/* Nút Toggle Trộn thẻ */}
-                                        <button 
-                                            onClick={handleToggleShuffle} 
-                                            className={`p-2.5 bg-black/5 hover:bg-black/10 active:scale-90 rounded-full transition-all flex items-center justify-center ${isShuffleOn ? 'bg-indigo-100 text-indigo-600' : 'text-gray-400 hover:text-gray-700'}`}
-                                        >
+                                        <button onClick={handleToggleShuffle} className={`p-2.5 bg-black/5 hover:bg-black/10 active:scale-90 rounded-full transition-all flex items-center justify-center ${isShuffleOn ? 'bg-indigo-100 text-indigo-600' : 'text-gray-400 hover:text-gray-700'}`}>
                                             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" className={`pointer-events-none ${btnFeedback === 'shuffle' ? 'animate-[spin_0.4s_linear_infinite]' : ''}`}><path d="m21 16-4 4-4-4"/><path d="M17 20V4"/><path d="m3 8 4-4 4 4"/><path d="M7 4v16"/></svg>
                                         </button>
                                     </div>
                                 </div>
-                                <div 
-                                    className="absolute inset-0 bg-indigo-600 rounded-[2rem] shadow-2xl flex flex-col items-center justify-center p-6 text-white [backface-visibility:hidden] [transform:rotateY(180deg)] border-4 overflow-hidden text-center"
-                                    style={{ borderColor: dynamicBorder() }}
-                                >
+                                <div className="absolute inset-0 bg-indigo-600 rounded-[2rem] shadow-2xl flex flex-col items-center justify-center p-6 text-white [backface-visibility:hidden] [transform:rotateY(180deg)] border-4 overflow-hidden text-center" style={{ borderColor: dynamicBorder() }}>
                                     <div className="flex-1 flex flex-col items-center justify-center w-full transform -translate-y-3">
                                         <h3 className="text-3xl font-black mb-2 uppercase tracking-tighter leading-tight">{info.sound || '---'}</h3>
                                         <p className="text-base opacity-90 font-medium italic leading-snug px-2">{info.meaning || ''}</p>
@@ -532,44 +440,20 @@ const FlashcardModal = ({ isOpen, onClose, text, dbData, onSrsUpdate }) => { // 
                                 </div>
                             </div>
                         </div>
-
-                        {/* THANH TIẾN TRÌNH */}
+                        
+                        {/* --- THANH TIẾN TRÌNH (GIỮ NGUYÊN) --- */}
                         <div className="w-64 mt-8 mb-6 relative h-6 flex items-center">
-                            {/* Thanh nền (Màu xám mờ) */}
-                            <div className="w-full h-1 bg-white/10 rounded-full relative overflow-hidden">
-                                {/* [MỚI] Thanh đã đi qua (Tô màu xanh) */}
-                                <div 
-                                    className="absolute top-0 left-0 h-full bg-sky-400 transition-all duration-300 ease-out"
-                                    style={{ width: `${progressRatio * 100}%` }}
-                                />
-                            </div>
-
-                            {/* [HỘP SỐ] Tổng số thẻ (Bên phải) */}
-                            <div className="absolute right-0 top-1/2 -translate-y-1/2 w-full h-1 pointer-events-none">
-                                <div className="absolute right-0 top-1/2 -translate-y-1/2 h-7 w-9 rounded-md flex items-center justify-center bg-white shadow-sm z-0">
-                                    <span className="text-[10px] font-black text-black leading-none">{queue.length}</span>
-                                </div>
-                            </div>
-
-                            {/* [HỘP SỐ] Thẻ hiện tại (Cục trượt màu xanh) */}
-                            <div className="absolute top-1/2 -translate-y-1/2 w-full h-1 pointer-events-none">
-                                <div 
-                                    className="absolute top-1/2 -translate-y-1/2 h-7 w-9 bg-sky-400 rounded-md flex items-center justify-center shadow-[0_0_15px_rgba(56,189,248,0.8)] transition-all duration-300 ease-out z-10"
-                                    style={{ 
-                                        left: `calc(${progressRatio * 100}% - ${progressRatio * 36}px)` 
-                                    }}
-                                >
-                                    <span className="text-[10px] font-black text-white leading-none">{currentIndex + 1}</span>
-                                </div>
-                            </div>
+                            <div className="w-full h-1 bg-white/10 rounded-full relative overflow-hidden"><div className="absolute top-0 left-0 h-full bg-sky-400 transition-all duration-300 ease-out" style={{ width: `${progressRatio * 100}%` }} /></div>
+                            <div className="absolute right-0 top-1/2 -translate-y-1/2 w-full h-1 pointer-events-none"><div className="absolute right-0 top-1/2 -translate-y-1/2 h-7 w-9 rounded-md flex items-center justify-center bg-white shadow-sm z-0"><span className="text-[10px] font-black text-black leading-none">{queue.length}</span></div></div>
+                            <div className="absolute top-1/2 -translate-y-1/2 w-full h-1 pointer-events-none"><div className="absolute top-1/2 -translate-y-1/2 h-7 w-9 bg-sky-400 rounded-md flex items-center justify-center shadow-[0_0_15px_rgba(56,189,248,0.8)] transition-all duration-300 ease-out z-10" style={{ left: `calc(${progressRatio * 100}% - ${progressRatio * 36}px)` }}><span className="text-[10px] font-black text-white leading-none">{currentIndex + 1}</span></div></div>
                         </div>
 
-                        {/* NÚT ĐIỀU HƯỚNG */}
+                        {/* --- SỬA: NÚT ĐIỀU HƯỚNG (GẮN SỰ KIỆN LƯU) --- */}
                         <div className="flex gap-3 w-full px-8">
                             <button 
                                 onClick={() => {
-                                    // SỬA: Gửi tín hiệu 0 (Đang học)
-                                    if(onSrsUpdate) onSrsUpdate(currentChar, 0);
+                                    // [LOGIC MỚI] Nút Đỏ = 0
+                                    if(onSrsUpdate) onSrsUpdate(currentChar, 0); 
                                     handleNext(false);
                                 }} 
                                 className="flex-1 py-3 bg-red-500/10 hover:bg-red-500/20 hover:text-red-600 active:bg-red-500 text-red-500 active:text-white border border-red-500/20 rounded-xl font-black text-[10px] transition-all flex items-center justify-center gap-2 uppercase"
@@ -578,8 +462,8 @@ const FlashcardModal = ({ isOpen, onClose, text, dbData, onSrsUpdate }) => { // 
                             </button>
                             <button 
                                 onClick={() => {
-                                    // SỬA: Gửi tín hiệu 1 (Đã biết)
-                                    if(onSrsUpdate) onSrsUpdate(currentChar, 1);
+                                    // [LOGIC MỚI] Nút Xanh = 1
+                                    if(onSrsUpdate) onSrsUpdate(currentChar, 1); 
                                     handleNext(true);
                                 }} 
                                 className="flex-1 py-3 bg-green-500/10 hover:bg-green-500/20 hover:text-green-600 active:bg-green-500 text-green-500 active:text-white border border-green-500/20 rounded-xl font-black text-[10px] transition-all flex items-center justify-center gap-2 uppercase"
@@ -588,49 +472,17 @@ const FlashcardModal = ({ isOpen, onClose, text, dbData, onSrsUpdate }) => { // 
                             </button>
                         </div>
 
-                        {/* NÚT ĐÓNG */}
-                        <button 
-                            onClick={onClose} 
-                            className="mt-8 text-white/40 hover:text-red-500 transition-all text-[13px] sm:text-[11px] font-black uppercase tracking-[0.2em] py-2 px-4 active:scale-95"
-                        >
-                            Đóng thẻ
-                        </button>
+                        <button onClick={onClose} className="mt-8 text-white/40 hover:text-red-500 transition-all text-[13px] sm:text-[11px] font-black uppercase tracking-[0.2em] py-2 px-4 active:scale-95">Đóng thẻ</button>
                     </>
                 ) : (
                     <div className="bg-white rounded-[2rem] p-8 w-full max-w-[280px] text-center shadow-2xl border-4 border-indigo-50 animate-in zoom-in-95">
-                        
-                        {/* --- [MỚI] ĐẶT NGÒI NỔ VÀO ĐÂY (Thêm onClick và cursor-pointer) --- */}
-                        <div 
-                            className="text-5xl mb-4 animate-bounce cursor-pointer hover:scale-125 transition-transform" 
-                            onClick={triggerConfetti}
-                            title="Bấm để bắn pháo hoa!"
-                        >
-                            🎉
-                        </div>
-                        
+                        <div className="text-5xl mb-4 animate-bounce cursor-pointer hover:scale-125 transition-transform" onClick={triggerConfetti} title="Bấm để bắn pháo hoa!">🎉</div>
                         <h3 className="text-lg font-black text-gray-800 mb-1 uppercase">Hoàn thành</h3>
                         <p className="text-gray-400 mb-6 text-[11px] font-medium italic">Bạn đã học được {knownCount}/{queue.length} chữ.</p>
                         <div className="space-y-2">
-                            {unknownIndices.length > 0 && (
-                                <button 
-                                    onClick={() => startNewSession(isShuffleOn ? shuffleArray(unknownIndices.map(idx => queue[idx])) : unknownIndices.map(idx => queue[idx]))} 
-                                    className="w-full py-3.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl font-black text-[11px] shadow-lg active:scale-95 transition-colors"
-                                >
-                                    ÔN LẠI {unknownIndices.length} THẺ ĐANG HỌC
-                                </button>
-                            )}
-                            <button 
-                                onClick={() => startNewSession(isShuffleOn ? shuffleArray(originalQueue) : originalQueue)} 
-                                className="w-full py-3.5 bg-blue-50 border-2 border-blue-100 text-blue-500 hover:bg-blue-100 hover:border-blue-300 hover:text-blue-700 rounded-xl font-black text-[11px] transition-all active:scale-95"
-                            >
-                                HỌC LẠI TỪ ĐẦU
-                            </button>
-                            <button 
-                                onClick={onClose} 
-                                className="w-full py-3.5 bg-white border-2 border-gray-200 text-gray-400 hover:text-red-600 hover:border-red-600 font-black text-[11px] uppercase tracking-widest rounded-xl transition-all active:scale-95"
-                            >
-                                THOÁT
-                            </button>
+                            {unknownIndices.length > 0 && (<button onClick={() => startNewSession(isShuffleOn ? shuffleArray(unknownIndices.map(idx => queue[idx])) : unknownIndices.map(idx => queue[idx]))} className="w-full py-3.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl font-black text-[11px] shadow-lg active:scale-95 transition-colors">ÔN LẠI {unknownIndices.length} THẺ ĐANG HỌC</button>)}
+                            <button onClick={() => startNewSession(isShuffleOn ? shuffleArray(originalQueue) : originalQueue)} className="w-full py-3.5 bg-blue-50 border-2 border-blue-100 text-blue-500 hover:bg-blue-100 hover:border-blue-300 hover:text-blue-700 rounded-xl font-black text-[11px] transition-all active:scale-95">HỌC LẠI TỪ ĐẦU</button>
+                            <button onClick={onClose} className="w-full py-3.5 bg-white border-2 border-gray-200 text-gray-400 hover:text-red-600 hover:border-red-600 font-black text-[11px] uppercase tracking-widest rounded-xl transition-all active:scale-95">THOÁT</button>
                         </div>
                     </div>
                 )}
@@ -638,6 +490,7 @@ const FlashcardModal = ({ isOpen, onClose, text, dbData, onSrsUpdate }) => { // 
         </div>
     );
 };
+
 // --- COMPONENT POPUP HOẠT HỌA (Đã chỉnh con trỏ chuột) ---
 const KanjiAnimationModal = ({ char, paths, fullSvg, dbData, isOpen, onClose }) => {
 const [key, setKey] = useState(0); 
@@ -1051,31 +904,24 @@ return (
     const Sidebar = ({ config, onChange, onPrint, srsData, isMenuOpen, setIsMenuOpen, isConfigOpen, setIsConfigOpen, isCafeModalOpen, setIsCafeModalOpen, showMobilePreview, setShowMobilePreview, dbData, setIsFlashcardOpen, onOpenReviewList }) => {
    // --- BƯỚC 2: TÌM TRONG COMPONENT SIDEBAR -> SỬA BIẾN dueChars ---
 
+// 1. Logic bộ lọc mới
 const dueChars = useMemo(() => {
     const now = Date.now();
     return Object.keys(srsData || {}).filter(char => {
         const data = srsData[char];
-        // Điều kiện: Chưa hoàn thành (isDone false) VÀ thời gian hẹn nhỏ hơn hoặc bằng hiện tại
-        return !data.isDone && data.nextReview !== null && data.nextReview <= now;
+        // Điều kiện: Chưa hoàn thành VÀ (Là chữ đang học HOẶC Đã đến giờ ôn)
+        return !data.isDone && data.nextReview !== null && (data.nextReview === 0 || data.nextReview <= now);
     });
 }, [srsData]);
 
-// --- BƯỚC 3: TÌM TRONG COMPONENT SIDEBAR -> SỬA HÀM handleLoadDueCards ---
-
+// 2. Hàm Load bài mới (Load xong mở ngay)
 const handleLoadDueCards = () => {
     if (dueChars.length === 0) return;
-    
-    // 1. Lấy chuỗi ký tự cần ôn
     const dueText = dueChars.join('');
-    
-    // 2. Cập nhật vào ô nhập liệu (Ghi đè hoàn toàn)
-    onChange({ ...config, text: dueText });
-    
-    // 3. Mở ngay Flashcard (Dùng setTimeout nhỏ để đảm bảo state text đã cập nhật kịp)
-    setTimeout(() => {
-        setIsFlashcardOpen(true);
-    }, 50);
+    onChange({ ...config, text: dueText }); 
+    setTimeout(() => { setIsFlashcardOpen(true); }, 50); 
 };
+        
         const scrollRef = useRef(null);
     const [searchResults, setSearchResults] = useState([]);
     const [activeIndex, setActiveIndex] = useState(0); 
@@ -1776,8 +1622,7 @@ LÀM SẠCH
                 />
             </div>
             
-           {/* THAY THẾ ĐOẠN HIỂN THỊ CŨ BẰNG ĐOẠN NÀY */}
-{dueChars.length > 0 && (
+           {dueChars.length > 0 && (
     <div className="mb-6 animate-in slide-in-from-top duration-500">
         <div className="bg-orange-50 border-2 border-orange-200 rounded-2xl p-4 shadow-sm">
             <div className="flex items-center gap-3 mb-3">
@@ -1790,21 +1635,12 @@ LÀM SẠCH
                 </div>
             </div>
             
-            {/* HAI NÚT CHIA ĐÔI */}
+            {/* NÚT CHIA ĐÔI */}
             <div className="flex gap-2">
-                {/* Nút 1: Ôn tập ngay (Màu đậm) */}
-                <button 
-                    onClick={handleLoadDueCards}
-                    className="flex-1 py-2.5 bg-orange-500 hover:bg-orange-600 text-white text-[10px] font-black rounded-xl transition-all shadow-md shadow-orange-200 active:scale-95 uppercase"
-                >
+                <button onClick={handleLoadDueCards} className="flex-1 py-2.5 bg-orange-500 hover:bg-orange-600 text-white text-[10px] font-black rounded-xl transition-all shadow-md shadow-orange-200 active:scale-95 uppercase">
                     Ôn ngay
                 </button>
-
-                {/* Nút 2: Xem danh sách (Màu nhạt) */}
-                <button 
-                    onClick={onOpenReviewList}
-                    className="flex-1 py-2.5 bg-orange-100 hover:bg-orange-200 text-orange-600 text-[10px] font-black rounded-xl transition-all border border-orange-200 active:scale-95 uppercase"
-                >
+                <button onClick={onOpenReviewList} className="flex-1 py-2.5 bg-orange-100 hover:bg-orange-200 text-orange-600 text-[10px] font-black rounded-xl transition-all border border-orange-200 active:scale-95 uppercase">
                     Xem DS
                 </button>
             </div>
@@ -2512,6 +2348,7 @@ const [isFlashcardOpen, setIsFlashcardOpen] = useState(false);
         const [srsData, setSrsData] = useState(() => {
     // Tự động lấy dữ liệu cũ từ máy người dùng khi mở web
     const saved = localStorage.getItem('phadao_srs_data');
+            
     return saved ? JSON.parse(saved) : {};
 });
 
@@ -2646,13 +2483,13 @@ return (
     dbData={dbData} 
     onSrsUpdate={updateSRSProgress}
 />
-        {/* 3. RENDER MODAL MỚI TẠI ĐÂY */}
+       {/* 3. RENDER MODAL MỚI */}
             <ReviewListModal 
                 isOpen={isReviewListOpen}
                 onClose={() => setIsReviewListOpen(false)}
                 srsData={srsData}
             />
-    </div>
+        </div>
 );
 };
     const root = ReactDOM.createRoot(document.getElementById('root'));
