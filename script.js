@@ -1856,9 +1856,7 @@ className={`py-2 text-[11px] font-black border rounded-md transition-all duratio
                                 Xáo trộn danh sách hiện tại
                             </button>
                         </div>
-//lấy ngẫu nhiên cũ
-                            </div>
-                        </div>
+
 <div className="pt-4 border-t border-gray-100">
     <div className="flex items-center gap-2 mb-2">
         <p className="text-[10px] font-bold text-gray-400 uppercase tracking-tight">ÔN TẬP</p>
@@ -1878,6 +1876,8 @@ className={`py-2 text-[11px] font-black border rounded-md transition-all duratio
         <span className="text-xs font-black tracking-wide uppercase">Tạo Flashcard</span>
     </button>
 </div>
+</div>
+)}  
 
          {/* --- NÚT MỚI: DANH SÁCH ÔN TẬP (MÀU CAM) --- */}
 <div className="pt-2 mt-1">
