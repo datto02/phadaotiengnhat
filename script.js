@@ -281,7 +281,7 @@ const ReviewListModal = ({ isOpen, onClose, srsData, onResetSRS }) => {
                             </button>
                         </div>
                         
-                        <div className="p-6 overflow-y-auto custom-scrollbar text-sm text-gray-600 space-y-6">
+                        <div className="p-6 overflow-y-auto custom-scrollbar text-sm text-gray-600 space-y-6 flex-1">
                             
                             {/* 1. Phương pháp học */}
                             <div>
