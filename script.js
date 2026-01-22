@@ -926,11 +926,11 @@ return (
                     </p>
                     <p className="flex items-center gap-2">
                         <span className="bg-gray-100 text-gray-600 w-5 h-5 flex items-center justify-center rounded-full text-[10px] font-bold">3</span>
-                        Có thể xem âm On/Kun trong phần "tùy chỉnh".
+                        Tạo nhanh FLASHCARD trong phần "tiện ích".
                     </p>
                     <p className="flex items-center gap-2">
                         <span className="bg-gray-100 text-gray-600 w-5 h-5 flex items-center justify-center rounded-full text-[10px] font-bold">4</span>
-                        Tạo nhanh FLASHCARD trong 5 giây ở phần "tiện ích".
+                        Chế độ ôn tập thông minh (lặp lại ngắt quãng) được tích hợp vào Flashcard.
                     </p>
                 </div>
             </div>
