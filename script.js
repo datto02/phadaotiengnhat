@@ -1837,7 +1837,7 @@ LÀM SẠCH
                             </div>
 
                             {/* Tạo Flashcard */}
-                            <div className="pt-4 border-t border-gray-100">
+                            <div className="pt-2">
                                 <div className="flex items-center gap-2 mb-2">
                                     <p className="text-[10px] font-bold text-gray-400 uppercase tracking-tight">ÔN TẬP</p>
                                     <span className="flex-1 border-b border-gray-50"></span>
