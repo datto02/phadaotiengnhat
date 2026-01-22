@@ -1880,7 +1880,7 @@ LÀM SẠCH
                                         <path d="M12 18h.01"></path>
                                         <path d="M16 18h.01"></path>
                                     </svg>
-                                    <span className="text-xs font-bold uppercase tracking-wide">Danh sách cần ôn tập</span>
+                                    <span className="text-xs font-bold uppercase tracking-wide">ÔN TẬP THÔNG MINH</span>
                                 </button>
                             </div>
 
