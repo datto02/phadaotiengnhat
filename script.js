@@ -2206,49 +2206,6 @@ TÀI LIỆU HỌC TẬP
         </div>
     );
     };
-// --- COMPONENT MỚI: BẢNG DANH SÁCH ÔN TẬP ---
-const ReviewListModal = ({ isOpen, onClose, srsData }) => {
-    // 1. Logic khóa cuộn nền khi mở modal
-    React.useEffect(() => {
-        if (isOpen) document.body.style.overflow = 'hidden';
-        else document.body.style.overflow = 'unset';
-        return () => { document.body.style.overflow = 'unset'; };
-    }, [isOpen]);
-
-    // 2. Logic gom nhóm dữ liệu theo ngày
-    const groupedData = React.useMemo(() => {
-        const groups = { today: [] }; // 'today' chứa cả quá hạn và hôm nay
-        const now = Date.now();
-
-        Object.entries(srsData || {}).forEach(([char, data]) => {
-            // Bỏ qua chữ đã hoàn thành hoặc chưa học
-            if (data.isDone || !data.nextReview) return;
-
-            if (data.nextReview <= now) {
-                // Nếu đến hạn hoặc quá hạn -> Nhét vào nhóm "Cần ôn ngay"
-                groups.today.push(char);
-            } else {
-                // Nếu chưa đến hạn -> Tính xem là ngày nào
-                const dateObj = new Date(data.nextReview);
-                // Tạo key dạng "23/01"
-                const dateKey = `${dateObj.getDate().toString().padStart(2, '0')}/${(dateObj.getMonth() + 1).toString().padStart(2, '0')}`;
-                
-                if (!groups[dateKey]) groups[dateKey] = [];
-                groups[dateKey].push(char);
-            }
-        });
-        return groups;
-    }, [srsData, isOpen]);
-
-    if (!isOpen) return null;
-
-    // Lấy danh sách các ngày tương lai và sắp xếp tăng dần
-    const futureDates = Object.keys(groupedData).filter(k => k !== 'today').sort((a, b) => {
-        const [d1, m1] = a.split('/').map(Number);
-        const [d2, m2] = b.split('/').map(Number);
-        // So sánh tháng trước, ngày sau (giả sử cùng năm cho đơn giản, hoặc logic date chuẩn)
-        return m1 === m2 ? d1 - d2 : m1 - m2;
-    });
 
     return (
         <div 
