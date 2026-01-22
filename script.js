@@ -206,7 +206,49 @@ const useKanjiReadings = (char, active, dbData) => {
 const ReviewListModal = ({ isOpen, onClose, srsData, onResetSRS }) => {
     const [isConfirmOpen, setIsConfirmOpen] = React.useState(false);
     const [isHelpOpen, setIsHelpOpen] = React.useState(false);
+// --- 1. Hàm Xuất dữ liệu (Backup) ---
+    const handleExport = () => {
+        const data = localStorage.getItem('phadao_srs_data');
+        if (!data || data === '{}') {
+            alert("Chưa có dữ liệu để sao lưu!");
+            return;
+        }
+        const blob = new Blob([data], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const date = new Date();
+        const dateStr = `${date.getDate()}-${date.getMonth() + 1}-${date.getFullYear()}`;
+        const fileName = `backup_tiengnhat_${dateStr}.json`;
+        
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = fileName;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+    };
 
+    // --- 2. Hàm Nhập dữ liệu (Restore) ---
+    const handleImport = (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = (event) => {
+            try {
+                const json = event.target.result;
+                JSON.parse(json); // Check lỗi JSON
+                if (confirm("⚠️ CẢNH BÁO:\nDữ liệu hiện tại sẽ bị thay thế hoàn toàn bởi bản sao lưu này.\nBạn có chắc chắn muốn khôi phục không?")) {
+                    localStorage.setItem('phadao_srs_data', json);
+                    alert("Khôi phục thành công! Trang web sẽ tải lại.");
+                    window.location.reload();
+                }
+            } catch (err) {
+                alert("File lỗi! Vui lòng chọn đúng file .json");
+            }
+        };
+        reader.readAsText(file);
+        e.target.value = '';
+    };
     // Logic khóa cuộn nền
     React.useEffect(() => {
         if (isOpen) document.body.style.overflow = 'hidden';
@@ -1655,119 +1697,7 @@ else setFilterOptions(p => ({...p, katakana: true}));
 
     // Check warning để đổi font placeholder
     const isWarningMode = !filterOptions.hiragana && !filterOptions.katakana && !filterOptions.kanji;
-// --- 1. HÀM XUẤT DỮ LIỆU (BACKUP) ---
 
-const handleExportData = () => {
-
-    const data = localStorage.getItem('phadao_srs_data');
-
-    if (!data || data === '{}') {
-
-        alert("Chưa có dữ liệu nào để sao lưu!");
-
-        return;
-
-    }
-
-    
-
-    // Tạo file JSON
-
-    const blob = new Blob([data], { type: 'application/json' });
-
-    const url = URL.createObjectURL(blob);
-
-    
-
-    // Tạo tên file có ngày giờ (Ví dụ: backup_tiengnhat_23-01-2026.json)
-
-    const date = new Date();
-
-    const dateStr = `${date.getDate()}-${date.getMonth() + 1}-${date.getFullYear()}`;
-
-    const fileName = `backup_tiengnhat_${dateStr}.json`;
-
-    
-
-    // Tạo thẻ a ảo để bấm tải về
-
-    const a = document.createElement('a');
-
-    a.href = url;
-
-    a.download = fileName;
-
-    document.body.appendChild(a);
-
-    a.click();
-
-    document.body.removeChild(a);
-
-    URL.revokeObjectURL(url);
-
-};
-
-
-
-// --- 2. HÀM NHẬP DỮ LIỆU (RESTORE) ---
-
-const handleImportData = (e) => {
-
-    const file = e.target.files[0];
-
-    if (!file) return;
-
-
-
-    const reader = new FileReader();
-
-    reader.onload = (event) => {
-
-        try {
-
-            const json = event.target.result;
-
-            // Kiểm tra thử xem có phải JSON hợp lệ không
-
-            const parsed = JSON.parse(json);
-
-            
-
-            // Kiểm tra sơ bộ cấu trúc (nếu cần)
-
-            if (typeof parsed !== 'object') throw new Error("File không hợp lệ");
-
-
-
-            // Cảnh báo trước khi đè dữ liệu
-
-            if (confirm("CẢNH BÁO: Dữ liệu hiện tại sẽ bị thay thế hoàn toàn bởi bản sao lưu này. Bạn có chắc chắn không?")) {
-
-                localStorage.setItem('phadao_srs_data', json);
-
-                alert("Khôi phục thành công! Trang web sẽ tải lại.");
-
-                window.location.reload(); // Tải lại trang để nhận dữ liệu mới
-
-            }
-
-        } catch (err) {
-
-            alert("Lỗi: File sao lưu bị hỏng hoặc không đúng định dạng!");
-
-            console.error(err);
-
-        }
-
-    };
-
-    reader.readAsText(file);
-
-    // Reset input để chọn lại cùng 1 file vẫn nhận
-
-    e.target.value = '';
-
-};
     return (
         <div className="w-full md:w-96 bg-white shadow-xl p-6 flex flex-col gap-6 h-auto md:h-screen md:overflow-y-auto relative md:sticky top-0 border-r border-gray-200 z-50 hide-scrollbar">
         
