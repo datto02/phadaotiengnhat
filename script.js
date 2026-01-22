@@ -1715,15 +1715,11 @@ LÀM SẠCH
                 {/* HÀNG 3 NÚT */}
                 <div className="flex flex-row gap-4 w-full h-12">
                     
-                    {/* 1. CHỌN NHANH */}
-                    <div className="relative flex-1" ref={quickMenuRef}> 
-                    <button onClick={() => toggleMenu('quick')} className={`w-full h-full px-1 border rounded-xl flex items-center justify-center shadow-sm transition-all active:scale-[0.98] ${isMenuOpen ? 'bg-indigo-50 border-indigo-300 text-indigo-700' : 'bg-white border-gray-300 text-gray-500 hover:bg-gray-50'}`}>
-                        <span className="font-bold text-xs whitespace-nowrap">Chọn nhanh</span>
-                    </button>
-
-                  {isMenuOpen && (
+                    {/* 1. MENU CHỌN NHANH (Quick Select) */}
+                    {isMenuOpen && (
                         <div className="absolute bottom-full left-0 mb-2 z-50 w-72 bg-white border border-gray-200 rounded-2xl shadow-2xl p-4 space-y-4 animate-in fade-in zoom-in-95 duration-200">
-                            {/* 1. Bảng chữ cái */}
+                            
+                            {/* Bảng chữ cái */}
                             <div>
                                 <p className="text-[10px] font-bold text-gray-400 uppercase mb-2 text-left">Bảng chữ cái</p>
                                 <div className="grid grid-cols-2 gap-2">
@@ -1732,54 +1728,72 @@ LÀM SẠCH
                                 </div>
                             </div>
 
-                            {/* 2. Bộ thủ */}
+                            {/* Bộ thủ */}
                             <div>
                                 <p className="text-[10px] font-bold text-gray-400 uppercase mb-2">Bộ thủ</p>
                                 <button onClick={() => handleLoadFromGithub('./data/bothu.json')} className="w-full py-2 text-xs font-black border bg-gray-100 text-gray-500 border-gray-200 uppercase transition-all duration-200 hover:bg-gray-500 hover:text-white hover:border-gray-500 rounded">Bộ thủ cơ bản</button>
                             </div>
 
-                            {/* 3. Lấy tất cả Kanji */}
+                            {/* Lấy tất cả Kanji */}
                             <div>
                                 <p className="text-[10px] font-bold text-gray-400 uppercase mb-2 text-left">Lấy tất cả Kanji</p>
                                 <div className="grid grid-cols-5 gap-1.5">
                                     {['N5', 'N4', 'N3', 'N2', 'N1'].map((level) => (
-                                        <button key={level} onClick={() => { const fileName = `kanji${level.toLowerCase()}.json`; const url = `./data/${fileName}`; handleLoadFromGithub(url); }} className={`py-2 text-[11px] font-black border rounded-md transition-all duration-200 active:scale-95 ${levelColors[level]}`}>{level}</button>
+                                        <button 
+                                            key={level} 
+                                            onClick={() => { 
+                                                const fileName = `kanji${level.toLowerCase()}.json`; 
+                                                const url = `./data/${fileName}`; 
+                                                handleLoadFromGithub(url); 
+                                            }} 
+                                            className={`py-2 text-[11px] font-black border rounded-md transition-all duration-200 active:scale-95 ${levelColors[level]}`}
+                                        >
+                                            {level}
+                                        </button>
                                     ))}
                                 </div>
                             </div>
 
-                            {/* 4. Lấy ngẫu nhiên (ĐÃ CHUYỂN VỀ ĐÂY) */}
+                            {/* Lấy ngẫu nhiên (Đã chuyển xuống đây) */}
                             <div>
                                 <div className="flex justify-between items-center mb-2 mt-1">
                                     <p className="text-[10px] font-bold text-gray-400 uppercase">Lấy ngẫu nhiên</p>
                                     {/* Input số lượng */}
                                     <div className="flex items-center gap-1.5">
-                                        <input type="number" min="0" max="50" value={randomCount} onChange={(e) => { const val = e.target.value; if (val === '') setRandomCount(''); else setRandomCount(parseInt(val)); }} onKeyDown={(e) => { if (e.key === 'Enter' && randomCount > 50) setRandomCount(50) }} onBlur={() => { if (randomCount > 50) setRandomCount(50) }} className="w-10 h-6 text-[14px] text-center font-bold bg-gray-50 border border-gray-200 text-gray-700 rounded focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none transition-colors" />
+                                        <input 
+                                            type="number" 
+                                            min="0" 
+                                            max="50" 
+                                            value={randomCount} 
+                                            onChange={(e) => { 
+                                                const val = e.target.value; 
+                                                if (val === '') setRandomCount(''); 
+                                                else setRandomCount(parseInt(val)); 
+                                            }} 
+                                            onKeyDown={(e) => { if (e.key === 'Enter' && randomCount > 50) setRandomCount(50) }} 
+                                            onBlur={() => { if (randomCount > 50) setRandomCount(50) }} 
+                                            className="w-10 h-6 text-[14px] text-center font-bold bg-gray-50 border border-gray-200 text-gray-700 rounded focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none transition-colors" 
+                                        />
                                         <span className="text-[9px] font-bold text-gray-400">chữ</span>
                                     </div>
                                 </div>
                                 <div className="grid grid-cols-5 gap-1.5">
                                     {['N5', 'N4', 'N3', 'N2', 'N1'].map((level) => (
-                                        <button key={`rand-${level}`} onClick={() => handleRandomLoadFromGithub(level)} className={`py-2 text-[11px] font-black border rounded-md transition-all duration-200 active:scale-95 ${levelColors[level]}`}>{level}</button>
+                                        <button 
+                                            key={`rand-${level}`} 
+                                            onClick={() => handleRandomLoadFromGithub(level)} 
+                                            className={`py-2 text-[11px] font-black border rounded-md transition-all duration-200 active:scale-95 ${levelColors[level]}`}
+                                        >
+                                            {level}
+                                        </button>
                                     ))}
                                 </div>
                             </div>
                         </div>
                     )}
-                        
-                            </div>
-                        </div>
-                        </div>
-                    )}
-                    </div>
 
-                    {/* 2. TIỆN ÍCH */}
-                    <div className="relative flex-1" ref={utilsMenuRef}> 
-                    <button onClick={() => toggleMenu('utils')} className={`w-full h-full px-1 border rounded-xl flex items-center justify-center shadow-sm transition-all active:scale-[0.98] ${isUtilsOpen ? 'bg-indigo-50 border-indigo-300 text-indigo-700' : 'bg-white border-gray-300 text-gray-500 hover:bg-gray-50'}`}>
-                        <span className="font-bold text-xs whitespace-nowrap">Tiện ích</span>
-                    </button>
-                    
-             {isUtilsOpen && (
+                   {/* 2. MENU TIỆN ÍCH (Utilities) */}
+                    {isUtilsOpen && (
                         <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 z-50 w-72 bg-white border border-gray-200 rounded-2xl shadow-2xl p-4 space-y-5 animate-in fade-in zoom-in-95 duration-200">
                             
                             {/* Công cụ Xáo trộn */}
@@ -1797,7 +1811,14 @@ LÀM SẠCH
                                     <p className="text-[10px] font-bold text-gray-400 uppercase tracking-tight">ÔN TẬP</p>
                                     <span className="flex-1 border-b border-gray-50"></span>
                                 </div>
-                                <button onClick={() => { if (!config.text) return alert("Vui lòng nhập chữ vào ô để học flashcard!"); setIsFlashcardOpen(true); setIsUtilsOpen(false); }} className="w-full py-3 bg-[#4255ff] hover:bg-[#3243cc] text-white rounded-xl flex items-center justify-center gap-2 shadow-md transition-all active:scale-95 group">
+                                <button 
+                                    onClick={() => {
+                                        if (!config.text) return alert("Vui lòng nhập chữ vào ô để học flashcard!");
+                                        setIsFlashcardOpen(true);
+                                        setIsUtilsOpen(false);
+                                    }}
+                                    className="w-full py-3 bg-[#4255ff] hover:bg-[#3243cc] text-white rounded-xl flex items-center justify-center gap-2 shadow-md transition-all active:scale-95 group"
+                                >
                                     <span className="bg-white p-0.5 rounded flex items-center justify-center group-hover:rotate-12 transition-transform">
                                         <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#4255ff" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
                                     </span>
@@ -1807,19 +1828,33 @@ LÀM SẠCH
 
                             {/* Danh sách ôn tập (Màu Cam) */}
                             <div className="pt-2 mt-1">
-                                <button onClick={() => { onOpenReviewList(); setIsUtilsOpen(false); }} className="w-full py-2.5 bg-orange-50 border border-orange-200 text-orange-600 hover:text-orange-700 hover:border-orange-300 hover:bg-orange-100 rounded-xl flex items-center justify-center gap-2 transition-all active:scale-95 group shadow-sm">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-orange-500 group-hover:text-orange-600 transition-colors">
-                                        <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line><path d="M8 14h.01"></path><path d="M12 14h.01"></path><path d="M16 14h.01"></path><path d="M8 18h.01"></path><path d="M12 18h.01"></path><path d="M16 18h.01"></path>
+                                <button 
+                                    onClick={() => {
+                                        onOpenReviewList();    
+                                        setIsUtilsOpen(false); 
+                                    }}
+                                    className="w-full py-2.5 bg-orange-50 border border-orange-200 text-orange-600 hover:text-orange-700 hover:border-orange-300 hover:bg-orange-100 rounded-xl flex items-center justify-center gap-2 transition-all active:scale-95 group shadow-sm"
+                                >
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" 
+                                         className="text-orange-500 group-hover:text-orange-600 transition-colors"
+                                    >
+                                        <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                                        <line x1="16" y1="2" x2="16" y2="6"></line>
+                                        <line x1="8" y1="2" x2="8" y2="6"></line>
+                                        <line x1="3" y1="10" x2="21" y2="10"></line>
+                                        <path d="M8 14h.01"></path>
+                                        <path d="M12 14h.01"></path>
+                                        <path d="M16 14h.01"></path>
+                                        <path d="M8 18h.01"></path>
+                                        <path d="M12 18h.01"></path>
+                                        <path d="M16 18h.01"></path>
                                     </svg>
                                     <span className="text-xs font-bold uppercase tracking-wide">Danh sách cần ôn tập</span>
                                 </button>
                             </div>
-                        </div>
-                    )}
-                        </div>
-                    )}
-                    </div>
 
+                        </div>
+                    )}
                     {/* 3. TÙY CHỈNH */}
                     <div className="relative flex-1" ref={configMenuRef}> 
                     <button onClick={() => toggleMenu('config')} className={`w-full h-full px-1 border rounded-xl flex items-center justify-center shadow-sm transition-all active:scale-[0.98] ${isConfigOpen ? 'bg-indigo-50 border-indigo-300 text-indigo-700' : 'bg-white border-gray-300 text-gray-500 hover:bg-gray-50'}`}>
