@@ -406,7 +406,7 @@ const ReviewListModal = ({ isOpen, onClose, srsData, onResetSRS }) => {
                 ) : (
                     // === GIAO DIỆN 2: CẢNH BÁO XÓA ===
                     <div 
-                        className="p-8 text-center animate-in fade-in zoom-in-95 duration-200 flex flex-col items-center justify-center min-h-[300px] cursor-pointer"
+                        className="p-5 text-center animate-in fade-in zoom-in-95 duration-200 flex flex-col items-center justify-center min-h-[300px] cursor-pointer"
                         onClick={(e) => {
                             e.stopPropagation(); 
                             setIsConfirmOpen(false); 
@@ -427,7 +427,7 @@ const ReviewListModal = ({ isOpen, onClose, srsData, onResetSRS }) => {
                             
                             <div className="flex flex-col gap-3 w-full max-w-[260px]">
                                 <button onClick={() => setIsConfirmOpen(false)} className="w-full py-3.5 bg-green-500 hover:bg-green-600 text-white font-black rounded-xl shadow-lg shadow-green-200 transition-all active:scale-95 uppercase text-xs tracking-wider">KHÔNG XÓA NỮA</button>
-                                <button onClick={() => { onResetSRS(); setIsConfirmOpen(false); onClose(); }} className="w-full py-3 text-red-600 hover:text-red-700 hover:bg-red-50 font-bold rounded-xl transition-all text-xs">Vẫn xóa dữ liệu</button>
+                                <button onClick={() => { onResetSRS(); setIsConfirmOpen(false); onClose(); }} className="w-full py-3 text-red-600 hover:text-red-700 bg-red-50 hover:bg-red-100 font-bold rounded-xl transition-all text-xs">Vẫn xóa dữ liệu</button>
                             </div>
                         </div>
                     </div>
@@ -1047,7 +1047,7 @@ return (
                     </p>
                     <p className="flex items-center gap-2">
                         <span className="bg-gray-100 text-gray-600 w-5 h-5 flex items-center justify-center rounded-full text-[10px] font-bold">4</span>
-                        <span>Chế độ <span className="font-bold">ôn tập thông minh</span> (lặp lại ngắt quãng) được tích hợp vào Flashcard.</span>
+                        <span>Chế độ <span className="font-bold">Lịch trình ôn tập</span> (lặp lại ngắt quãng) được tích hợp vào Flashcard.</span>
                     </p>
                 </div>
             </div>
