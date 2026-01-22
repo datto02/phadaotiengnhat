@@ -406,7 +406,7 @@ const ReviewListModal = ({ isOpen, onClose, srsData, onResetSRS }) => {
                 ) : (
                     // === GIAO DIỆN 2: CẢNH BÁO XÓA ===
                     <div 
-                        className="p-8 text-center animate-in fade-in zoom-in-95 duration-200 flex flex-col items-center justify-center min-h-[300px] cursor-pointer"
+                        className="p-7 text-center animate-in fade-in zoom-in-95 duration-200 flex flex-col items-center justify-center min-h-[300px] cursor-pointer"
                         onClick={(e) => {
                             e.stopPropagation(); 
                             setIsConfirmOpen(false); 
@@ -419,7 +419,7 @@ const ReviewListModal = ({ isOpen, onClose, srsData, onResetSRS }) => {
                             <div className="w-16 h-16 bg-red-50 text-red-500 rounded-full flex items-center justify-center mb-5 animate-bounce">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
                             </div>
-                            <h3 className="text-xl font-black text-gray-800 mb-2 uppercase">Cảnh báo quan trọng</h3>
+                            <h3 className="text-xl font-black text-gray-800 mb-2 uppercase">Cảnh báo</h3>
                             <p className="text-sm text-gray-500 mb-8 leading-relaxed max-w-[260px]">
                                 Lịch sử học tập sẽ bị xóa vĩnh viễn.<br/>
                                 <span className="text-red-500 font-bold">Không thể khôi phục lại!</span>
