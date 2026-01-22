@@ -1703,7 +1703,7 @@ LÀM SẠCH
                     Ôn ngay
                 </button>
                 <button onClick={onOpenReviewList} className="flex-1 py-2.5 bg-orange-100 hover:bg-orange-200 text-orange-600 text-[10px] font-black rounded-xl transition-all border border-orange-200 active:scale-95 uppercase">
-                    Xem DS
+                    Xem danh sách
                 </button>
             </div>
         </div>
