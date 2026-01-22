@@ -278,20 +278,20 @@ const ReviewListModal = ({ isOpen, onClose, srsData, onResetSRS }) => {
                             </div>
 
                             {/* 2. Cơ chế hoạt động */}
-                            <div>
-                                <h4 className="font-bold text-gray-800 mb-1 flex items-center gap-2">
-                                    <span className="text-lg">⚙️</span> 2. CƠ CHẾ HOẠT ĐỘNG
-                                </h4>
-                                <div className="bg-indigo-50 p-3 rounded-xl border border-indigo-100 text-sm text-indigo-900 leading-relaxed">
-                                    <p className="mb-2">
-                                        Hệ thống tự động tính toán <b>mức độ ghi nhớ</b> của bạn đối với từng Kanji (dựa trên quá trình và kết quả học Flashcard). Từ đó đưa ra <b>lịch trình ôn tập phù hợp</b> riêng cho từng chữ.
-                                    </p>
-                                    <p className="flex gap-1 items-start mt-2 font-medium">
-                                        <span>🔔</span>
-                                        <span><b>Nhắc nhở:</b> Thông báo sẽ tự động xuất hiện trên giao diện web khi đến hạn ôn tập.</span>
-                                    </p>
-                                </div>
-                            </div>
+                            <div className="bg-indigo-50 p-3 rounded-xl border border-indigo-100 text-sm">
+    <h4 className="font-bold text-indigo-700 mb-1 flex items-center gap-2">
+        <span className="text-lg">⚙️</span> 2. CƠ CHẾ HOẠT ĐỘNG
+    </h4>
+    <div className="text-indigo-900 leading-relaxed">
+        <p className="mb-2">
+            Hệ thống tự động tính toán <b>mức độ ghi nhớ</b> của bạn đối với từng Kanji (dựa trên quá trình và kết quả học Flashcard). Từ đó đưa ra <b>lịch trình ôn tập phù hợp</b> riêng cho từng chữ.
+        </p>
+        <p className="flex gap-1 items-start mt-2 font-medium">
+            <span>🔔</span>
+            <span><b>Nhắc nhở:</b> Thông báo sẽ tự động xuất hiện trên giao diện web khi đến hạn ôn tập (vào lúc 5 giờ sáng).</span>
+        </p>
+    </div>
+</div>
                             
                             {/* 3. Lưu ý dữ liệu */}
                             <div className="bg-yellow-50 p-3 rounded-xl border border-yellow-100 text-sm">
@@ -301,12 +301,49 @@ const ReviewListModal = ({ isOpen, onClose, srsData, onResetSRS }) => {
                                 <ul className="list-disc list-inside space-y-1.5 text-gray-600">
                                     <li><b>Lưu trữ:</b> Dữ liệu học tập được lưu trực tiếp trên <b>Trình duyệt</b> của thiết bị bạn đang dùng.</li>
                                     <li><b>Dung lượng:</b> Cực kỳ nhẹ! Toàn bộ 2136 Kanji chỉ chiếm khoảng 300KB (nhẹ hơn 1 bức ảnh mờ), hoàn toàn không gây nặng máy.</li>
-                                    <li><b>Cảnh báo:</b> Dữ liệu sẽ mất nếu bạn <b>Xóa Cookie/Dữ liệu duyệt web</b> hoặc dùng <b>Tab ẩn danh</b>. Hãy dùng trình duyệt thường để học nhé!</li>
+                                    <li><b>Cảnh báo:</b> Dữ liệu sẽ mất nếu bạn <b>Xóa lịch sử duyệt web</b> hoặc dùng <b>Tab ẩn danh</b>. Hãy dùng trình duyệt thường để học nhé!</li>
                                 </ul>
                             </div>
+                                
+{/* --- MỤC 4: SAO LƯU & KHÔI PHỤC (MỚI) --- */}
+<div className="bg-emerald-50 p-3 rounded-xl border border-emerald-100 text-sm">
+    <h4 className="font-bold text-emerald-800 mb-2 flex items-center gap-2">
+        <span className="text-lg">💾</span> 4. SAO LƯU & KHÔI PHỤC
+    </h4>
+    
+    <div className="text-emerald-900 leading-relaxed mb-3 text-justify">
+        <p className="mb-1">
+            <b>Tại sao cần sao lưu?</b> Để chuyển dữ liệu học tập sang máy khác (điện thoại/máy tính), hoặc phòng trường hợp lỡ tay xóa mất lịch sử duyệt web.
+        </p>
+    </div>
 
+    {/* Cụm nút bấm */}
+    <div className="grid grid-cols-2 gap-3">
+        {/* NÚT TẢI VỀ */}
+        <button 
+            onClick={handleExport}
+            className="flex flex-col items-center justify-center gap-1 py-2 bg-white border border-emerald-200 text-emerald-700 font-bold rounded-lg shadow-sm hover:bg-emerald-600 hover:text-white transition-all active:scale-95"
+        >
+            <div className="flex items-center gap-1">
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                <span>TẢI FILE VỀ</span>
+            </div>
+            <span className="text-[9px] font-normal opacity-80">(Lưu file .json)</span>
+        </button>
+
+        {/* NÚT TẢI LÊN */}
+        <label className="flex flex-col items-center justify-center gap-1 py-2 bg-emerald-600 border border-emerald-600 text-white font-bold rounded-lg shadow-sm hover:bg-emerald-700 transition-all active:scale-95 cursor-pointer">
+            <div className="flex items-center gap-1">
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                <span>KHÔI PHỤC</span>
+            </div>
+            <span className="text-[9px] font-normal opacity-80">(Chọn file đã lưu)</span>
+            <input type="file" accept=".json" className="hidden" onChange={handleImport} />
+        </label>
+    </div>
+</div>
                             <button onClick={() => setIsHelpOpen(false)} className="w-full py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-xl shadow-lg transition-all active:scale-95 text-xs uppercase">
-                                quay lại danh sách ôn tập
+                                quay lại lịch trình ôn tập
                             </button>
                         </div>
                     </>
@@ -316,8 +353,8 @@ const ReviewListModal = ({ isOpen, onClose, srsData, onResetSRS }) => {
                     <>
                         <div className="p-4 border-b border-gray-100 flex justify-between items-center bg-gray-50">
                             <div className="flex items-baseline gap-3">
-                                <h3 className="text-lg font-bold text-gray-800 uppercase flex items-center gap-2">📅 LỊCH TRÌNH ÔN TẬP</h3>
-                                <button onClick={() => setIsHelpOpen(true)} className="text-[14px] font-bold text-blue-500 hover:text-blue-700 underline decoration-blue-300 hover:decoration-blue-700 underline-offset-2 transition-all">
+                                <h3 className="text-sm font-bold text-gray-800 uppercase flex items-center gap-2">📅 LỊCH TRÌNH ÔN TẬP</h3>
+                                <button onClick={() => setIsHelpOpen(true)} className="text-[12px] font-bold text-blue-500 hover:text-blue-700 underline decoration-blue-300 hover:decoration-blue-700 underline-offset-2 transition-all">
                                     xem hướng dẫn
                                 </button>
                             </div>
@@ -331,7 +368,7 @@ const ReviewListModal = ({ isOpen, onClose, srsData, onResetSRS }) => {
                                 <div className="bg-orange-50 rounded-xl p-3 border border-orange-100">
                                     <div className="flex items-center justify-between mb-2">
                                         <span className="text-sm font-black text-orange-600 uppercase">Cần ôn ngay</span>
-                                        <span className="bg-orange-200 text-orange-700 text-[14px] font-bold px-1.5 rounded">{groupedData.today.length} chữ</span>
+                                        <span className="bg-orange-200 text-orange-700 text-sm font-bold px-1.5 rounded">{groupedData.today.length} chữ</span>
                                     </div>
                                     {groupedData.today.length > 0 ? (
                                         <div className="flex flex-wrap gap-1">
@@ -339,7 +376,7 @@ const ReviewListModal = ({ isOpen, onClose, srsData, onResetSRS }) => {
                                                 <span key={i} className="inline-block bg-white text-gray-800 border border-orange-200 rounded px-1.5 py-0.5 text-lg font-['Klee_One'] min-w-[32px] text-center shadow-sm">{char}</span>
                                             ))}
                                         </div>
-                                    ) : (<p className="text-[15px] text-gray-400 italic">Không có Kanji tồn đọng. Giỏi lắm! 🎉</p>)}
+                                    ) : (<p className="text-[12px] text-gray-400 italic">Không có Kanji cần ôn. Giỏi quá! 🎉</p>)}
                                 </div>
 
                                 {futureDates.length > 0 && (
@@ -1003,6 +1040,53 @@ return (
 
     // 4. Page Layout (Đã cập nhật giao diện Bản Mẫu)
     const Page = ({ chars, config, dbData }) => {
+// 1. Hàm Xuất dữ liệu (Tải file về máy)
+    const handlePageExport = () => {
+        const data = localStorage.getItem('phadao_srs_data');
+        if (!data || data === '{}') {
+            alert("Bạn chưa có dữ liệu học tập nào để sao lưu!");
+            return;
+        }
+        // Tạo file JSON và kích hoạt tải về
+        const blob = new Blob([data], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const date = new Date();
+        const dateStr = `${date.getDate()}-${date.getMonth() + 1}-${date.getFullYear()}`;
+        const fileName = `backup_tiengnhat_${dateStr}.json`;
+        
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = fileName;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+    };
+
+    // 2. Hàm Nhập dữ liệu (Tải file lên)
+    const handlePageImport = (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = (event) => {
+            try {
+                const json = event.target.result;
+                JSON.parse(json); // Kiểm tra xem file có lỗi không
+                
+                // Hỏi xác nhận lần cuối
+                if (confirm("⚠️ CẢNH BÁO:\nDữ liệu hiện tại trên máy này sẽ bị thay thế hoàn toàn bởi file bạn vừa chọn.\nBạn có chắc chắn muốn khôi phục không?")) {
+                    localStorage.setItem('phadao_srs_data', json);
+                    alert("Khôi phục thành công! Trang web sẽ tải lại.");
+                    window.location.reload();
+                }
+            } catch (err) {
+                alert("File lỗi! Vui lòng chọn đúng file .json đã sao lưu trước đó.");
+            }
+        };
+        reader.readAsText(file);
+        e.target.value = ''; // Reset để chọn lại file cũ vẫn nhận
+    };
+        
     // Kiểm tra xem có phải đang ở chế độ bản mẫu (không có text) hay không
     const isSample = !config.text || config.text.trim().length === 0;
 
@@ -1030,7 +1114,7 @@ return (
                     </p>
                     <p className="flex items-center gap-2">
                         <span className="bg-gray-100 text-gray-600 w-5 h-5 flex items-center justify-center rounded-full text-[10px] font-bold">4</span>
-                        <span>Chế độ <span className="font-bold">Lịch trình ôn tập</span> (lặp lại ngắt quãng) được tích hợp vào Flashcard.</span>
+                        <span>Chế độ <span className="font-bold">ÔN TẬP THÔNG MINH</span> (lặp lại ngắt quãng) được tích hợp vào Flashcard.</span>
                     </p>
                 </div>
             </div>
@@ -1571,7 +1655,119 @@ else setFilterOptions(p => ({...p, katakana: true}));
 
     // Check warning để đổi font placeholder
     const isWarningMode = !filterOptions.hiragana && !filterOptions.katakana && !filterOptions.kanji;
+// --- 1. HÀM XUẤT DỮ LIỆU (BACKUP) ---
 
+const handleExportData = () => {
+
+    const data = localStorage.getItem('phadao_srs_data');
+
+    if (!data || data === '{}') {
+
+        alert("Chưa có dữ liệu nào để sao lưu!");
+
+        return;
+
+    }
+
+    
+
+    // Tạo file JSON
+
+    const blob = new Blob([data], { type: 'application/json' });
+
+    const url = URL.createObjectURL(blob);
+
+    
+
+    // Tạo tên file có ngày giờ (Ví dụ: backup_tiengnhat_23-01-2026.json)
+
+    const date = new Date();
+
+    const dateStr = `${date.getDate()}-${date.getMonth() + 1}-${date.getFullYear()}`;
+
+    const fileName = `backup_tiengnhat_${dateStr}.json`;
+
+    
+
+    // Tạo thẻ a ảo để bấm tải về
+
+    const a = document.createElement('a');
+
+    a.href = url;
+
+    a.download = fileName;
+
+    document.body.appendChild(a);
+
+    a.click();
+
+    document.body.removeChild(a);
+
+    URL.revokeObjectURL(url);
+
+};
+
+
+
+// --- 2. HÀM NHẬP DỮ LIỆU (RESTORE) ---
+
+const handleImportData = (e) => {
+
+    const file = e.target.files[0];
+
+    if (!file) return;
+
+
+
+    const reader = new FileReader();
+
+    reader.onload = (event) => {
+
+        try {
+
+            const json = event.target.result;
+
+            // Kiểm tra thử xem có phải JSON hợp lệ không
+
+            const parsed = JSON.parse(json);
+
+            
+
+            // Kiểm tra sơ bộ cấu trúc (nếu cần)
+
+            if (typeof parsed !== 'object') throw new Error("File không hợp lệ");
+
+
+
+            // Cảnh báo trước khi đè dữ liệu
+
+            if (confirm("CẢNH BÁO: Dữ liệu hiện tại sẽ bị thay thế hoàn toàn bởi bản sao lưu này. Bạn có chắc chắn không?")) {
+
+                localStorage.setItem('phadao_srs_data', json);
+
+                alert("Khôi phục thành công! Trang web sẽ tải lại.");
+
+                window.location.reload(); // Tải lại trang để nhận dữ liệu mới
+
+            }
+
+        } catch (err) {
+
+            alert("Lỗi: File sao lưu bị hỏng hoặc không đúng định dạng!");
+
+            console.error(err);
+
+        }
+
+    };
+
+    reader.readAsText(file);
+
+    // Reset input để chọn lại cùng 1 file vẫn nhận
+
+    e.target.value = '';
+
+};
     return (
         <div className="w-full md:w-96 bg-white shadow-xl p-6 flex flex-col gap-6 h-auto md:h-screen md:overflow-y-auto relative md:sticky top-0 border-r border-gray-200 z-50 hide-scrollbar">
         
@@ -1708,7 +1904,7 @@ return (
                             className={`flex items-center gap-1 text-[10px] font-bold px-2 py-1 rounded transition-colors ${isFilterMenuOpen ? 'bg-indigo-100 text-indigo-700' : 'text-gray-600 hover:bg-gray-50 hover:text-indigo-700'}`}
                         >
                             <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon></svg>
-                            Bộ lọc
+                            BỘ LỌC
                         </button>
 
                         {/* POPUP MENU BỘ LỌC */}
@@ -1819,7 +2015,7 @@ LÀM SẠCH
                 <div className="flex flex-row gap-4 w-full h-12">
                     
                     {/* 1. MENU CHỌN NHANH (Quick Select) */}
-<div className="relative flex-1" ref={quickMenuRef}> 
+                 <div className="relative flex-1" ref={quickMenuRef}> 
                     <button onClick={() => toggleMenu('quick')} className={`w-full h-full px-1 border rounded-xl flex items-center justify-center shadow-sm transition-all active:scale-[0.98] ${isMenuOpen ? 'bg-indigo-50 border-indigo-300 text-indigo-700' : 'bg-white border-gray-300 text-gray-500 hover:bg-gray-50'}`}>
                         <span className="font-bold text-xs whitespace-nowrap">Chọn nhanh</span>
                     </button>
@@ -1898,9 +2094,9 @@ LÀM SẠCH
                                             }} 
                                             onKeyDown={(e) => { if (e.key === 'Enter' && randomCount > 50) setRandomCount(50) }} 
                                             onBlur={() => { if (randomCount > 50) setRandomCount(50) }} 
-                                            className="w-10 h-6 text-[14px] text-center font-bold bg-gray-50 border border-gray-200 text-gray-700 rounded focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none transition-colors[appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none" 
+                                            className="w-10 h-6 text-[16px] text-center font-bold bg-gray-50 border border-gray-200 text-gray-700 rounded focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none transition-colors[appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none" 
                                         />
-                                        <span className="text-[9px] font-bold text-gray-400 uppercase">chữ</span>
+                                        <span className="text-[10px] font-bold text-gray-400 uppercase">chữ</span>
                                     </div>
                                 </div>
                                 <div className="grid grid-cols-5 gap-1.5">
