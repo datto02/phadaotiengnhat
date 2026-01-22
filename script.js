@@ -1723,21 +1723,40 @@ LÀM SẠCH
                     {isMenuOpen && (
                         <div className="absolute bottom-full left-0 mb-2 z-50 w-72 bg-white border border-gray-200 rounded-2xl shadow-2xl p-4 space-y-4 animate-in fade-in zoom-in-95 duration-200">
                             
-                            {/* Bảng chữ cái */}
+                         {/* --- PHẦN GỘP: BẢNG CHỮ CÁI & BỘ THỦ --- */}
                             <div>
-                                <p className="text-[10px] font-bold text-gray-400 uppercase mb-2 text-left">Bảng chữ cái</p>
-                                <div className="grid grid-cols-2 gap-2">
-                                    <button onClick={() => handleLoadFromGithub('./data/hiragana.json', 'hiragana')} className="py-2 text-xs font-bold bg-white text-gray-600 border border-gray-200 rounded-lg hover:bg-black hover:text-white transition">あ Hiragana</button>
-                                    <button onClick={() => handleLoadFromGithub('./data/katakana.json', 'katakana')} className="py-2 text-xs font-bold bg-white text-gray-600 border border-gray-200 rounded-lg hover:bg-black hover:text-white transition">ア Katakana</button>
+                                <p className="text-[10px] font-bold text-gray-400 uppercase mb-2 text-left">Bảng chữ cái & Bộ thủ</p>
+                                <div className="grid grid-cols-3 gap-1.5">
+                                    {/* Nút 1: Hiragana */}
+                                    <button 
+                                        onClick={() => handleLoadFromGithub('./data/hiragana.json', 'hiragana')} 
+                                        className="py-2 text-[11px] font-bold bg-white text-gray-600 border border-gray-200 rounded-lg hover:bg-black hover:text-white transition truncate"
+                                        title="Hiragana"
+                                    >
+                                        あ Hira
+                                    </button>
+
+                                    {/* Nút 2: Katakana */}
+                                    <button 
+                                        onClick={() => handleLoadFromGithub('./data/katakana.json', 'katakana')} 
+                                        className="py-2 text-[11px] font-bold bg-white text-gray-600 border border-gray-200 rounded-lg hover:bg-black hover:text-white transition truncate"
+                                        title="Katakana"
+                                    >
+                                        ア Kata
+                                    </button>
+
+                                    {/* Nút 3: Bộ thủ */}
+                                    <button 
+                                        onClick={() => handleLoadFromGithub('./data/bothu.json')} 
+                                        className="py-2 text-[11px] font-bold bg-gray-100 text-gray-600 border border-gray-200 rounded-lg hover:bg-gray-600 hover:text-white transition truncate"
+                                        title="Bộ thủ cơ bản"
+                                    >
+                                        Bộ thủ
+                                    </button>
                                 </div>
                             </div>
 
-                            {/* Bộ thủ */}
-                            <div>
-                                <p className="text-[10px] font-bold text-gray-400 uppercase mb-2">Bộ thủ</p>
-                                <button onClick={() => handleLoadFromGithub('./data/bothu.json')} className="w-full py-2 text-xs font-black border bg-gray-100 text-gray-500 border-gray-200 uppercase transition-all duration-200 hover:bg-gray-500 hover:text-white hover:border-gray-500 rounded">Bộ thủ cơ bản</button>
-                            </div>
-
+                           
                             {/* Lấy tất cả Kanji */}
                             <div>
                                 <p className="text-[10px] font-bold text-gray-400 uppercase mb-2 text-left">Lấy tất cả Kanji</p>
