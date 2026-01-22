@@ -1876,8 +1876,7 @@ className={`py-2 text-[11px] font-black border rounded-md transition-all duratio
         <span className="text-xs font-black tracking-wide uppercase">Tạo Flashcard</span>
     </button>
 </div>
-</div>
-)}  
+ 
 
          {/* --- NÚT MỚI: DANH SÁCH ÔN TẬP (MÀU CAM) --- */}
 <div className="pt-2 mt-1">
