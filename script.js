@@ -257,7 +257,7 @@ const ReviewListModal = ({ isOpen, onClose, srsData, onResetSRS }) => {
                     // ĐÃ SỬA: Thay div bao ngoài bằng Fragment <> để flex-1 hoạt động đúng với parent
                     <>
                          <div className="p-4 border-b border-gray-100 flex justify-between items-center bg-indigo-50">
-                            <h3 className="text-sm font-black text-indigo-700 uppercase flex items-center gap-2">
+                            <h3 className="text-base font-black text-indigo-700 uppercase flex items-center gap-2">
                                 🎓 HƯỚNG DẪN
                             </h3>
                             <button onClick={() => setIsHelpOpen(false)} className="text-indigo-400 hover:text-indigo-600 transition-colors">
@@ -272,7 +272,7 @@ const ReviewListModal = ({ isOpen, onClose, srsData, onResetSRS }) => {
                                 <h4 className="font-bold text-gray-800 mb-1 flex items-center gap-2">
                                     <span className="text-lg">🧠</span> 1. PHƯƠNG PHÁP HỌC
                                 </h4>
-                                <p className="text-xs leading-relaxed text-justify">
+                                <p className="text-sm leading-relaxed text-justify">
                                     Hệ thống sử dụng thuật toán <b>Lặp lại ngắt quãng</b> (Spaced Repetition) tích hợp vào <b>FLASHCARD</b>. Thay vì học nhồi nhét, hệ thống sẽ tính toán <b>"thời điểm lãng quên"</b> của não bộ để nhắc bạn ôn lại <b>đúng lúc bạn sắp quên</b>.
                                 </p>
                             </div>
@@ -282,7 +282,7 @@ const ReviewListModal = ({ isOpen, onClose, srsData, onResetSRS }) => {
                                 <h4 className="font-bold text-gray-800 mb-1 flex items-center gap-2">
                                     <span className="text-lg">⚙️</span> 2. CƠ CHẾ HOẠT ĐỘNG
                                 </h4>
-                                <div className="bg-indigo-50 p-3 rounded-xl border border-indigo-100 text-xs text-indigo-900 leading-relaxed">
+                                <div className="bg-indigo-50 p-3 rounded-xl border border-indigo-100 text-sm text-indigo-900 leading-relaxed">
                                     <p className="mb-2">
                                         Hệ thống tự động tính toán <b>mức độ ghi nhớ</b> của bạn đối với từng Kanji (dựa trên quá trình và kết quả học Flashcard). Từ đó đưa ra <b>lịch trình ôn tập phù hợp</b> riêng cho từng chữ.
                                     </p>
@@ -409,7 +409,7 @@ const ReviewListModal = ({ isOpen, onClose, srsData, onResetSRS }) => {
                             </p>
                             
                             <div className="flex flex-col gap-3 w-full max-w-[260px]">
-                                <button onClick={() => setIsConfirmOpen(false)} className="w-full py-3.5 bg-indigo-600 hover:bg-indigo-700 text-white font-black rounded-xl shadow-lg shadow-green-200 transition-all active:scale-95 uppercase text-xs tracking-wider">KHÔNG XÓA NỮA</button>
+                                <button onClick={() => setIsConfirmOpen(false)} className="w-full py-3.5 bg-indigo-600 hover:bg-indigo-700 text-white font-black rounded-xl shadow-lg shadow-indigo-200 transition-all active:scale-95 uppercase text-xs tracking-wider">KHÔNG XÓA NỮA</button>
                                 <button onClick={() => { onResetSRS(); setIsConfirmOpen(false); onClose(); }} className="w-full py-3 text-red-600 hover:text-red-700 bg-red-50 hover:bg-red-100 font-bold rounded-xl transition-all text-xs">Vẫn xóa dữ liệu</button>
                             </div>
                         </div>
