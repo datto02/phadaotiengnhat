@@ -1,10 +1,8 @@
-
 const ReviewListModal = ({ isOpen, onClose, srsData, onResetSRS }) => {
     const [isConfirmOpen, setIsConfirmOpen] = React.useState(false);
     const [isHelpOpen, setIsHelpOpen] = React.useState(false);
-
     const handleExport = () => {
-        const data = localStorage.getItem('phadao_srs_data');
+    const data = localStorage.getItem('phadao_srs_data');
         if (!data || data === '{}') {
             alert("Chưa có dữ liệu để sao lưu!");
             return;
