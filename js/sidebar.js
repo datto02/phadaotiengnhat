@@ -929,7 +929,7 @@ LÀM SẠCH
 <div className="absolute bottom-full right-0 mb-2 z-50 w-72 bg-white border border-gray-200 rounded-2xl shadow-2xl p-4 space-y-3.5 animate-in fade-in zoom-in-95 duration-200">
 
     {/* MỤC 1: SỐ CHỮ MẪU */}
-    <div className="space-y-1">
+    <div className="space-y-0">
         <div className="flex justify-between items-center">
             <label className="text-[11px] font-bold text-gray-600">Số chữ mẫu</label>
             <span className="text-[11px] font-black text-indigo-600 bg-indigo-50 px-1.5 rounded">{config.traceCount} chữ</span>
@@ -938,7 +938,7 @@ LÀM SẠCH
     </div>
 
     {/* MỤC 2: ĐỘ ĐẬM CHỮ */}
-    <div className="space-y-1">
+    <div className="space-y-0">
         <div className="flex justify-between items-center">
             <label className="text-[11px] font-bold text-gray-600">Độ đậm chữ</label>
             <span className="text-[11px] font-black text-indigo-600 bg-indigo-50 px-1.5 rounded">{Math.round(config.traceOpacity * 100)}%</span>
@@ -947,7 +947,7 @@ LÀM SẠCH
     </div>
 
     {/* MỤC 3: CỠ CHỮ */}
-    <div className="space-y-1">
+    <div className="space-y-0">
         <div className="flex justify-between items-center">
             <label className="text-[11px] font-bold text-gray-600">Cỡ chữ</label>
             <span className="text-[11px] font-black text-indigo-600 bg-indigo-50 px-1.5 rounded">{config.fontSize} pt</span>
@@ -956,7 +956,7 @@ LÀM SẠCH
     </div>
 
     {/* MỤC 4: ĐỘ ĐẬM KHUNG */}
-    <div className="space-y-1">
+    <div className="space-y-0">
         <div className="flex justify-between items-center">
             <label className="text-[11px] font-bold text-gray-600">Độ đậm khung</label>
             <span className="text-[11px] font-black text-indigo-600 bg-indigo-50 px-1.5 rounded">{Math.round(config.gridOpacity * 100)}%</span>
