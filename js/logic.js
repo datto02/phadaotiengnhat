@@ -55,13 +55,15 @@ const calculateSRS = (currentData, quality) => {
 const fetchDataFromGithub = async () => {
   try { 
   
-    const [dbResponse, onkunResponse] = await Promise.all([
+    const [dbResponse, onkunResponse, vocabResponse] = await Promise.all([
       fetch('./data/kanji_db.json'),
-      fetch('./data/onkun.json')
+      fetch('./data/onkun.json'),
+      fetch('./data/vocab.json')  
     ]);
 
     let kanjiDb = null;
     let onkunDb = null;
+    let vocabDb = null;
 
     if (dbResponse.ok) kanjiDb = await dbResponse.json();
     else console.warn("Không tải được kanji_db.json");
@@ -69,8 +71,14 @@ const fetchDataFromGithub = async () => {
     if (onkunResponse.ok) onkunDb = await onkunResponse.json();
     else console.warn("Không tải được onkun.json (sẽ dùng API online)");
 
+    if (vocabResponse.ok) {
+        vocabDb = await vocabResponse.json();
+    } else {
+        console.warn("Chưa có file vocab.json, chế độ từ vựng sẽ trống.");
+        vocabDb = {};
+    }
 
-    return { ...kanjiDb, ONKUN_DB: onkunDb }; 
+    return { ...kanjiDb, ONKUN_DB: onkunDb, VOCAB_DB: vocabDb }; 
   } catch (error) {
     console.error("Lỗi tải dữ liệu hệ thống:", error);
     return null;
