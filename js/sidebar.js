@@ -956,7 +956,7 @@ LÀM SẠCH
     </div>
 
     {/* MỤC 4: ĐỘ ĐẬM KHUNG */}
-    <div className="space-y-0">
+    <div className="space-y-1">
         <div className="flex justify-between items-center">
             <label className="text-[11px] font-bold text-gray-600">Độ đậm khung</label>
             <span className="text-[11px] font-black text-indigo-600 bg-indigo-50 px-1.5 rounded">{Math.round(config.gridOpacity * 100)}%</span>
