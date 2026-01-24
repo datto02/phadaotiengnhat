@@ -968,7 +968,7 @@ LÀM SẠCH
 <div className="pt-2 border-t border-gray-100">
     <div className="space-y-1">
         <label className="flex items-center justify-between group">
-            <span className="text-[11px] font-bold text-gray-600">Chế độ hiển thị</span>
+            <span className="text-[11px] font-bold text-gray-600">Hiển thị</span>
             <select
                 value={config.displayMode}
                 onChange={(e) => handleChange('displayMode', e.target.value)}
