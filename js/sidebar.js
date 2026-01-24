@@ -965,7 +965,7 @@ LÀM SẠCH
     </div>
 
 {/* MỤC 5: CHẾ ĐỘ HIỂN THỊ (RADIO BUTTONS - GỌN GÀNG) */}
-<div className="pt-0"> {/* Đã xóa border-t và giảm padding để gọn hơn */}
+<div className="pt-0"> 
     <div className="space-y-2">
         
         {/* Hàng chứa 3 nút Radio */}
@@ -980,7 +980,7 @@ LÀM SẠCH
                     onChange={() => handleChange('displayMode', 'strokes')}
                     className="w-3.5 h-3.5 accent-indigo-600 cursor-pointer"
                 />
-                <span className={`text-[10px] font-bold transition-colors ${config.displayMode === 'strokes' ? 'text-indigo-700' : 'text-gray-500 group-hover:text-indigo-600'}`}>
+                <span className={`text-[11px] font-bold transition-colors ${config.displayMode === 'strokes' ? 'text-indigo-700' : 'text-gray-500 group-hover:text-indigo-600'}`}>
                     Nét viết
                 </span>
             </label>
@@ -994,7 +994,7 @@ LÀM SẠCH
                     onChange={() => handleChange('displayMode', 'readings')}
                     className="w-3.5 h-3.5 accent-indigo-600 cursor-pointer"
                 />
-                <span className={`text-[10px] font-bold transition-colors ${config.displayMode === 'readings' ? 'text-indigo-700' : 'text-gray-500 group-hover:text-indigo-600'}`}>
+                <span className={`text-[11px] font-bold transition-colors ${config.displayMode === 'readings' ? 'text-indigo-700' : 'text-gray-500 group-hover:text-indigo-600'}`}>
                     On/Kun
                 </span>
             </label>
@@ -1008,7 +1008,7 @@ LÀM SẠCH
                     onChange={() => handleChange('displayMode', 'vocab')}
                     className="w-3.5 h-3.5 accent-indigo-600 cursor-pointer"
                 />
-                <span className={`text-[10px] font-bold transition-colors ${config.displayMode === 'vocab' ? 'text-indigo-700' : 'text-gray-500 group-hover:text-indigo-600'}`}>
+                <span className={`text-[11px] font-bold transition-colors ${config.displayMode === 'vocab' ? 'text-indigo-700' : 'text-gray-500 group-hover:text-indigo-600'}`}>
                     Từ vựng
                 </span>
             </label>
