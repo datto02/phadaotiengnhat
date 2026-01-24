@@ -219,55 +219,49 @@ const HeaderSection = ({ char, paths, loading, failed, config, dbData }) => {
 
 
 
-                    // CHẾ ĐỘ 3: TỪ VỰNG (VOCAB) - MỚI
+                 // CHẾ ĐỘ 3: TỪ VỰNG (VOCAB) - ĐÃ SỬA LỖI MẤT CHÂN CHỮ G
+            if (config.displayMode === 'vocab') {
+                const vocabs = dbData.VOCAB_DB ? (dbData.VOCAB_DB[char] || []) : [];
+                
+                if (vocabs.length === 0) return <div className="h-full flex items-end pb-[3px] text-[12px] text-gray-400 italic">---</div>;
 
-                    if (config.displayMode === 'vocab') {
-
-                        const vocabs = dbData.VOCAB_DB ? (dbData.VOCAB_DB[char] || []) : [];
-
-                        
-
-                        if (vocabs.length === 0) return <div className="h-full flex items-end pb-[3px] text-[12px] text-gray-400 italic">---</div>;
-
-
-
-                        return (
-                            <div className="h-full flex items-end pb-[3px] text-[12px] text-black w-full leading-none whitespace-nowrap overflow-hidden">
-                                <div className="truncate w-full"> 
-                                    {vocabs.map((v, i) => (
-                                        <span key={i} className="mr-3 inline-block">
-                                            {/* 1. In đậm Kanji: Dùng font-black và màu xanh indigo */}
-                                            {v.word.split('').map((c, idx) => 
-                                                c === char 
-                                                ? <span key={idx} className="font-black text-black">{c}</span> 
-                                                : c
-                                            )}
-                                            
-                                            {/* 2. In đậm cách đọc (Dựa vào dấu * trong dữ liệu): Dùng font-black và màu xanh indigo */}
-                                            {' ('}
-                                            {(v.reading || '').includes('*') ? (
-                                                v.reading.split('*').map((part, idx) => 
-                                                    // Phần lẻ (giữa 2 dấu sao) sẽ in đậm và đổi màu
-                                                    idx % 2 === 1 
-                                                    ? <span key={idx} className="font-black text-black">{part}</span> 
-                                                    : part
-                                                )
-                                            ) : (
-                                                <span className="font-normal">{v.reading}</span>
-                                            )}
-                                            {') '}
-                                            
-                                            {/* 3. Nghĩa tiếng Việt */}
-                                            <span className="font-sans font-normal text-black">{v.meaning}</span>
-                                            
-                                            {/* Dấu chấm phẩy ngăn cách */}
-                                            {i < vocabs.length - 1 ? '; ' : '.'}
-                                        </span>
-                                    ))}
-                                </div>
-                            </div>
-                        );
-                    }
+                return (
+                    // Thay đổi: pb-[3px] -> pb-0 | leading-none -> leading-normal
+                    <div className="h-full flex items-end pb-0 text-[12px] text-black w-full leading-normal whitespace-nowrap overflow-hidden">
+                        <div className="truncate w-full font-['Klee_One']"> 
+                            {vocabs.map((v, i) => (
+                                <span key={i} className="mr-3 inline-block">
+                                    {/* 1. In đậm Kanji */}
+                                    {v.word.split('').map((c, idx) => 
+                                        c === char 
+                                        ? <span key={idx} className="font-black text-indigo-700">{c}</span> 
+                                        : c
+                                    )}
+                                    
+                                    {/* 2. In đậm cách đọc */}
+                                    {' ('}
+                                    {(v.reading || '').includes('*') ? (
+                                        v.reading.split('*').map((part, idx) => 
+                                            idx % 2 === 1 
+                                            ? <span key={idx} className="font-black text-indigo-700">{part}</span> 
+                                            : part
+                                        )
+                                    ) : (
+                                        <span className="font-normal">{v.reading}</span>
+                                    )}
+                                    {') '}
+                                    
+                                    {/* 3. Nghĩa tiếng Việt */}
+                                    <span className="font-sans font-normal text-gray-600">{v.meaning}</span>
+                                    
+                                    {/* Dấu chấm phẩy ngăn cách */}
+                                    {i < vocabs.length - 1 ? '; ' : '.'}
+                                </span>
+                            ))}
+                        </div>
+                    </div>
+                );
+            }
 
                     return null;
                 })()}
