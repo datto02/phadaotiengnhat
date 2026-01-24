@@ -228,13 +228,13 @@ const HeaderSection = ({ char, paths, loading, failed, config, dbData }) => {
                 return (
                     // Thay đổi: pb-[3px] -> pb-0 | leading-none -> leading-normal
                     <div className="h-full flex items-end pb-0 text-[12px] text-black w-full leading-normal whitespace-nowrap overflow-hidden">
-                        <div className="truncate w-full font-['Klee_One']"> 
+                        <div className="truncate w-full"> 
                             {vocabs.map((v, i) => (
                                 <span key={i} className="mr-3 inline-block">
                                     {/* 1. In đậm Kanji */}
                                     {v.word.split('').map((c, idx) => 
                                         c === char 
-                                        ? <span key={idx} className="font-black text-indigo-700">{c}</span> 
+                                        ? <span key={idx} className="font-black text-black">{c}</span> 
                                         : c
                                     )}
                                     
@@ -243,7 +243,7 @@ const HeaderSection = ({ char, paths, loading, failed, config, dbData }) => {
                                     {(v.reading || '').includes('*') ? (
                                         v.reading.split('*').map((part, idx) => 
                                             idx % 2 === 1 
-                                            ? <span key={idx} className="font-black text-indigo-700">{part}</span> 
+                                            ? <span key={idx} className="font-black text-black">{part}</span> 
                                             : part
                                         )
                                     ) : (
@@ -252,7 +252,7 @@ const HeaderSection = ({ char, paths, loading, failed, config, dbData }) => {
                                     {') '}
                                     
                                     {/* 3. Nghĩa tiếng Việt */}
-                                    <span className="font-sans font-normal text-gray-600">{v.meaning}</span>
+                                    <span className="font-sans font-normal text-black">{v.meaning}</span>
                                     
                                     {/* Dấu chấm phẩy ngăn cách */}
                                     {i < vocabs.length - 1 ? '; ' : '.'}
