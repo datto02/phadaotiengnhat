@@ -1,0 +1,9 @@
+{
+  "本": [
+    { "word": "日本", "reading": "にほん", "meaning": "Nhật Bản" },
+    { "word": "本棚", "reading": "ほんだな", "meaning": "Giá sách" }
+  ],
+  "日": [
+    { "word": "日曜日", "reading": "にちようび", "meaning": "Chủ nhật" }
+  ]
+}
