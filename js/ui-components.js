@@ -146,9 +146,10 @@ return (
     </div>
 );
 };
-// --- 2. HEADER SECTION (CẬP NHẬT HIỂN THỊ TỪ VỰNG) ---
+// --- 2. HEADER SECTION (ĐÃ CẬP NHẬT LOGIC IN ĐẬM TỪ VỰNG) ---
 const HeaderSection = ({ char, paths, loading, failed, config, dbData }) => {
-    const readings = useKanjiReadings(char, config.displayMode === 'readings', dbData); // Cập nhật logic hook
+    // Logic cũ của On/Kun (chỉ chạy khi chọn mode readings)
+    const readings = useKanjiReadings(char, config.displayMode === 'readings', dbData);
 
     if (loading) return <div className="h-[22px] w-full animate-pulse bg-gray-100 rounded mb-1"></div>;
     if (failed) return <div className="h-[22px] w-full mb-1"></div>;
@@ -157,68 +158,77 @@ const HeaderSection = ({ char, paths, loading, failed, config, dbData }) => {
     const isJLPT = dbData.KANJI_LEVELS?.N5?.includes(char) || dbData.KANJI_LEVELS?.N4?.includes(char) || dbData.KANJI_LEVELS?.N3?.includes(char) || dbData.KANJI_LEVELS?.N2?.includes(char) || dbData.KANJI_LEVELS?.N1?.includes(char);
 
     return (
-        <div className="flex flex-row items-end px-1 mb-1 h-[22px] overflow-hidden border-b border-transparent" style={{ width: '184mm', minWidth: '184mm', maxWidth: '184mm' }}>
-            {/* 1. ÂM HÁN VIỆT + NGHĨA */}
-            {info && (
-                <div className="flex-shrink-0 mr-4 flex items-baseline gap-2 mb-[3px]">
-                    <span className="font-bold text-sm leading-none text-black whitespace-nowrap uppercase">{info.sound}</span>
-                    {info.meaning && info.meaning.trim() !== "" && (<span className="text-[12px] font-normal text-black leading-none whitespace-nowrap">({info.meaning})</span>)}
-                </div>
-            )}
-
-            {/* 2. KHU VỰC THAY ĐỔI THEO CHẾ ĐỘ */}
-            <div className="flex-1 min-w-0 h-[22px]">
-                {(() => {
-                    // CHẾ ĐỘ 1: NÉT VIẾT (STROKES)
-                    if (config.displayMode === 'strokes') {
-                        return (<div className="h-full flex items-center flex-wrap gap-1">{paths.map((_, i) => (<div key={i} className="w-[22px] h-[22px] flex-shrink-0"><svg viewBox="0 0 109 109" className="decomp-svg">{paths.slice(0, i + 1).map((d, pIndex) => (<path key={pIndex} d={d} />))}</svg></div>))}</div>);
-                    }
-
-                    // CHẾ ĐỘ 2: ÂM ON/KUN (READINGS)
-                    if (config.displayMode === 'readings') {
-                        if (isJLPT) {
-                            return (<div className="h-full flex items-end pb-[3px] text-[12px] text-black italic w-full leading-none whitespace-nowrap"><div className="truncate w-full"><span className="font-bold text-black mr-1 uppercase">On:</span><span className="mr-3 not-italic font-medium">{readings.on || '---'}</span><span className="font-bold text-black mr-1 uppercase">Kun:</span><span className="not-italic font-medium">{readings.kun || '---'}</span></div></div>);
-                        }
-                        return null; // Không phải Kanji thì ẩn
-                    }
-
-                    // CHẾ ĐỘ 3: TỪ VỰNG (VOCAB) - MỚI
-                    if (config.displayMode === 'vocab') {
-                        // Lấy danh sách từ vựng từ dữ liệu (Giả sử cấu trúc dbData.VOCAB_DB[char] là mảng các object)
-                        // Cấu trúc mong đợi: [{word: "日本", reading: "にほん", meaning: "Nhật Bản"}, ...]
-                        const vocabs = dbData.VOCAB_DB ? (dbData.VOCAB_DB[char] || []) : [];
-                        
-                        if (vocabs.length === 0) return <div className="h-full flex items-end pb-[3px] text-[12px] text-gray-400 italic">---</div>;
-
-                        return (
-                            <div className="h-full flex items-end pb-[3px] text-[12px] text-black w-full leading-none whitespace-nowrap overflow-hidden">
-                                <div className="truncate w-full">
-                                    {vocabs.map((v, i) => (
-                                        <span key={i} className="mr-3">
-                                            {/* In đậm chữ Kanji trong từ */}
-                                            {v.word.split('').map((c, idx) => c === char ? <b key={idx} className="font-bold">{c}</b> : c)}
-                                            
-                                            {/* In đậm Reading (Furigana) */}
-                                            {' ('}<b className="font-bold">{v.reading}</b>{') '}
-                                            
-                                            {/* Nghĩa bình thường */}
-                                            <span className="font-normal">{v.meaning}</span>
-                                            
-                                            {/* Dấu chấm phẩy ngăn cách */}
-                                            {i < vocabs.length - 1 ? '; ' : '.'}
-                                        </span>
-                                    ))}
-                                </div>
-                            </div>
-                        );
-                    }
-                    
-                    return null;
-                })()}
-            </div>
+    <div className="flex flex-row items-end px-1 mb-1 h-[22px] overflow-hidden border-b border-transparent" style={{ width: '184mm', minWidth: '184mm', maxWidth: '184mm' }}>
+        {/* PHẦN ÂM HÁN VIỆT + NGHĨA (Giữ nguyên) */}
+        {info && (
+        <div className="flex-shrink-0 mr-4 flex items-baseline gap-2 mb-[3px]">
+            <span className="font-bold text-sm leading-none text-black whitespace-nowrap uppercase">{info.sound}</span>
+            {info.meaning && info.meaning.trim() !== "" && (<span className="text-[12px] font-normal text-black leading-none whitespace-nowrap">({info.meaning})</span>)}
         </div>
+        )}
+
+        {/* PHẦN HIỂN THỊ THAY ĐỔI THEO CHẾ ĐỘ */}
+        <div className="flex-1 min-w-0 h-[22px]"> 
+        {(() => {
+            // CHẾ ĐỘ 1: NÉT VIẾT (Giữ nguyên)
+            if (config.displayMode === 'strokes') {
+                return (<div className="h-full flex items-center flex-wrap gap-1">{paths.map((_, i) => (<div key={i} className="w-[22px] h-[22px] flex-shrink-0"><svg viewBox="0 0 109 109" className="decomp-svg">{paths.slice(0, i + 1).map((d, pIndex) => (<path key={pIndex} d={d} />))}</svg></div>))}</div>);
+            }
+            
+            // CHẾ ĐỘ 2: ÂM ON/KUN (Giữ nguyên logic)
+            if (config.displayMode === 'readings') {
+                if (isJLPT) {
+                    return (<div className="h-full flex items-end pb-[3px] text-[12px] text-black italic w-full leading-none whitespace-nowrap"><div className="truncate w-full"><span className="font-bold text-black mr-1 uppercase">On:</span><span className="mr-3 not-italic font-medium">{readings.on || '---'}</span><span className="font-bold text-black mr-1 uppercase">Kun:</span><span className="not-italic font-medium">{readings.kun || '---'}</span></div></div>);
+                }
+                return null;
+            }
+
+            // CHẾ ĐỘ 3: TỪ VỰNG (MỚI !!!)
+            if (config.displayMode === 'vocab') {
+                // Lấy danh sách từ vựng từ file vocab.json
+                const vocabs = dbData.VOCAB_DB ? (dbData.VOCAB_DB[char] || []) : [];
+                
+                if (vocabs.length === 0) return <div className="h-full flex items-end pb-[3px] text-[12px] text-gray-400 italic">---</div>;
+
+                return (
+                    <div className="h-full flex items-end pb-[3px] text-[12px] text-black w-full leading-none whitespace-nowrap overflow-hidden">
+                        <div className="truncate w-full font-['Klee_One']"> 
+                            {vocabs.map((v, i) => (
+                                <span key={i} className="mr-3 inline-block">
+                                    {/* 1. In đậm chữ Kanji chính trong từ */}
+                                    {v.word.split('').map((c, idx) => c === char ? <b key={idx} className="font-bold">{c}</b> : c)}
+                                    
+                                    {/* 2. In đậm cách đọc (Dựa vào dấu *) */}
+                                    {' ('}
+                                    {v.reading.includes('*') ? (
+                                        v.reading.split('*').map((part, idx) => 
+                                            // Phần lẻ (giữa 2 dấu sao) sẽ in đậm
+                                            idx % 2 === 1 ? <b key={idx} className="font-bold">{part}</b> : part
+                                        )
+                                    ) : (
+                                        <span className="font-normal">{v.reading}</span>
+                                    )}
+                                    {') '}
+                                    
+                                    {/* 3. Nghĩa tiếng Việt */}
+                                    <span className="font-sans font-normal text-gray-600">{v.meaning}</span>
+                                    
+                                    {/* Dấu chấm phẩy ngăn cách */}
+                                    {i < vocabs.length - 1 ? '; ' : '.'}
+                                </span>
+                            ))}
+                        </div>
+                    </div>
+                );
+            }
+
+            return null;
+        })()}
+        </div>
+    </div>
     );
 };
+
 
 const GridBox = ({ char, type, config, index, svgData, failed, onClick }) => {
 const isReference = type === 'reference';
