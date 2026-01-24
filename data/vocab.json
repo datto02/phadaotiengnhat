@@ -103,7 +103,6 @@
   ],
   "校": [
     { "word": "学校", "reading": "がっ*こう*", "meaning": "Trường học" },
-    { "word": "高校", "reading": "*こう*こう", "meaning": "Trường cấp 3" },
     { "word": "校長", "reading": "*こう*ちょう", "meaning": "Hiệu trưởng" }
   ],
   "左": [
@@ -132,8 +131,7 @@
     { "word": "様子", "reading": "よう*す*", "meaning": "Tình trạng" }
   ],
   "糸": [
-    { "word": "糸", "reading": "*いと*", "meaning": "Sợi chỉ" },
-    { "word": "毛糸", "reading": "け*いと*", "meaning": "Len" }
+    { "word": "糸", "reading": "*いと*", "meaning": "Sợi chỉ" }
   ],
   "字": [
     { "word": "字", "reading": "*じ*", "meaning": "Chữ" },
@@ -161,7 +159,6 @@
   ],
   "十": [
     { "word": "十", "reading": "*じゅう*", "meaning": "Số 10" },
-    { "word": "十", "reading": "*とお*", "meaning": "10 cái" },
     { "word": "十分", "reading": "*じゅう*ぶん", "meaning": "Đầy đủ" }
   ],
   "出": [
@@ -176,8 +173,7 @@
   ],
   "小": [
     { "word": "小さい", "reading": "*ちい*さい", "meaning": "Nhỏ" },
-    { "word": "小学校", "reading": "*しょう*がっこう", "meaning": "Tiểu học" },
-    { "word": "小川", "reading": "*お*がわ", "meaning": "Suối nhỏ" }
+    { "word": "小学校", "reading": "*しょう*がっこう", "meaning": "Tiểu học" }
   ],
   "上": [
     { "word": "上", "reading": "*うえ*", "meaning": "Bên trên" },
@@ -191,7 +187,7 @@
   "人": [
     { "word": "人", "reading": "*ひと*", "meaning": "Người" },
     { "word": "日本人", "reading": "にほん*じん*", "meaning": "Người Nhật" },
-    { "word": "一人", "reading": "ひ*とり*", "meaning": "Một người" }
+    { "word": "一人", "reading": "ひと*り*", "meaning": "Một người" }
   ],
   "水": [
     { "word": "水", "reading": "*みず*", "meaning": "Nước" },
@@ -224,7 +220,6 @@
     { "word": "赤道", "reading": "*せき*どう", "meaning": "Xích đạo" }
   ],
   "先": [
-    { "word": "先", "reading": "*さき*", "meaning": "Trước/Tương lai" },
     { "word": "先生", "reading": "*せん*せい", "meaning": "Giáo viên" },
     { "word": "先月", "reading": "*せん*げつ", "meaning": "Tháng trước" }
   ],
@@ -234,8 +229,7 @@
     { "word": "千円", "reading": "*せん*えん", "meaning": "1000 Yên" }
   ],
   "川": [
-    { "word": "川", "reading": "*かわ*", "meaning": "Sông" },
-    { "word": "河川", "reading": "か*せん*", "meaning": "Sông ngòi" }
+    { "word": "川", "reading": "*かわ*", "meaning": "Sông" }
   ],
   "早": [
     { "word": "早い", "reading": "*はや*い", "meaning": "Sớm" },
@@ -252,8 +246,7 @@
     { "word": "遠足", "reading": "えん*そく*", "meaning": "Dã ngoại" }
   ],
   "村": [
-    { "word": "村", "reading": "*むら*", "meaning": "Làng" },
-    { "word": "農村", "reading": "のう*そん*", "meaning": "Nông thôn" }
+    { "word": "村", "reading": "*むら*", "meaning": "Làng" }
   ],
   "大": [
     { "word": "大きい", "reading": "*おお*きい", "meaning": "To lớn" },
@@ -266,21 +259,18 @@
     { "word": "男の子", "reading": "*おとこ*のこ", "meaning": "Bé trai" }
   ],
   "竹": [
-    { "word": "竹", "reading": "*たけ*", "meaning": "Tre" },
-    { "word": "竹林", "reading": "*ちく*りん", "meaning": "Rừng tre" }
+    { "word": "竹", "reading": "*たけ*", "meaning": "Tre" }
   ],
   "中": [
     { "word": "中", "reading": "*なか*", "meaning": "Bên trong" },
-    { "word": "中国", "reading": "*ちゅう*ごく", "meaning": "Trung Quốc" },
-    { "word": "一日中", "reading": "いちにち*じゅう*", "meaning": "Suốt cả ngày" }
+    { "word": "中国", "reading": "*ちゅう*ごく", "meaning": "Trung Quốc" }
   ],
   "虫": [
     { "word": "虫", "reading": "*むし*", "meaning": "Côn trùng" },
-    { "word": "昆虫", "reading": "こん*ちゅう*", "meaning": "Sâu bọ" }
+    { "word": "虫歯", "reading": "*むし*ば", "meaning": "Răng sâu" }
   ],
   "町": [
-    { "word": "町", "reading": "*まち*", "meaning": "Thị trấn" },
-    { "word": "下町", "reading": "した*まち*", "meaning": "Khu phố cổ" }
+    { "word": "町", "reading": "*まち*", "meaning": "Thị trấn" }
   ],
   "天": [
     { "word": "天気", "reading": "*てん*き", "meaning": "Thời tiết" },
