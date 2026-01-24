@@ -146,7 +146,7 @@ return (
     </div>
 );
 };
-// --- 2. HEADER SECTION (ĐÃ CẬP NHẬT LOGIC IN ĐẬM TỪ VỰNG) ---
+// --- 2. HEADER SECTION (ĐÃ FIX LỖI IN ĐẬM) ---
 const HeaderSection = ({ char, paths, loading, failed, config, dbData }) => {
     // Logic cũ của On/Kun (chỉ chạy khi chọn mode readings)
     const readings = useKanjiReadings(char, config.displayMode === 'readings', dbData);
@@ -170,12 +170,12 @@ const HeaderSection = ({ char, paths, loading, failed, config, dbData }) => {
         {/* PHẦN HIỂN THỊ THAY ĐỔI THEO CHẾ ĐỘ */}
         <div className="flex-1 min-w-0 h-[22px]"> 
         {(() => {
-            // CHẾ ĐỘ 1: NÉT VIẾT (Giữ nguyên)
+            // CHẾ ĐỘ 1: NÉT VIẾT
             if (config.displayMode === 'strokes') {
                 return (<div className="h-full flex items-center flex-wrap gap-1">{paths.map((_, i) => (<div key={i} className="w-[22px] h-[22px] flex-shrink-0"><svg viewBox="0 0 109 109" className="decomp-svg">{paths.slice(0, i + 1).map((d, pIndex) => (<path key={pIndex} d={d} />))}</svg></div>))}</div>);
             }
             
-            // CHẾ ĐỘ 2: ÂM ON/KUN (Giữ nguyên logic)
+            // CHẾ ĐỘ 2: ÂM ON/KUN
             if (config.displayMode === 'readings') {
                 if (isJLPT) {
                     return (<div className="h-full flex items-end pb-[3px] text-[12px] text-black italic w-full leading-none whitespace-nowrap"><div className="truncate w-full"><span className="font-bold text-black mr-1 uppercase">On:</span><span className="mr-3 not-italic font-medium">{readings.on || '---'}</span><span className="font-bold text-black mr-1 uppercase">Kun:</span><span className="not-italic font-medium">{readings.kun || '---'}</span></div></div>);
@@ -183,9 +183,8 @@ const HeaderSection = ({ char, paths, loading, failed, config, dbData }) => {
                 return null;
             }
 
-            // CHẾ ĐỘ 3: TỪ VỰNG (MỚI !!!)
+            // CHẾ ĐỘ 3: TỪ VỰNG (ĐÃ SỬA LẠI CSS ĐỂ NHÌN RÕ HƠN)
             if (config.displayMode === 'vocab') {
-                // Lấy danh sách từ vựng từ file vocab.json
                 const vocabs = dbData.VOCAB_DB ? (dbData.VOCAB_DB[char] || []) : [];
                 
                 if (vocabs.length === 0) return <div className="h-full flex items-end pb-[3px] text-[12px] text-gray-400 italic">---</div>;
@@ -195,15 +194,21 @@ const HeaderSection = ({ char, paths, loading, failed, config, dbData }) => {
                         <div className="truncate w-full font-['Klee_One']"> 
                             {vocabs.map((v, i) => (
                                 <span key={i} className="mr-3 inline-block">
-                                    {/* 1. In đậm chữ Kanji chính trong từ */}
-                                    {v.word.split('').map((c, idx) => c === char ? <b key={idx} className="font-bold">{c}</b> : c)}
+                                    {/* 1. In đậm Kanji: Dùng font-black và màu xanh indigo */}
+                                    {v.word.split('').map((c, idx) => 
+                                        c === char 
+                                        ? <span key={idx} className="font-black text-indigo-700">{c}</span> 
+                                        : c
+                                    )}
                                     
-                                    {/* 2. In đậm cách đọc (Dựa vào dấu *) */}
+                                    {/* 2. In đậm cách đọc (Dựa vào dấu *): Dùng font-black và màu xanh indigo */}
                                     {' ('}
-                                    {v.reading.includes('*') ? (
+                                    {(v.reading || '').includes('*') ? (
                                         v.reading.split('*').map((part, idx) => 
-                                            // Phần lẻ (giữa 2 dấu sao) sẽ in đậm
-                                            idx % 2 === 1 ? <b key={idx} className="font-bold">{part}</b> : part
+                                            // Phần lẻ (giữa 2 dấu sao) sẽ in đậm và đổi màu
+                                            idx % 2 === 1 
+                                            ? <span key={idx} className="font-black text-indigo-700">{part}</span> 
+                                            : part
                                         )
                                     ) : (
                                         <span className="font-normal">{v.reading}</span>
