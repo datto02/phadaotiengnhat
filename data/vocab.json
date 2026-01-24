@@ -51,7 +51,7 @@
   "貝": [
     { "word": "貝", "reading": "*かい*", "meaning": "Sò, ốc" },
     { "word": "貝殻", "reading": "*かい*がら", "meaning": "Vỏ sò" }
-  ]  
+  ], 
 
   "学": [
     { "word": "学生", "reading": "*がく*せい", "meaning": "Học sinh" },
@@ -94,7 +94,7 @@
   ],
   "犬": [
     { "word": "犬", "reading": "*いぬ*", "meaning": "Con chó" },
-    { "word": "子犬", "reading": "こ*いぬ*", "meaning": "Chó con" },
+    { "word": "子犬", "reading": "こ*いぬ*", "meaning": "Chó con" }
   ],
   "見": [
     { "word": "見る", "reading": "*み*る", "meaning": "Nhìn/Xem" },
