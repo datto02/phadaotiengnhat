@@ -1017,7 +1017,7 @@ LÀM SẠCH
     </div>
 </div>
 {/* NÚT ĐẶT LẠI MẶC ĐỊNH - Đã thu gọn */}
-<div className="pt-0"> {/* Giảm padding top từ pt-1 về pt-0 */}
+<div className="pt-2 mt-1 border-t border-gray-200"> {/* Giảm padding top từ pt-1 về pt-0 */}
 <button 
     onClick={() => onChange({ ...config, fontSize: 33, traceCount: 9, traceOpacity: 0.15, gridOpacity: 0.8, displayMode: 'strokes' })} 
     className="w-full py-1.5 text-[10px] font-bold text-red-500 bg-red-50 hover:bg-red-500 hover:text-white rounded-lg flex items-center justify-center gap-1 transition-all active:scale-95"
