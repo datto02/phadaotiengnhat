@@ -1913,7 +1913,7 @@
   "旅": [
     { "word": "旅行", "reading": "りょ*こう*", "meaning": "Du lịch" },
     { "word": "旅", "reading": "*たび*", "meaning": "Chuyến đi" },
-    { "word": "旅館", "reading": "りょ*かん*", "meaning": "Lữ quán/Nhà trọ kiểu Nhật" }
+    { "word": "旅館", "reading": "りょ*かん*", "meaning": "Nhà trọ kiểu Nhật" }
   ],
   "両": [
     { "word": "両親", "reading": "*りょう*しん", "meaning": "Bố mẹ" },
@@ -4436,7 +4436,7 @@
     { "word": "規律", "reading": "き*りつ*", "meaning": "Kỷ luật" }
   ],
   "臨": [
-    { "word": "臨時", "reading": "*りん*じ", "meaning": "Lâm thời/Tạm thời" }
+    { "word": "臨時", "reading": "*りん*じ", "meaning": "Tạm thời" }
   ],
   "朗": [
     { "word": "朗らか", "reading": "*ほが*らか", "meaning": "Vui vẻ/Sáng sủa" }
@@ -4445,5 +4445,2307 @@
     { "word": "論文", "reading": "*ろん*ぶん", "meaning": "Luận văn" },
     { "word": "結論", "reading": "けつ*ろん*", "meaning": "Kết luận" },
     { "word": "議論", "reading": "ぎ*ろん*", "meaning": "Thảo luận" }
+  ],
+  "握": [
+    { "word": "握手", "reading": "*あく*しゅ", "meaning": "Bắt tay" },
+    { "word": "握る", "reading": "*にぎ*る", "meaning": "Nắm/Cầm" }
+  ],
+  "扱": [
+    { "word": "扱う", "reading": "*あつか*う", "meaning": "Sử dụng/Xử lý" },
+    { "word": "取り扱い", "reading": "とり*あつかい*", "meaning": "Thao tác/Đối đãi" }
+  ],
+  "依": [
+    { "word": "依頼", "reading": "*い*らい", "meaning": "Nhờ vả/Yêu cầu" },
+    { "word": "依存", "reading": "*い*ぞん", "meaning": "Phụ thuộc" }
+  ],
+  "偉": [
+    { "word": "偉い", "reading": "*えら*い", "meaning": "Vĩ đại/Giỏi/Đáng nể" },
+    { "word": "偉大", "reading": "*い*だい", "meaning": "Vĩ đại" }
+  ],
+  "威": [
+    { "word": "権威", "reading": "けん*い*", "meaning": "Quyền uy" },
+    { "word": "威張る", "reading": "*い*ばる", "meaning": "Kiêu ngạo/Hợm hĩnh" }
+  ],
+  "為": [
+    { "word": "行為", "reading": "こう*い*", "meaning": "Hành vi" }
+  ],
+  "維": [
+    { "word": "維持", "reading": "*い*じ", "meaning": "Duy trì" }
+  ],
+  "緯": [
+    { "word": "緯度", "reading": "*い*ど", "meaning": "Vĩ độ" }
+  ],
+  "違": [
+    { "word": "違う", "reading": "*ちが*う", "meaning": "Khác/Sai" },
+    { "word": "間違い", "reading": "ま*ちが*い", "meaning": "Lỗi sai" },
+    { "word": "違反", "reading": "*い*はん", "meaning": "Vi phạm" }
+  ],
+  "壱": [
+    { "word": "金壱万円", "reading": "きん*いち*まんえん", "meaning": "1 vạn yên (viết trên giấy tờ)" }
+  ],
+  "稲": [
+    { "word": "稲", "reading": "*いね*", "meaning": "Cây lúa" },
+    { "word": "稲作", "reading": "*いな*さく", "meaning": "Trồng lúa" }
+  ],
+  "芋": [
+    { "word": "芋", "reading": "*いも*", "meaning": "Khoai" },
+    { "word": "じゃが芋", "reading": "じゃが*いも*", "meaning": "Khoai tây" }
+  ],
+  "陰": [
+    { "word": "陰", "reading": "*かげ*", "meaning": "Bóng râm/Mặt tối" },
+    { "word": "陰気", "reading": "*いん*き", "meaning": "U ám/Buồn bã" }
+  ],
+  "隠": [
+    { "word": "隠す", "reading": "*かく*す", "meaning": "Che giấu (tha động từ)" },
+    { "word": "隠れる", "reading": "*かく*れる", "meaning": "Ẩn nấp (tự động từ)" }
+  ],
+  "影": [
+    { "word": "影", "reading": "*かげ*", "meaning": "Cái bóng" },
+    { "word": "影響", "reading": "*えい*きょう", "meaning": "Ảnh hưởng" },
+    { "word": "撮影", "reading": "さつ*えい*", "meaning": "Chụp ảnh/Quay phim" }
+  ],
+  "鋭": [
+    { "word": "鋭い", "reading": "*するど*い", "meaning": "Sắc bén" }
+  ],
+  "越": [
+    { "word": "越える", "reading": "*こ*える", "meaning": "Vượt qua" },
+    { "word": "引っ越し", "reading": "ひっ*こ*し", "meaning": "Chuyển nhà" },
+    { "word": "追い越す", "reading": "おい*こ*す", "meaning": "Vượt qua (xe cộ)" }
+  ],
+  "援": [
+    { "word": "応援", "reading": "おう*えん*", "meaning": "Cổ vũ" },
+    { "word": "援助", "reading": "*えん*じょ", "meaning": "Viện trợ" }
+  ],
+  "煙": [
+    { "word": "煙", "reading": "*けむり*", "meaning": "Khói" },
+    { "word": "禁煙", "reading": "きん*えん*", "meaning": "Cấm hút thuốc" }
+  ],
+  "縁": [
+    { "word": "縁", "reading": "*えん*", "meaning": "Duyên nợ/Mối liên hệ" }
+  ],
+  "鉛": [
+    { "word": "鉛筆", "reading": "*えん*ぴつ", "meaning": "Bút chì" }
+  ],
+  "汚": [
+    { "word": "汚い", "reading": "*きたな*い", "meaning": "Bẩn" },
+    { "word": "汚れる", "reading": "*よご*れる", "meaning": "Bị bẩn" },
+    { "word": "汚染", "reading": "*お*せん", "meaning": "Ô nhiễm" }
+  ],
+  "奥": [
+    { "word": "奥", "reading": "*おく*", "meaning": "Bên trong cùng" },
+    { "word": "奥さん", "reading": "*おく*さん", "meaning": "Vợ (người khác)" }
+  ],
+  "押": [
+    { "word": "押す", "reading": "*お*す", "meaning": "Ấn/Đẩy" },
+    { "word": "押入れ", "reading": "*お*し*い*れ", "meaning": "Tủ âm tường" }
+  ],
+  "憶": [
+    { "word": "記憶", "reading": "き*おく*", "meaning": "Ký ức/Trí nhớ" }
+  ],
+  "暇": [
+    { "word": "暇", "reading": "*ひま*", "meaning": "Rảnh rỗi" },
+    { "word": "休暇", "reading": "きゅう*か*", "meaning": "Kỳ nghỉ" }
+  ],
+  "箇": [
+    { "word": "箇所", "reading": "*か*しょ", "meaning": "Chỗ/Địa điểm" }
+  ],
+  "菓": [
+    { "word": "お菓子", "reading": "お*か*し", "meaning": "Bánh kẹo" }
+  ],
+  "雅": [
+    { "word": "優雅", "reading": "ゆう*が*", "meaning": "Nhã nhặn/Thanh lịch" }
+  ],
+  "介": [
+    { "word": "紹介", "reading": "しょう*かい*", "meaning": "Giới thiệu" },
+    { "word": "介護", "reading": "*かい*ご", "meaning": "Chăm sóc/Điều dưỡng" }
+  ],
+  "壊": [
+    { "word": "壊れる", "reading": "*こわ*れる", "meaning": "Hỏng/Vỡ" },
+    { "word": "破壊", "reading": "は*かい*", "meaning": "Phá hoại" }
+  ],
+  "戒": [
+    { "word": "警戒", "reading": "けい*かい*", "meaning": "Cảnh giác" }
+  ],
+  "皆": [
+    { "word": "皆さん", "reading": "*みな*さん", "meaning": "Mọi người" }
+  ],
+  "獲": [
+    { "word": "獲得", "reading": "*かく*とく", "meaning": "Gặt hái/Thu được" },
+    { "word": "獲物", "reading": "*え*もの", "meaning": "Con mồi" }
+  ],
+  "較": [
+    { "word": "比較", "reading": "ひ*かく*", "meaning": "So sánh" }
+  ],
+  "刈": [
+    { "word": "刈る", "reading": "*か*る", "meaning": "Cắt/Gặt/Tỉa" }
+  ],
+  "乾": [
+    { "word": "乾く", "reading": "*かわ*く", "meaning": "Khô" },
+    { "word": "乾燥", "reading": "*かん*そう", "meaning": "Khô khan/Sấy khô" },
+    { "word": "乾杯", "reading": "*かん*ぱい", "meaning": "Cạn ly" }
+  ],
+  "勧": [
+    { "word": "勧める", "reading": "*すす*める", "meaning": "Khuyên/Gợi ý" }
+  ],
+  "歓": [
+    { "word": "歓迎", "reading": "*かん*げい", "meaning": "Hoan nghênh" },
+    { "word": "歓声", "reading": "*かん*せい", "meaning": "Tiếng hoan hô" }
+  ],
+  "汗": [
+    { "word": "汗", "reading": "*あせ*", "meaning": "Mồ hôi" }
+  ],
+  "環": [
+    { "word": "環境", "reading": "*かん*きょう", "meaning": "Môi trường" },
+    { "word": "循環", "reading": "じゅん*かん*", "meaning": "Tuần hoàn" }
+  ],
+  "甘": [
+    { "word": "甘い", "reading": "*あま*い", "meaning": "Ngọt" },
+    { "word": "甘やかす", "reading": "*あま*やかす", "meaning": "Nuông chiều" }
+  ],
+  "監": [
+    { "word": "監督", "reading": "*かん*とく", "meaning": "Huấn luyện viên/Đạo diễn" }
+  ],
+  "含": [
+    { "word": "含む", "reading": "*ふく*む", "meaning": "Bao gồm" }
+  ],
+  "奇": [
+    { "word": "奇跡", "reading": "*き*せき", "meaning": "Kỳ tích" },
+    { "word": "好奇心", "reading": "こう*き*しん", "meaning": "Lòng hiếu kỳ" }
+  ],
+  "幾": [
+    { "word": "幾つ", "reading": "*いく*つ", "meaning": "Bao nhiêu/Mấy cái" },
+    { "word": "幾何学", "reading": "*き*かがく", "meaning": "Hình học" }
+  ],
+  "祈": [
+    { "word": "祈る", "reading": "*いの*る", "meaning": "Cầu nguyện" }
+  ],
+  "輝": [
+    { "word": "輝く", "reading": "*かがや*く", "meaning": "Tỏa sáng" }
+  ],
+  "鬼": [
+    { "word": "鬼", "reading": "*おに*", "meaning": "Con quỷ" },
+    { "word": "鬼ごっこ", "reading": "*おに*ごっこ", "meaning": "Trò đuổi bắt" }
+  ],
+  "儀": [
+    { "word": "儀式", "reading": "*ぎ*しき", "meaning": "Nghi thức" },
+    { "word": "礼儀", "reading": "れい*ぎ*", "meaning": "Lễ nghi" }
+  ],
+  "戯": [
+    { "word": "遊戯", "reading": "ゆう*ぎ*", "meaning": "Trò chơi/Vui chơi" }
+  ],
+  "詰": [
+    { "word": "詰める", "reading": "*つ*める", "meaning": "Nhồi/Nhét" },
+    { "word": "缶詰", "reading": "かん*づ*め", "meaning": "Đồ hộp" },
+    { "word": "詰まる", "reading": "*つ*まる", "meaning": "Tắc/Đầy" }
+  ],
+  "却": [
+    { "word": "返却", "reading": "へん*きゃく*", "meaning": "Trả lại" },
+    { "word": "冷却", "reading": "れい*きゃく*", "meaning": "Làm lạnh" }
+  ],
+  "脚": [
+    { "word": "脚本", "reading": "*きゃく*ほん", "meaning": "Kịch bản" },
+    { "word": "失脚", "reading": "しっ*きゃく*", "meaning": "Mất chức/Đổ vỡ" }
+  ],
+  "丘": [
+    { "word": "丘", "reading": "*おか*", "meaning": "Quả đồi" },
+    { "word": "砂丘", "reading": "さ*きゅう*", "meaning": "Cồn cát" }
+  ],
+  "及": [
+    { "word": "普及", "reading": "ふ*きゅう*", "meaning": "Phổ cập" },
+    { "word": "及ぶ", "reading": "*およ*ぶ", "meaning": "Đạt đến/Lan ra" }
+  ],
+  "朽": [
+    { "word": "朽ちる", "reading": "*く*ちる", "meaning": "Mục nát" },
+    { "word": "老朽化", "reading": "ろう*きゅう*か", "meaning": "Xuống cấp/Lão hóa" }
+  ],
+  "巨": [
+    { "word": "巨大", "reading": "*きょ*だい", "meaning": "Khổng lồ" },
+    { "word": "巨人", "reading": "*きょ*じん", "meaning": "Người khổng lồ" }
+  ],
+  "拠": [
+    { "word": "証拠", "reading": "しょう*こ*", "meaning": "Chứng cứ" },
+    { "word": "根拠", "reading": "こん*きょ*", "meaning": "Căn cứ" },
+    { "word": "拠点", "reading": "*きょ*てん", "meaning": "Cứ điểm/Trụ sở" }
+  ],
+  "距": [
+    { "word": "距離", "reading": "*きょ*り", "meaning": "Cự ly/Khoảng cách" }
+  ],
+  "凶": [
+    { "word": "凶悪", "reading": "*きょう*あく", "meaning": "Hung ác" }
+  ],
+  "叫": [
+    { "word": "叫ぶ", "reading": "*さけ*ぶ", "meaning": "Hét/Gào" },
+    { "word": "絶叫", "reading": "ぜっ*きょう*", "meaning": "Hét lên (vì sợ/vui)" }
+  ],
+  "恐": [
+    { "word": "恐れる", "reading": "*おそ*れる", "meaning": "Sợ hãi" },
+    { "word": "恐怖", "reading": "*きょう*ふ", "meaning": "Khủng bố/Sợ hãi" },
+    { "word": "恐ろしい", "reading": "*おそ*ろしい", "meaning": "Đáng sợ" }
+  ],
+  "況": [
+    { "word": "状況", "reading": "じょう*きょう*", "meaning": "Tình huống" },
+    { "word": "不況", "reading": "ふ*きょう*", "meaning": "Khủng hoảng kinh tế" }
+  ],
+  "狂": [
+    { "word": "狂う", "reading": "*くる*う", "meaning": "Điên/Hỏng hóc" },
+    { "word": "熱狂", "reading": "ねっ*きょう*", "meaning": "Cuồng nhiệt" }
+  ],
+  "狭": [
+    { "word": "狭い", "reading": "*せま*い", "meaning": "Hẹp" }
+  ],
+  "響": [
+    { "word": "影響", "reading": "えい*きょう*", "meaning": "Ảnh hưởng" },
+    { "word": "響く", "reading": "*ひび*く", "meaning": "Vang vọng" }
+  ],
+  "驚": [
+    { "word": "驚く", "reading": "*おどろ*く", "meaning": "Ngạc nhiên" },
+    { "word": "驚き", "reading": "*おどろ*き", "meaning": "Sự ngạc nhiên" }
+  ],
+  "仰": [
+    { "word": "仰ぐ", "reading": "*あお*ぐ", "meaning": "Nhìn lên/Ngưỡng mộ" },
+    { "word": "信仰", "reading": "しん*こう*", "meaning": "Tín ngưỡng" }
+  ],
+  "駆": [
+    { "word": "駆け足", "reading": "*か*けあし", "meaning": "Chạy nhanh" },
+    { "word": "駆使", "reading": "*く*し", "meaning": "Tận dụng triệt để" }
+  ],
+  "屈": [
+    { "word": "退屈", "reading": "たい*くつ*", "meaning": "Buồn tẻ/Chán ngắt" },
+    { "word": "理屈", "reading": "り*くつ*", "meaning": "Lý lẽ/Logic" }
+  ],
+  "掘": [
+    { "word": "掘る", "reading": "*ほ*る", "meaning": "Đào" },
+    { "word": "発掘", "reading": "はっ*くつ*", "meaning": "Khai quật" }
+  ],
+  "繰": [
+    { "word": "繰り返す", "reading": "*く*りかえす", "meaning": "Lặp lại" }
+  ],
+  "傾": [
+    { "word": "傾く", "reading": "*かたむ*く", "meaning": "Nghiêng/Ngả về" },
+    { "word": "傾向", "reading": "*けい*こう", "meaning": "Khuynh hướng" }
+  ],
+  "恵": [
+    { "word": "恵まれる", "reading": "*めぐ*まれる", "meaning": "Được ban cho/May mắn" },
+    { "word": "知恵", "reading": "ち*え*", "meaning": "Trí tuệ" }
+  ],
+  "継": [
+    { "word": "継続", "reading": "*けい*ぞく", "meaning": "Kế tục/Tiếp tục" },
+    { "word": "継ぐ", "reading": "*つ*ぐ", "meaning": "Thừa kế" }
+  ],
+  "迎": [
+    { "word": "迎える", "reading": "*むか*える", "meaning": "Đón/Nghênh đón" },
+    { "word": "歓迎", "reading": "かん*げい*", "meaning": "Hoan nghênh" }
+  ],
+  "撃": [
+    { "word": "攻撃", "reading": "こう*げき*", "meaning": "Tấn công" },
+    { "word": "目撃", "reading": "もく*げき*", "meaning": "Mục kích/Chứng kiến" }
+  ],
+  "兼": [
+    { "word": "兼ねる", "reading": "*か*ねる", "meaning": "Kiêm nhiệm" },
+    { "word": "兼用", "reading": "*けん*よう", "meaning": "Dùng cho cả hai" }
+  ],
+  "剣": [
+    { "word": "剣道", "reading": "*けん*どう", "meaning": "Kiếm đạo" },
+    { "word": "真剣", "reading": "しん*けん*", "meaning": "Nghiêm túc/Đứng đắn" }
+  ],
+  "圏": [
+    { "word": "圏外", "reading": "*けん*がい", "meaning": "Ngoài vùng phủ sóng" },
+    { "word": "首都圏", "reading": "しゅと*けん*", "meaning": "Vùng thủ đô" }
+  ],
+  "堅": [
+    { "word": "堅い", "reading": "*かた*い", "meaning": "Cứng/Vững chắc" },
+    { "word": "堅実", "reading": "*けん*じつ", "meaning": "Chắc chắn/Thiết thực" }
+  ],
+  "肩": [
+    { "word": "肩", "reading": "*かた*", "meaning": "Vai" }
+  ],
+  "軒": [
+    { "word": "軒", "reading": "*のき*", "meaning": "Mái hiên" },
+    { "word": "一軒家", "reading": "いっ*けん*や", "meaning": "Nhà nguyên căn" }
+  ],
+  "遣": [
+    { "word": "派遣", "reading": "は*けん*", "meaning": "Phái cử" },
+    { "word": "気遣い", "reading": "き*づか*い", "meaning": "Sự quan tâm/Lo lắng" }
+  ],
+  "玄": [
+    { "word": "玄関", "reading": "*げん*かん", "meaning": "Lối đi vào/Sảnh" },
+    { "word": "玄米", "reading": "*げん*まい", "meaning": "Gạo lứt" }
+  ],
+  "枯": [
+    { "word": "枯れる", "reading": "*か*れる", "meaning": "Héo/Khô" }
+  ],
+  "誇": [
+    { "word": "誇り", "reading": "*ほこ*り", "meaning": "Niềm tự hào" },
+    { "word": "誇張", "reading": "*こ*ちょう", "meaning": "Phóng đại" }
+  ],
+  "鼓": [
+    { "word": "太鼓", "reading": "たい*こ*", "meaning": "Cái trống" },
+    { "word": "鼓動", "reading": "*こ*どう", "meaning": "Nhịp đập (tim)" }
+  ],
+  "互": [
+    { "word": "お互い", "reading": "お*たが*い", "meaning": "Lẫn nhau" },
+    { "word": "相互", "reading": "*そう*ご", "meaning": "Tương hỗ" }
+  ],
+  "御": [
+    { "word": "御飯", "reading": "*ご*はん", "meaning": "Cơm" },
+    { "word": "御中", "reading": "*おん*ちゅう", "meaning": "Kính gửi (công ty/tổ chức)" }
+  ],
+  "恒": [
+    { "word": "恒例", "reading": "*こう*れい", "meaning": "Thông lệ/Thường lệ" }
+  ],
+  "抗": [
+    { "word": "抵抗", "reading": "てい*こう*", "meaning": "Kháng cự/Điện trở" },
+    { "word": "反抗", "reading": "はん*こう*", "meaning": "Phản kháng" }
+  ],
+  "攻": [
+    { "word": "攻める", "reading": "*せ*める", "meaning": "Tấn công" },
+    { "word": "攻撃", "reading": "*こう*げき", "meaning": "Công kích" }
+  ],
+  "更": [
+    { "word": "更に", "reading": "*さら*に", "meaning": "Hơn nữa" },
+    { "word": "変更", "reading": "へん*こう*", "meaning": "Thay đổi" },
+    { "word": "更新", "reading": "*こう*しん", "meaning": "Gia hạn/Cập nhật" }
+  ],
+  "稿": [
+    { "word": "原稿", "reading": "げん*こう*", "meaning": "Bản thảo" }
+  ],
+  "荒": [
+    { "word": "荒れる", "reading": "*あ*れる", "meaning": "Hoang vu/Biển động" },
+    { "word": "荒い", "reading": "*あら*い", "meaning": "Thô bạo/Gấp gáp" },
+    { "word": "荒らす", "reading": "*あ*らす", "meaning": "Phá hoại" }
+  ],
+  "項": [
+    { "word": "項目", "reading": "*こう*もく", "meaning": "Hạng mục" },
+    { "word": "事項", "reading": "じ*こう*", "meaning": "Sự việc/Điều khoản" }
+  ],
+  "豪": [
+    { "word": "豪華", "reading": "*ごう*か", "meaning": "Hào hoa/Sang trọng" },
+    { "word": "富豪", "reading": "ふ*ごう*", "meaning": "Phú hào" }
+  ],
+  "腰": [
+    { "word": "腰", "reading": "*こし*", "meaning": "Eo/Hông" },
+    { "word": "腰掛ける", "reading": "*こし*かける", "meaning": "Ngồi xuống" }
+  ],
+  "込": [
+    { "word": "込む", "reading": "*こ*む", "meaning": "Đông đúc" },
+    { "word": "申し込む", "reading": "もうし*こ*む", "meaning": "Đăng ký" },
+    { "word": "込める", "reading": "*こ*める", "meaning": "Dồn/Nạp (đạn, tình cảm)" }
+  ],
+  "婚": [
+    { "word": "結婚", "reading": "けっ*こん*", "meaning": "Kết hôn" },
+    { "word": "婚約", "reading": "*こん*やく", "meaning": "Đính hôn" },
+    { "word": "新婚", "reading": "しん*こん*", "meaning": "Tân hôn" }
+  ],
+  "鎖": [
+    { "word": "閉鎖", "reading": "へい*さ*", "meaning": "Phong tỏa/Đóng cửa" },
+    { "word": "連鎖", "reading": "れん*さ*", "meaning": "Chuỗi/Liên kết" }
+  ],
+  "彩": [
+    { "word": "色彩", "reading": "しき*さい*", "meaning": "Màu sắc" }
+  ],
+  "歳": [
+    { "word": "〜歳", "reading": "〜*さい*", "meaning": "Tuổi" },
+    { "word": "二十歳", "reading": "はたち", "meaning": "20 tuổi" },
+    { "word": "歳暮", "reading": "*せい*ぼ", "meaning": "Quà cuối năm" }
+  ],
+  "載": [
+    { "word": "載る", "reading": "*の*る", "meaning": "Được đăng/Đặt lên" },
+    { "word": "載せる", "reading": "*の*せる", "meaning": "Đăng tải/Chất lên" },
+    { "word": "掲載", "reading": "けい*さい*", "meaning": "Đăng bài" }
+  ],
+  "剤": [
+    { "word": "洗剤", "reading": "せん*ざい*", "meaning": "Chất tẩy rửa" },
+    { "word": "薬剤師", "reading": "やく*ざい*し", "meaning": "Dược sĩ" }
+  ],
+  "咲": [
+    { "word": "咲く", "reading": "*さ*く", "meaning": "Nở (hoa)" }
+  ],
+  "惨": [
+    { "word": "悲惨", "reading": "ひ*さん*", "meaning": "Bi thảm" },
+    { "word": "惨め", "reading": "*み*じめ", "meaning": "Đáng thương/Khổ sở" }
+  ],
+  "伺": [
+    { "word": "伺う", "reading": "*うかが*う", "meaning": "Hỏi/Thăm (khiêm nhường)" }
+  ],
+  "刺": [
+    { "word": "刺す", "reading": "*さ*す", "meaning": "Đâm/Châm/Chích" },
+    { "word": "名刺", "reading": "めい*し*", "meaning": "Danh thiếp" },
+    { "word": "刺激", "reading": "*し*げき", "meaning": "Kích thích" }
+  ],
+  "旨": [
+    { "word": "趣旨", "reading": "しゅ*し*", "meaning": "Ý đồ/Mục đích" },
+    { "word": "旨い", "reading": "*うま*い", "meaning": "Ngon/Giỏi" }
+  ],
+  "紫": [
+    { "word": "紫", "reading": "*むらさき*", "meaning": "Màu tím" },
+    { "word": "紫外線", "reading": "*し*がいせん", "meaning": "Tia tử ngoại" }
+  ],
+  "脂": [
+    { "word": "脂肪", "reading": "*し*ぼう", "meaning": "Mỡ/Chất béo" },
+    { "word": "油脂", "reading": "ゆ*し*", "meaning": "Dầu mỡ" }
+  ],
+  "雌": [
+    { "word": "雌", "reading": "*めす*", "meaning": "Con cái (động vật)" }
+  ],
+  "執": [
+    { "word": "執筆", "reading": "*しっ*ぴつ", "meaning": "Viết văn/Chấp bút" },
+    { "word": "執行", "reading": "*しっ*こう", "meaning": "Chấp hành/Thi hành" }
+  ],
+  "芝": [
+    { "word": "芝生", "reading": "*しば*ふ", "meaning": "Bãi cỏ" },
+    { "word": "芝居", "reading": "*しば*い", "meaning": "Vở kịch/Diễn trò" }
+  ],
+  "斜": [
+    { "word": "斜め", "reading": "*なな*め", "meaning": "Nghiêng/Chéo" },
+    { "word": "斜面", "reading": "*しゃ*めん", "meaning": "Mặt nghiêng/Dốc" }
+  ],
+  "煮": [
+    { "word": "煮る", "reading": "*に*る", "meaning": "Nấu/Ninh" },
+    { "word": "煮える", "reading": "*に*える", "meaning": "Chín/Nhừ" }
+  ],
+  "釈": [
+    { "word": "解釈", "reading": "かい*しゃく*", "meaning": "Giải thích/Diễn giải" },
+    { "word": "釈放", "reading": "*しゃく*ほう", "meaning": "Phóng thích" }
+  ],
+  "寂": [
+    { "word": "寂しい", "reading": "*さび*しい", "meaning": "Buồn/Cô đơn" },
+    { "word": "静寂", "reading": "せい*じゃく*", "meaning": "Tĩnh lặng" }
+  ],
+  "朱": [
+    { "word": "朱色", "reading": "*しゅ*いろ", "meaning": "Màu đỏ son" }
+  ],
+  "狩": [
+    { "word": "狩る", "reading": "*か*る", "meaning": "Săn bắt" },
+    { "word": "紅葉狩り", "reading": "もみじ*が*り", "meaning": "Ngắm lá đỏ" }
+  ],
+  "趣": [
+    { "word": "趣味", "reading": "*しゅ*み", "meaning": "Sở thích" },
+    { "word": "趣旨", "reading": "*しゅ*し", "meaning": "Ý đồ/Mục đích" }
+  ],
+  "需": [
+    { "word": "需要", "reading": "*じゅ*よう", "meaning": "Nhu cầu" },
+    { "word": "必需品", "reading": "ひつ*じゅ*ひん", "meaning": "Nhu yếu phẩm" }
+  ],
+  "秀": [
+    { "word": "優秀", "reading": "ゆう*しゅう*", "meaning": "Ưu tú" }
+  ],
+  "舟": [
+    { "word": "舟", "reading": "*ふね*", "meaning": "Thuyền nhỏ" },
+    { "word": "小舟", "reading": "こ*ぶね*", "meaning": "Thuyền con" }
+  ],
+  "襲": [
+    { "word": "襲う", "reading": "*おそ*う", "meaning": "Tấn công/Ập đến" },
+    { "word": "逆襲", "reading": "ぎゃく*しゅう*", "meaning": "Phản công" }
+  ],
+  "柔": [
+    { "word": "柔らかい", "reading": "*やわ*らかい", "meaning": "Mềm mại" },
+    { "word": "柔軟", "reading": "*じゅう*なん", "meaning": "Linh hoạt/Mềm dẻo" }
+  ],
+  "獣": [
+    { "word": "猛獣", "reading": "もう*じゅう*", "meaning": "Mãnh thú" },
+    { "word": "獣医", "reading": "*じゅう*い", "meaning": "Bác sĩ thú y" }
+  ],
+  "瞬": [
+    { "word": "瞬間", "reading": "*しゅん*かん", "meaning": "Khoảnh khắc" },
+    { "word": "一瞬", "reading": "いっ*しゅん*", "meaning": "Một thoáng" }
+  ],
+  "旬": [
+    { "word": "旬", "reading": "*しゅん*", "meaning": "Mùa (ngon nhất của thực phẩm)" },
+    { "word": "上旬", "reading": "じょう*じゅん*", "meaning": "Thượng tuần (10 ngày đầu tháng)" },
+    { "word": "初旬", "reading": "しょ*じゅん*", "meaning": "Đầu tháng" }
+  ],
+  "盾": [
+    { "word": "矛盾", "reading": "む*じゅん*", "meaning": "Mâu thuẫn" },
+    { "word": "盾", "reading": "*たて*", "meaning": "Cái khiên" }
+  ],
+  "巡": [
+    { "word": "巡る", "reading": "*めぐ*る", "meaning": "Đi quanh/Dạo quanh" },
+    { "word": "お巡りさん", "reading": "お*まわ*りさん", "meaning": "Cảnh sát tuần tra" }
+  ],
+  "召": [
+    { "word": "召し上がる", "reading": "*め*しあがる", "meaning": "Ăn/Uống (kính ngữ)" }
+  ],
+  "床": [
+    { "word": "床", "reading": "*ゆか*", "meaning": "Sàn nhà" },
+    { "word": "起床", "reading": "き*しょう*", "meaning": "Thức dậy" },
+    { "word": "床屋", "reading": "*とこ*や", "meaning": "Tiệm cắt tóc" }
+  ],
+  "沼": [
+    { "word": "沼", "reading": "*ぬま*", "meaning": "Ao đầm" },
+    { "word": "泥沼", "reading": "どろ*ぬま*", "meaning": "Vũng bùn/Sa lầy" }
+  ],
+  "称": [
+    { "word": "名称", "reading": "めい*しょう*", "meaning": "Danh xưng/Tên gọi" },
+    { "word": "対称", "reading": "たい*しょう*", "meaning": "Đối xứng" }
+  ],
+  "紹": [
+    { "word": "紹介", "reading": "*しょう*かい", "meaning": "Giới thiệu" },
+    { "word": "自己紹介", "reading": "じこ*しょう*かい", "meaning": "Tự giới thiệu" }
+  ],
+  "詳": [
+    { "word": "詳しい", "reading": "*くわ*しい", "meaning": "Tường tận/Chi tiết" },
+    { "word": "詳細", "reading": "*しょう*さい", "meaning": "Chi tiết" }
+  ],
+  "丈": [
+    { "word": "丈夫", "reading": "*じょう*ぶ", "meaning": "Bền/Chắc" },
+    { "word": "大丈夫", "reading": "だい*じょう*ぶ", "meaning": "Không sao/Ổn" }
+  ],
+  "畳": [
+    { "word": "畳", "reading": "*たたみ*", "meaning": "Chiếu Tatami" },
+    { "word": "畳む", "reading": "*たた*む", "meaning": "Gấp (chăn, chiếu)" }
+  ],
+  "飾": [
+    { "word": "飾る", "reading": "*かざ*る", "meaning": "Trang trí" },
+    { "word": "装飾", "reading": "そう*しょく*", "meaning": "Trang sức/Trang trí" },
+    { "word": "修飾", "reading": "しゅう*しょく*", "meaning": "Bổ nghĩa (ngữ pháp)" }
+  ],
+  "殖": [
+    { "word": "繁殖", "reading": "はん*しょく*", "meaning": "Sinh sôi/Phát triển" },
+    { "word": "養殖", "reading": "よう*しょく*", "meaning": "Nuôi trồng thủy sản" }
+  ],
+  "触": [
+    { "word": "触る", "reading": "*さわ*る", "meaning": "Sờ/Chạm" },
+    { "word": "触れる", "reading": "*ふ*れる", "meaning": "Tiếp xúc/Đề cập" },
+    { "word": "感触", "reading": "かん*しょく*", "meaning": "Cảm giác/Xúc giác" }
+  ],
+  "侵": [
+    { "word": "侵入", "reading": "*しん*にゅう", "meaning": "Xâm nhập" },
+    { "word": "侵す", "reading": "*おか*す", "meaning": "Xâm phạm/Vi phạm" }
+  ],
+  "寝": [
+    { "word": "寝る", "reading": "*ね*る", "meaning": "Ngủ" },
+    { "word": "寝坊", "reading": "*ね*ぼう", "meaning": "Ngủ nướng" },
+    { "word": "昼寝", "reading": "ひる*ね*", "meaning": "Ngủ trưa" }
+  ],
+  "慎": [
+    { "word": "慎重", "reading": "*しん*ちょう", "meaning": "Thận trọng" },
+    { "word": "慎む", "reading": "*つつし*む", "meaning": "Cẩn thận/Hạn chế" }
+  ],
+  "振": [
+    { "word": "振る", "reading": "*ふ*る", "meaning": "Vẫy/Rắc/Từ chối" },
+    { "word": "振動", "reading": "*しん*どう", "meaning": "Chấn động/Rung" },
+    { "word": "振り込む", "reading": "*ふ*りこむ", "meaning": "Chuyển khoản" }
+  ],
+  "浸": [
+    { "word": "浸かる", "reading": "*つ*かる", "meaning": "Ngâm mình" },
+    { "word": "浸す", "reading": "*ひた*す", "meaning": "Nhúng/Ngâm" }
+  ],
+  "薪": [
+    { "word": "薪", "reading": "*たきぎ*", "meaning": "Củi" }
+  ],
+  "震": [
+    { "word": "地震", "reading": "じ*しん*", "meaning": "Động đất" },
+    { "word": "震える", "reading": "*ふる*える", "meaning": "Run rẩy" }
+  ],
+  "尋": [
+    { "word": "尋ねる", "reading": "*たず*ねる", "meaning": "Hỏi" }
+  ],
+  "尽": [
+    { "word": "尽くす", "reading": "*つ*くす", "meaning": "Cống hiến/Dốc sức" },
+    { "word": "尽きる", "reading": "*つ*きる", "meaning": "Cạn kiệt" }
+  ],
+  "陣": [
+    { "word": "報道陣", "reading": "ほうどう*じん*", "meaning": "Nhóm phóng viên" },
+    { "word": "陣地", "reading": "*じん*ち", "meaning": "Trận địa/Căn cứ" }
+  ],
+  "吹": [
+    { "word": "吹く", "reading": "*ふ*く", "meaning": "Thổi" },
+    { "word": "吹雪", "reading": "*ふ*ぶき", "meaning": "Bão tuyết" }
+  ],
+  "澄": [
+    { "word": "澄む", "reading": "*す*む", "meaning": "Trong trẻo/Trong sáng" }
+  ],
+  "是": [
+    { "word": "是非", "reading": "*ぜ*ひ", "meaning": "Nhất định" },
+    { "word": "是正", "reading": "*ぜ*せい", "meaning": "Điều chỉnh/Sửa chữa" }
+  ],
+  "姓": [
+    { "word": "姓名", "reading": "*せい*めい", "meaning": "Họ tên" },
+    { "word": "姓", "reading": "*せい*", "meaning": "Họ" }
+  ],
+  "征": [
+    { "word": "遠征", "reading": "えん*せい*", "meaning": "Viễn chinh/Thi đấu xa" }
+  ],
+  "跡": [
+    { "word": "足跡", "reading": "あし*あと*", "meaning": "Dấu chân" },
+    { "word": "奇跡", "reading": "き*せき*", "meaning": "Kỳ tích" },
+    { "word": "跡", "reading": "*あと*", "meaning": "Dấu vết" }
+  ],
+  "占": [
+    { "word": "占う", "reading": "*うらな*う", "meaning": "Bói" },
+    { "word": "占める", "reading": "*し*める", "meaning": "Chiếm" },
+    { "word": "占領", "reading": "*せん*りょう", "meaning": "Chiếm lĩnh" }
+  ],
+  "扇": [
+    { "word": "扇風機", "reading": "*せん*ぷうき", "meaning": "Quạt máy" },
+    { "word": "扇子", "reading": "*せん*す", "meaning": "Quạt giấy" }
+  ],
+  "鮮": [
+    { "word": "新鮮", "reading": "しん*せん*", "meaning": "Tươi mới" },
+    { "word": "鮮やか", "reading": "*あざ*やか", "meaning": "Rực rỡ/Nổi bật" }
+  ],
+  "訴": [
+    { "word": "訴える", "reading": "*うった*える", "meaning": "Kiện cáo/Than phiền" },
+    { "word": "告訴", "reading": "こく*そ*", "meaning": "Tố cáo" }
+  ],
+  "僧": [
+    { "word": "僧", "reading": "*そう*", "meaning": "Tăng lữ/Nhà sư" },
+    { "word": "小僧", "reading": "こ*ぞう*", "meaning": "Tiểu tăng/Thằng nhãi" }
+  ],
+  "燥": [
+    { "word": "乾燥", "reading": "かん*そう*", "meaning": "Khô/Sấy khô" }
+  ],
+  "騒": [
+    { "word": "騒ぐ", "reading": "*さわ*ぐ", "meaning": "Làm ồn" },
+    { "word": "騒音", "reading": "*そう*おん", "meaning": "Tiếng ồn" },
+    { "word": "騒々しい", "reading": "*そう*ぞうしい", "meaning": "Ồn ào" }
+  ],
+  "贈": [
+    { "word": "贈る", "reading": "*おく*る", "meaning": "Tặng" },
+    { "word": "贈り物", "reading": "*おく*りもの", "meaning": "Quà tặng" },
+    { "word": "贈答", "reading": "*ぞう*とう", "meaning": "Biếu tặng" }
+  ],
+  "即": [
+    { "word": "即座に", "reading": "*そく*ざに", "meaning": "Ngay lập tức" },
+    { "word": "即効", "reading": "*そっ*こう", "meaning": "Hiệu quả tức thì" }
+  ],
+  "俗": [
+    { "word": "民俗", "reading": "みん*ぞく*", "meaning": "Dân tục" },
+    { "word": "俗語", "reading": "*ぞく*ご", "meaning": "Tiếng lóng" }
+  ],
+  "耐": [
+    { "word": "耐える", "reading": "*た*える", "meaning": "Chịu đựng" },
+    { "word": "忍耐", "reading": "にん*たい*", "meaning": "Nhẫn nại" },
+    { "word": "耐久", "reading": "*たい*きゅう", "meaning": "Độ bền" }
+  ],
+  "替": [
+    { "word": "替える", "reading": "*か*える", "meaning": "Thay thế/Đổi" },
+    { "word": "着替え", "reading": "き*が*え", "meaning": "Thay quần áo" },
+    { "word": "両替", "reading": "りょう*が*え", "meaning": "Đổi tiền" }
+  ],
+  "拓": [
+    { "word": "開拓", "reading": "かい*たく*", "meaning": "Khai thác/Khai phá" }
+  ],
+  "沢": [
+    { "word": "贅沢", "reading": "ぜい*たく*", "meaning": "Xa xỉ" },
+    { "word": "沢山", "reading": "*たく*さん", "meaning": "Nhiều" }
+  ],
+  "濁": [
+    { "word": "濁る", "reading": "*にご*る", "meaning": "Đục" },
+    { "word": "濁点", "reading": "*だく*てん", "meaning": "Dấu đục (tenten)" }
+  ],
+  "脱": [
+    { "word": "脱ぐ", "reading": "*ぬ*ぐ", "meaning": "Cởi" },
+    { "word": "脱出", "reading": "*だっ*しゅつ", "meaning": "Thoát khỏi" },
+    { "word": "脱線", "reading": "*だっ*せん", "meaning": "Trật đường ray/Lạc đề" }
+  ],
+  "丹": [
+    { "word": "丹念", "reading": "*たん*ねん", "meaning": "Tỉ mỉ/Chú đáo" }
+  ],
+  "嘆": [
+    { "word": "嘆く", "reading": "*なげ*く", "meaning": "Than thở" },
+    { "word": "感嘆", "reading": "かん*たん*", "meaning": "Cảm thán" }
+  ],
+  "淡": [
+    { "word": "淡い", "reading": "*あわ*い", "meaning": "Nhạt/Mờ" },
+    { "word": "冷淡", "reading": "れい*たん*", "meaning": "Lãnh đạm" }
+  ],
+  "端": [
+    { "word": "端", "reading": "*はし*", "meaning": "Mép/Cạnh/Bờ" },
+    { "word": "先端", "reading": "せん*たん*", "meaning": "Tiên tiến/Mũi nhọn" },
+    { "word": "極端", "reading": "きょく*たん*", "meaning": "Cực đoan" }
+  ],
+  "弾": [
+    { "word": "弾く", "reading": "*ひ*く", "meaning": "Chơi đàn" },
+    { "word": "弾む", "reading": "*はず*む", "meaning": "Nảy/Phấn khích" },
+    { "word": "爆弾", "reading": "ばく*だん*", "meaning": "Bom" }
+  ],
+  "恥": [
+    { "word": "恥ずかしい", "reading": "*は*ずかしい", "meaning": "Xấu hổ" },
+    { "word": "恥", "reading": "*はじ*", "meaning": "Nỗi xấu hổ" }
+  ],
+  "致": [
+    { "word": "一致", "reading": "いっ*ち*", "meaning": "Nhất trí" },
+    { "word": "致命的", "reading": "*ち*めいてき", "meaning": "Chí mạng" },
+    { "word": "致します", "reading": "*いた*します", "meaning": "Làm (khiêm nhường)" }
+  ],
+  "遅": [
+    { "word": "遅い", "reading": "*おそ*い", "meaning": "Muộn/Chậm" },
+    { "word": "遅れる", "reading": "*おく*れる", "meaning": "Trễ" },
+    { "word": "遅刻", "reading": "*ち*こく", "meaning": "Đến muộn" }
+  ],
+  "蓄": [
+    { "word": "蓄える", "reading": "*たくわ*える", "meaning": "Tích trữ" },
+    { "word": "貯蓄", "reading": "ちょ*ちく*", "meaning": "Tiết kiệm" }
+  ],
+  "徴": [
+    { "word": "特徴", "reading": "とく*ちょう*", "meaning": "Đặc trưng" },
+    { "word": "象徴", "reading": "しょう*ちょう*", "meaning": "Tượng trưng" }
+  ],
+  "跳": [
+    { "word": "跳ねる", "reading": "*は*ねる", "meaning": "Nhảy/Bắn lên" },
+    { "word": "縄跳び", "reading": "なわ*と*び", "meaning": "Nhảy dây" }
+  ],
+  "沈": [
+    { "word": "沈む", "reading": "*しず*む", "meaning": "Chìm/Lặn" },
+    { "word": "沈没", "reading": "*ちん*ぼつ", "meaning": "Chìm tàu" }
+  ],
+  "珍": [
+    { "word": "珍しい", "reading": "*めずら*しい", "meaning": "Hiếm" }
+  ],
+  "堤": [
+    { "word": "堤防", "reading": "*てい*ぼう", "meaning": "Đê điều" }
+  ],
+  "抵": [
+    { "word": "抵抗", "reading": "*てい*こう", "meaning": "Kháng cự/Điện trở" },
+    { "word": "大抵", "reading": "たい*てい*", "meaning": "Đại thể/Thường là" }
+  ],
+  "摘": [
+    { "word": "摘む", "reading": "*つ*む", "meaning": "Hái/Ngắt" },
+    { "word": "指摘", "reading": "し*てき*", "meaning": "Chỉ trích/Chỉ ra" }
+  ],
+  "滴": [
+    { "word": "水滴", "reading": "すい*てき*", "meaning": "Giọt nước" },
+    { "word": "滴る", "reading": "*したた*る", "meaning": "Nhỏ giọt" }
+  ],
+  "添": [
+    { "word": "添付", "reading": "*てん*ぷ", "meaning": "Đính kèm" },
+    { "word": "添える", "reading": "*そ*える", "meaning": "Thêm vào/Kèm theo" }
+  ],
+  "殿": [
+    { "word": "殿様", "reading": "*との*さま", "meaning": "Lãnh chúa" },
+    { "word": "宮殿", "reading": "きゅう*でん*", "meaning": "Cung điện" }
+  ],
+  "吐": [
+    { "word": "吐く", "reading": "*は*く", "meaning": "Nôn/Thở ra" },
+    { "word": "吐き気", "reading": "*は*きけ", "meaning": "Buồn nôn" }
+  ],
+  "渡": [
+    { "word": "渡る", "reading": "*わた*る", "meaning": "Băng qua" },
+    { "word": "渡す", "reading": "*わた*す", "meaning": "Trao cho" }
+  ],
+  "途": [
+    { "word": "途中", "reading": "*と*ちゅう", "meaning": "Giữa đường" },
+    { "word": "用途", "reading": "よう*と*", "meaning": "Công dụng" },
+    { "word": "中途半端", "reading": "ちゅう*と*はんぱ", "meaning": "Nửa vời" }
+  ],
+  "奴": [
+    { "word": "奴", "reading": "*やつ*", "meaning": "Gã ấy/Hắn/Cái ấy" }
+  ],
+  "怒": [
+    { "word": "怒る", "reading": "*おこ*る", "meaning": "Tức giận" },
+    { "word": "怒り", "reading": "*いか*り", "meaning": "Cơn giận" }
+  ],
+  "倒": [
+    { "word": "倒れる", "reading": "*たお*れる", "meaning": "Ngã/Đổ" },
+    { "word": "倒す", "reading": "*たお*す", "meaning": "Làm đổ/Đánh bại" },
+    { "word": "面倒", "reading": "めん*どう*", "meaning": "Phiền phức" }
+  ],
+  "唐": [
+    { "word": "唐突", "reading": "*とう*とつ", "meaning": "Đường đột" }
+  ],
+  "塔": [
+    { "word": "塔", "reading": "*とう*", "meaning": "Cái tháp" }
+  ],
+  "桃": [
+    { "word": "桃", "reading": "*もも*", "meaning": "Quả đào" }
+  ],
+  "盗": [
+    { "word": "盗む", "reading": "*ぬす*む", "meaning": "Ăn trộm" },
+    { "word": "強盗", "reading": "ごう*とう*", "meaning": "Cướp" }
+  ],
+  "到": [
+    { "word": "到着", "reading": "*とう*ちゃく", "meaning": "Đến nơi" },
+    { "word": "殺到", "reading": "さっ*とう*", "meaning": "Dồn dập/Chen lấn" }
+  ],
+  "踏": [
+    { "word": "踏む", "reading": "*ふ*む", "meaning": "Đạp/Giẫm" },
+    { "word": "踏切", "reading": "*ふみ*きり", "meaning": "Chắn tàu" }
+  ],
+  "逃": [
+    { "word": "逃げる", "reading": "*に*げる", "meaning": "Chạy trốn" },
+    { "word": "逃す", "reading": "*のが*す", "meaning": "Bỏ lỡ/Để xổng" }
+  ],
+  "透": [
+    { "word": "透明", "reading": "*とう*めい", "meaning": "Trong suốt" },
+    { "word": "透き通る", "reading": "*す*きとおる", "meaning": "Trong vắt/Nhìn thấu" }
+  ],
+  "闘": [
+    { "word": "戦闘", "reading": "せん*とう*", "meaning": "Chiến đấu" },
+    { "word": "闘う", "reading": "*たたか*う", "meaning": "Đấu tranh" }
+  ],
+  "胴": [
+    { "word": "胴体", "reading": "*どう*たい", "meaning": "Thân mình" }
+  ],
+  "峠": [
+    { "word": "峠", "reading": "*とうげ*", "meaning": "Đèo" }
+  ],
+  "突": [
+    { "word": "突然", "reading": "*とつ*ぜん", "meaning": "Đột nhiên" },
+    { "word": "突き当たる", "reading": "*つ*きあたる", "meaning": "Đâm vào/Đi hết đường" },
+    { "word": "衝突", "reading": "しょう*とつ*", "meaning": "Xung đột/Va chạm" }
+  ],
+  "曇": [
+    { "word": "曇る", "reading": "*くも*る", "meaning": "Có mây/Mờ đi" },
+    { "word": "曇り", "reading": "*くも*り", "meaning": "Trời mây" }
+  ],
+  "鈍": [
+    { "word": "鈍い", "reading": "*にぶ*い", "meaning": "Cùn/Chậm chạp" }
+  ],
+  "弐": [
+    { "word": "弐", "reading": "*に*", "meaning": "Số 2 (trong tài chính)" }
+  ],
+  "悩": [
+    { "word": "悩む", "reading": "*なや*む", "meaning": "Lo nghĩ/Phiền não" },
+    { "word": "悩み", "reading": "*なや*み", "meaning": "Nỗi lo" }
+  ],
+  "濃": [
+    { "word": "濃い", "reading": "*こ*い", "meaning": "Đậm/Đặc" },
+    { "word": "濃度", "reading": "*のう*ど", "meaning": "Nồng độ" }
+  ],
+  "杯": [
+    { "word": "一杯", "reading": "いっ*ぱい*", "meaning": "Một cốc/Đầy" },
+    { "word": "乾杯", "reading": "かん*ぱい*", "meaning": "Cạn ly" }
+  ],
+  "輩": [
+    { "word": "先輩", "reading": "せん*ぱい*", "meaning": "Tiền bối" },
+    { "word": "後輩", "reading": "こう*はい*", "meaning": "Hậu bối" }
+  ],
+  "拍": [
+    { "word": "拍手", "reading": "*はく*しゅ", "meaning": "Vỗ tay" },
+    { "word": "拍子", "reading": "*ひょう*し", "meaning": "Nhịp phách/Đà" }
+  ],
+  "泊": [
+    { "word": "泊まる", "reading": "*と*まる", "meaning": "Trọ lại" },
+    { "word": "宿泊", "reading": "しゅく*はく*", "meaning": "Ngủ trọ/Lưu trú" },
+    { "word": "二泊", "reading": "に*はく*", "meaning": "2 đêm" }
+  ],
+  "薄": [
+    { "word": "薄い", "reading": "*うす*い", "meaning": "Mỏng/Nhạt" },
+    { "word": "薄める", "reading": "*うす*める", "meaning": "Làm loãng/Làm nhạt" }
+  ],
+  "迫": [
+    { "word": "迫る", "reading": "*せま*る", "meaning": "Cưỡng bức/Đến sát" },
+    { "word": "圧迫", "reading": "あっ*ぱく*", "meaning": "Áp bức/Gây áp lực" }
+  ],
+  "爆": [
+    { "word": "爆発", "reading": "*ばく*はつ", "meaning": "Vụ nổ/Bùng nổ" },
+    { "word": "爆笑", "reading": "*ばく*しょう", "meaning": "Cười phá lên" }
+  ],
+  "髪": [
+    { "word": "髪", "reading": "*かみ*", "meaning": "Tóc" },
+    { "word": "金髪", "reading": "きん*ぱつ*", "meaning": "Tóc vàng" },
+    { "word": "白髪", "reading": "しら*が*", "meaning": "Tóc bạc" }
+  ],
+  "罰": [
+    { "word": "罰", "reading": "*ばつ*", "meaning": "Hình phạt/Báo ứng" },
+    { "word": "処罰", "reading": "しょ*ばつ*", "meaning": "Xử phạt" }
+  ],
+  "抜": [
+    { "word": "抜く", "reading": "*ぬ*く", "meaning": "Nhổ/Rút/Vượt qua" },
+    { "word": "抜ける", "reading": "*ぬ*ける", "meaning": "Rụng/Thoát khỏi" },
+    { "word": "抜群", "reading": "*ばつ*ぐん", "meaning": "Xuất chúng" }
+  ],
+  "搬": [
+    { "word": "運搬", "reading": "うん*ぱん*", "meaning": "Vận chuyển" }
+  ],
+  "繁": [
+    { "word": "繁栄", "reading": "*はん*えい", "meaning": "Phồn vinh" },
+    { "word": "繁盛", "reading": "*はん*じょう", "meaning": "Phát đạt/Đắt khách" }
+  ],
+  "般": [
+    { "word": "一般", "reading": "いっ*ぱん*", "meaning": "Thông thường/Phổ biến" }
+  ],
+  "販": [
+    { "word": "販売", "reading": "*はん*ばい", "meaning": "Bán hàng" },
+    { "word": "自動販売機", "reading": "じどう*はん*ばいき", "meaning": "Máy bán hàng tự động" }
+  ],
+  "範": [
+    { "word": "範囲", "reading": "*はん*い", "meaning": "Phạm vi" },
+    { "word": "模範", "reading": "も*はん*", "meaning": "Mô phạm/Kiểu mẫu" }
+  ],
+  "盤": [
+    { "word": "地盤", "reading": "じ*ばん*", "meaning": "Địa bàn/Móng nhà" },
+    { "word": "円盤", "reading": "えん*ばん*", "meaning": "Đĩa tròn" }
+  ],
+  "彼": [
+    { "word": "彼", "reading": "*かれ*", "meaning": "Anh ấy/Bạn trai" },
+    { "word": "彼女", "reading": "*かの*じょ", "meaning": "Cô ấy/Bạn gái" },
+    { "word": "彼ら", "reading": "*かれ*ら", "meaning": "Họ" }
+  ],
+  "疲": [
+    { "word": "疲れる", "reading": "*つか*れる", "meaning": "Mệt" },
+    { "word": "疲れ", "reading": "*つか*れ", "meaning": "Sự mệt mỏi" }
+  ],
+  "被": [
+    { "word": "被害", "reading": "*ひ*がい", "meaning": "Thiệt hại" },
+    { "word": "被告", "reading": "*ひ*こく", "meaning": "Bị cáo" }
+  ],
+  "避": [
+    { "word": "避ける", "reading": "*さ*ける", "meaning": "Tránh/Lảng tránh" },
+    { "word": "避難", "reading": "*ひ*なん", "meaning": "Lánh nạn" }
+  ],
+  "尾": [
+    { "word": "尻尾", "reading": "しっ*ぽ*", "meaning": "Cái đuôi" },
+    { "word": "語尾", "reading": "ご*び*", "meaning": "Vĩ tố/Cuối từ" }
+  ],
+  "微": [
+    { "word": "微妙", "reading": "*び*みょう", "meaning": "Tinh tế/Khó diễn tả" },
+    { "word": "微笑む", "reading": "*ほほえ*む", "meaning": "Mỉm cười" },
+    { "word": "微量", "reading": "*び*りょう", "meaning": "Vi lượng/Lượng nhỏ" }
+  ],
+  "匹": [
+    { "word": "〜匹", "reading": "〜*ひき*", "meaning": "Con (đếm vật nuôi)" },
+    { "word": "匹敵", "reading": "*ひっ*てき", "meaning": "Ngang tầm/Sánh với" }
+  ],
+  "描": [
+    { "word": "描く", "reading": "*えが*く", "meaning": "Vẽ/Mô tả" },
+    { "word": "描写", "reading": "*びょう*しゃ", "meaning": "Miêu tả" }
+  ],
+  "浜": [
+    { "word": "横浜", "reading": "よこ*はま*", "meaning": "Yokohama" },
+    { "word": "砂浜", "reading": "すな*はま*", "meaning": "Bãi cát" }
+  ],
+  "敏": [
+    { "word": "敏感", "reading": "*びん*かん", "meaning": "Mẫn cảm/Nhạy cảm" },
+    { "word": "機敏", "reading": "き*びん*", "meaning": "Nhanh nhạy" }
+  ],
+  "怖": [
+    { "word": "怖い", "reading": "*こわ*い", "meaning": "Sợ" },
+    { "word": "恐怖", "reading": "*きょう*ふ", "meaning": "Sợ hãi/Khủng bố" }
+  ],
+  "敷": [
+    { "word": "敷く", "reading": "*し*く", "meaning": "Trải (chiếu/đệm)" },
+    { "word": "敷金", "reading": "*しき*きん", "meaning": "Tiền cọc nhà" },
+    { "word": "屋敷", "reading": "や*しき*", "meaning": "Dinh thự" }
+  ],
+  "普": [
+    { "word": "普通", "reading": "*ふ*つう", "meaning": "Bình thường" },
+    { "word": "普及", "reading": "*ふ*きゅう", "meaning": "Phổ cập" },
+    { "word": "普段", "reading": "*ふ*だん", "meaning": "Thường lệ" }
+  ],
+  "浮": [
+    { "word": "浮く", "reading": "*う*く", "meaning": "Nổi" },
+    { "word": "浮かぶ", "reading": "*う*かぶ", "meaning": "Nổi lên/Thoáng qua" },
+    { "word": "浮気", "reading": "*うわ*き", "meaning": "Ngoại tình" }
+  ],
+  "腐": [
+    { "word": "腐る", "reading": "*くさ*る", "meaning": "Thối/Hỏng" },
+    { "word": "豆腐", "reading": "とう*ふ*", "meaning": "Đậu phụ" }
+  ],
+  "膚": [
+    { "word": "皮膚", "reading": "ひ*ふ*", "meaning": "Da" }
+  ],
+  "賦": [
+    { "word": "月賦", "reading": "げっ*ぷ*", "meaning": "Trả góp hàng tháng" }
+  ],
+  "舞": [
+    { "word": "舞う", "reading": "*ま*う", "meaning": "Nhảy múa/Bay liượn" },
+    { "word": "お見舞い", "reading": "おみ*ま*い", "meaning": "Thăm bệnh" },
+    { "word": "舞台", "reading": "*ぶ*たい", "meaning": "Sân khấu" }
+  ],
+  "幅": [
+    { "word": "幅", "reading": "*はば*", "meaning": "Chiều rộng" },
+    { "word": "大幅", "reading": "おお*はば*", "meaning": "Khá nhiều/Mạnh" }
+  ],
+  "払": [
+    { "word": "払う", "reading": "*はら*う", "meaning": "Trả tiền/Phủi" },
+    { "word": "支払い", "reading": "し*はら*い", "meaning": "Sự chi trả" }
+  ],
+  "噴": [
+    { "word": "噴火", "reading": "*ふん*か", "meaning": "Phun trào (núi lửa)" },
+    { "word": "噴水", "reading": "*ふん*すい", "meaning": "Đài phun nước" }
+  ],
+  "柄": [
+    { "word": "柄", "reading": "*がら*", "meaning": "Hoa văn/Mẫu" },
+    { "word": "人柄", "reading": "ひと*がら*", "meaning": "Tính cách" },
+    { "word": "事柄", "reading": "こと*がら*", "meaning": "Sự việc" }
+  ],
+  "壁": [
+    { "word": "壁", "reading": "*かべ*", "meaning": "Bức tường" },
+    { "word": "障壁", "reading": "しょう*へき*", "meaning": "Rào cản" }
+  ],
+  "舗": [
+    { "word": "店舗", "reading": "てん*ぽ*", "meaning": "Cửa hàng" },
+    { "word": "舗装", "reading": "*ほ*そう", "meaning": "Lát đường (nhựa)" }
+  ],
+  "捕": [
+    { "word": "捕まえる", "reading": "*つか*まえる", "meaning": "Bắt giữ" },
+    { "word": "逮捕", "reading": "たい*ほ*", "meaning": "Bắt giữ (tội phạm)" },
+    { "word": "捕る", "reading": "*と*る", "meaning": "Bắt (cá/thú)" }
+  ],
+  "峰": [
+    { "word": "最高峰", "reading": "さいこう*ほう*", "meaning": "Đỉnh cao nhất" }
+  ],
+  "抱": [
+    { "word": "抱く", "reading": "*だ*く", "meaning": "Ôm" },
+    { "word": "抱える", "reading": "*かか*える", "meaning": "Ôm/Cầm (đồ vật)" },
+    { "word": "抱負", "reading": "*ほう*ふ", "meaning": "Hoài bão" }
+  ],
+  "砲": [
+    { "word": "鉄砲", "reading": "てっ*ぽう*", "meaning": "Súng" },
+    { "word": "大砲", "reading": "たい*ほう*", "meaning": "Đại bác" }
+  ],
+  "傍": [
+    { "word": "傍ら", "reading": "*かたわ*ら", "meaning": "Bên cạnh" },
+    { "word": "傍聴", "reading": "*ぼう*ちょう", "meaning": "Nghe dự thính" }
+  ],
+  "坊": [
+    { "word": "朝寝坊", "reading": "あさね*ぼう*", "meaning": "Dậy muộn" },
+    { "word": "坊主", "reading": "*ぼう*ず", "meaning": "Hòa thượng/Đầu trọc" }
+  ],
+  "帽": [
+    { "word": "帽子", "reading": "*ぼう*し", "meaning": "Cái mũ" }
+  ],
+  "忙": [
+    { "word": "忙しい", "reading": "*いそが*しい", "meaning": "Bận rộn" },
+    { "word": "多忙", "reading": "た*ぼう*", "meaning": "Rất bận" }
+  ],
+  "冒": [
+    { "word": "冒険", "reading": "*ぼう*けん", "meaning": "Mạo hiểm" },
+    { "word": "冒頭", "reading": "*ぼう*とう", "meaning": "Phần mở đầu" }
+  ],
+  "肪": [
+    { "word": "脂肪", "reading": "し*ぼう*", "meaning": "Mỡ/Chất béo" }
+  ],
+  "凡": [
+    { "word": "平凡", "reading": "へい*ぼん*", "meaning": "Bình phàm/Bình thường" }
+  ],
+  "盆": [
+    { "word": "お盆", "reading": "お*ぼん*", "meaning": "Lễ Obon" },
+    { "word": "盆地", "reading": "*ぼん*ち", "meaning": "Thung lũng/Lòng chảo" }
+  ],
+  "慢": [
+    { "word": "自慢", "reading": "じ*まん*", "meaning": "Tự mãn/Khoe khoang" },
+    { "word": "我慢", "reading": "が*まん*", "meaning": "Chịu đựng" }
+  ],
+  "漫": [
+    { "word": "漫画", "reading": "*まん*が", "meaning": "Truyện tranh" },
+    { "word": "散漫", "reading": "さん*まん*", "meaning": "Lơ đãng/Rời rạc" }
+  ],
+  "妙": [
+    { "word": "微妙", "reading": "び*みょう*", "meaning": "Không rõ ràng/Tinh tế" },
+    { "word": "奇妙", "reading": "き*みょう*", "meaning": "Kỳ lạ" }
+  ],
+  "眠": [
+    { "word": "眠い", "reading": "*ねむ*い", "meaning": "Buồn ngủ" },
+    { "word": "眠る", "reading": "*ねむ*る", "meaning": "Ngủ" },
+    { "word": "睡眠", "reading": "すい*みん*", "meaning": "Giấc ngủ" }
+  ],
+  "矛": [
+    { "word": "矛盾", "reading": "*む*じゅん", "meaning": "Mâu thuẫn" }
+  ],
+  "霧": [
+    { "word": "霧", "reading": "*きり*", "meaning": "Sương mù" },
+    { "word": "濃霧", "reading": "のう*む*", "meaning": "Sương mù dày đặc" }
+  ],
+  "娘": [
+    { "word": "娘", "reading": "*むすめ*", "meaning": "Con gái (mình)" }
+  ],
+  "茂": [
+    { "word": "茂る", "reading": "*しげ*る", "meaning": "Rậm rạp" }
+  ],
+  "猛": [
+    { "word": "猛烈", "reading": "*もう*れつ", "meaning": "Mãnh liệt" },
+    { "word": "猛暑", "reading": "*もう*しょ", "meaning": "Nắng nóng gay gắt" }
+  ],
+  "網": [
+    { "word": "網", "reading": "*あみ*", "meaning": "Cái lưới" },
+    { "word": "通信網", "reading": "つうしん*もう*", "meaning": "Mạng lưới thông tin" }
+  ],
+  "黙": [
+    { "word": "黙る", "reading": "*だま*る", "meaning": "Im lặng" },
+    { "word": "沈黙", "reading": "ちん*もく*", "meaning": "Trầm mặc" }
+  ],
+  "紋": [
+    { "word": "指紋", "reading": "し*もん*", "meaning": "Vân tay" },
+    { "word": "波紋", "reading": "は*もん*", "meaning": "Gợn sóng" }
+  ],
+  "躍": [
+    { "word": "活躍", "reading": "かつ*やく*", "meaning": "Hoạt động tích cực" },
+    { "word": "跳躍", "reading": "ちょう*やく*", "meaning": "Nhảy lên" }
+  ],
+  "雄": [
+    { "word": "雄", "reading": "*おす*", "meaning": "Con đực" },
+    { "word": "英雄", "reading": "えい*ゆう*", "meaning": "Anh hùng" }
+  ],
+  "与": [
+    { "word": "与える", "reading": "*あた*える", "meaning": "Ban tặng/Gây ra" },
+    { "word": "関与", "reading": "かん*よ*", "meaning": "Can dự/Liên quan" },
+    { "word": "給与", "reading": "きゅう*よ*", "meaning": "Tiền lương" }
+  ],
+  "誉": [
+    { "word": "名誉", "reading": "めい*よ*", "meaning": "Danh dự" },
+    { "word": "栄誉", "reading": "えい*よ*", "meaning": "Vinh dự" }
+  ],
+  "溶": [
+    { "word": "溶ける", "reading": "*と*ける", "meaning": "Tan chảy (tự động từ)" },
+    { "word": "溶かす", "reading": "*と*かす", "meaning": "Làm tan chảy (tha động từ)" }
+  ],
+  "謡": [
+    { "word": "民謡", "reading": "みん*よう*", "meaning": "Dân ca" },
+    { "word": "童謡", "reading": "どう*よう*", "meaning": "Đồng dao" }
+  ],
+  "踊": [
+    { "word": "踊る", "reading": "*おど*る", "meaning": "Nhảy múa" },
+    { "word": "踊り", "reading": "*おど*り", "meaning": "Điệu nhảy" },
+    { "word": "舞踊", "reading": "ぶ*よう*", "meaning": "Vũ điệu" }
+  ],
+  "翼": [
+    { "word": "翼", "reading": "*つばさ*", "meaning": "Cánh" },
+    { "word": "左翼", "reading": "さ*よく*", "meaning": "Cánh tả" }
+  ],
+  "頼": [
+    { "word": "頼む", "reading": "*たの*む", "meaning": "Nhờ vả" },
+    { "word": "信頼", "reading": "しん*らい*", "meaning": "Tin cậy" },
+    { "word": "頼る", "reading": "*たよ*る", "meaning": "Dựa vào" }
+  ],
+  "雷": [
+    { "word": "雷", "reading": "*かみなり*", "meaning": "Sấm sét" }
+  ],
+  "絡": [
+    { "word": "連絡", "reading": "れん*らく*", "meaning": "Liên lạc" },
+    { "word": "絡む", "reading": "*から*む", "meaning": "Rối/Liên quan" }
+  ],
+  "欄": [
+    { "word": "欄", "reading": "*らん*", "meaning": "Cột (báo)/Mục" },
+    { "word": "空欄", "reading": "くう*らん*", "meaning": "Cột trống" }
+  ],
+  "離": [
+    { "word": "離婚", "reading": "*り*こん", "meaning": "Ly hôn" },
+    { "word": "離れる", "reading": "*はな*れる", "meaning": "Rời xa/Cách ly" },
+    { "word": "距離", "reading": "きょ*り*", "meaning": "Khoảng cách" }
+  ],
+  "粒": [
+    { "word": "粒", "reading": "*つぶ*", "meaning": "Hạt/Viên" }
+  ],
+  "慮": [
+    { "word": "遠慮", "reading": "えん*りょ*", "meaning": "Ngại ngùng/Khách khí" },
+    { "word": "考慮", "reading": "こう*りょ*", "meaning": "Xem xét/Cân nhắc" }
+  ],
+  "療": [
+    { "word": "治療", "reading": "ち*りょう*", "meaning": "Điều trị" },
+    { "word": "医療", "reading": "い*りょう*", "meaning": "Y tế" }
+  ],
+  "隣": [
+    { "word": "隣", "reading": "*となり*", "meaning": "Bên cạnh" },
+    { "word": "近隣", "reading": "きん*りん*", "meaning": "Lân cận" }
+  ],
+  "涙": [
+    { "word": "涙", "reading": "*なみだ*", "meaning": "Nước mắt" }
+  ],
+  "隷": [
+    { "word": "奴隷", "reading": "ど*れい*", "meaning": "Nô lệ" }
+  ],
+  "麗": [
+    { "word": "綺麗", "reading": "き*れい*", "meaning": "Đẹp/Sạch sẽ" }
+  ],
+  "齢": [
+    { "word": "年齢", "reading": "ねん*れい*", "meaning": "Tuổi tác" },
+    { "word": "高齢", "reading": "こう*れい*", "meaning": "Cao tuổi" }
+  ],
+  "暦": [
+    { "word": "西暦", "reading": "せい*れき*", "meaning": "Dương lịch" },
+    { "word": "還暦", "reading": "かん*れき*", "meaning": "Mừng thọ 60 tuổi" }
+  ],
+  "劣": [
+    { "word": "劣る", "reading": "*おと*る", "meaning": "Kém hơn" },
+    { "word": "優劣", "reading": "ゆう*れつ*", "meaning": "Ưu khuyết" }
+  ],
+  "烈": [
+    { "word": "猛烈", "reading": "もう*れつ*", "meaning": "Mãnh liệt" },
+    { "word": "強烈", "reading": "きょう*れつ*", "meaning": "Quyết liệt/Mạnh mẽ" }
+  ],
+  "恋": [
+    { "word": "恋人", "reading": "*こい*びと", "meaning": "Người yêu" },
+    { "word": "恋", "reading": "*こい*", "meaning": "Tình yêu" },
+    { "word": "失恋", "reading": "しつ*れん*", "meaning": "Thất tình" }
+  ],
+  "露": [
+    { "word": "披露", "reading": "ひ*ろう*", "meaning": "Công bố/Tuyên bố" },
+    { "word": "露", "reading": "*つゆ*", "meaning": "Sương" }
+  ],
+  "郎": [
+    { "word": "新郎", "reading": "しん*ろう*", "meaning": "Chú rể" },
+    { "word": "太郎", "reading": "た*ろう*", "meaning": "Taro (tên riêng)" }
+  ],
+  "惑": [
+    { "word": "迷惑", "reading": "めい*わく*", "meaning": "Phiền phức" },
+    { "word": "惑星", "reading": "*わく*せい", "meaning": "Hành tinh" },
+    { "word": "戸惑う", "reading": "と*まど*う", "meaning": "Lúng túng/Bối rối" }
+  ],
+  "腕": [
+    { "word": "腕", "reading": "*うで*", "meaning": "Cánh tay/Tay nghề" },
+    { "word": "腕時計", "reading": "*うで*どけい", "meaning": "Đồng hồ đeo tay" }
+  ],
+  "哀": [
+    { "word": "哀れ", "reading": "*あわ*れ", "meaning": "Đáng thương" }
+  ],
+  "慰": [
+    { "word": "慰める", "reading": "*なぐさ*める", "meaning": "An ủi" },
+    { "word": "慰安旅行", "reading": "*い*あんりょこう", "meaning": "Du lịch giải khuây" }
+  ],
+  "詠": [
+    { "word": "詠む", "reading": "*よ*む", "meaning": "Sáng tác (thơ)" }
+  ],
+  "悦": [
+    { "word": "満悦", "reading": "まん*えつ*", "meaning": "Vô cùng sung sướng" }
+  ],
+  "閲": [
+    { "word": "閲覧", "reading": "*えつ*らん", "meaning": "Đọc/Duyệt (web)" },
+    { "word": "検閲", "reading": "けん*えつ*", "meaning": "Kiểm duyệt" }
+  ],
+  "宴": [
+    { "word": "宴会", "reading": "*えん*かい", "meaning": "Yến tiệc" }
+  ],
+  "炎": [
+    { "word": "炎", "reading": "*ほのお*", "meaning": "Ngọn lửa" },
+    { "word": "炎症", "reading": "*えん*しょう", "meaning": "Chứng viêm" }
+  ],
+  "欧": [
+    { "word": "欧米", "reading": "*おう*べい", "meaning": "Âu Mỹ" },
+    { "word": "欧州", "reading": "*おう*しゅう", "meaning": "Châu Âu" }
+  ],
+  "殴": [
+    { "word": "殴る", "reading": "*なぐ*る", "meaning": "Đấm/Đánh" }
+  ],
+  "乙": [
+    { "word": "乙女", "reading": "*おと*め", "meaning": "Thiếu nữ" },
+    { "word": "甲乙", "reading": "こう*おつ*", "meaning": "Giáp Ất/Hơn kém" }
+  ],
+  "卸": [
+    { "word": "卸す", "reading": "*おろ*す", "meaning": "Bán buôn/Bào (củ quả)" }
+  ],
+  "穏": [
+    { "word": "穏やか", "reading": "*おだ*やか", "meaning": "Ôn hòa/Điềm đạm" },
+    { "word": "平穏", "reading": "へい*おん*", "meaning": "Bình ổn" }
+  ],
+  "佳": [
+    { "word": "佳作", "reading": "*か*さく", "meaning": "Tác phẩm xuất sắc" }
+  ],
+  "嫁": [
+    { "word": "嫁", "reading": "*よめ*", "meaning": "Con dâu/Cô dâu" },
+    { "word": "転嫁", "reading": "てん*か*", "meaning": "Quy chụp/Đổ lỗi" }
+  ],
+  "架": [
+    { "word": "架空", "reading": "*か*くう", "meaning": "Hư cấu/Trên không" },
+    { "word": "架ける", "reading": "*か*ける", "meaning": "Treo/Bắc (cầu)" }
+  ],
+  "華": [
+    { "word": "華やか", "reading": "*はな*やか", "meaning": "Lộng lẫy/Tươi thắm" },
+    { "word": "中華", "reading": "ちゅう*か*", "meaning": "Trung Hoa" }
+  ],
+  "餓": [
+    { "word": "飢餓", "reading": "き*が*", "meaning": "Nạn đói" }
+  ],
+  "塊": [
+    { "word": "塊", "reading": "*かたまり*", "meaning": "Cục/Tảng/Miếng" }
+  ],
+  "怪": [
+    { "word": "怪しい", "reading": "*あや*しい", "meaning": "Đáng ngờ" },
+    { "word": "怪我", "reading": "*け*が", "meaning": "Vết thương" },
+    { "word": "怪物", "reading": "*かい*ぶつ", "meaning": "Quái vật" }
+  ],
+  "悔": [
+    { "word": "後悔", "reading": "こう*かい*", "meaning": "Hối hận" },
+    { "word": "悔しい", "reading": "*くや*しい", "meaning": "Cay cú/Tiếc nuối" }
+  ],
+  "慨": [
+    { "word": "感慨", "reading": "かん*がい*", "meaning": "Cảm khái/Xúc động" }
+  ],
+  "概": [
+    { "word": "概念", "reading": "*がい*ねん", "meaning": "Khái niệm" },
+    { "word": "概要", "reading": "*がい*よう", "meaning": "Phác thảo/Tóm lược" }
+  ],
+  "該": [
+    { "word": "該当", "reading": "*がい*とう", "meaning": "Tương ứng/Phù hợp" }
+  ],
+  "穫": [
+    { "word": "収穫", "reading": "しゅう*かく*", "meaning": "Thu hoạch" }
+  ],
+  "郭": [
+    { "word": "輪郭", "reading": "りん*かく*", "meaning": "Đường nét/Phác thảo" },
+    { "word": "城郭", "reading": "じょう*かく*", "meaning": "Thành quách" }
+  ],
+  "隔": [
+    { "word": "間隔", "reading": "かん*かく*", "meaning": "Khoảng cách" },
+    { "word": "隔てる", "reading": "*へだ*てる", "meaning": "Phân chia/Ngăn cách" },
+    { "word": "隔週", "reading": "*かく*しゅう", "meaning": "Cách tuần" }
+  ],
+  "岳": [
+    { "word": "山岳", "reading": "さん*がく*", "meaning": "Vùng núi" }
+  ],
+  "掛": [
+    { "word": "掛ける", "reading": "*か*ける", "meaning": "Treo/Đắp/Ngồi" },
+    { "word": "気掛かり", "reading": "き*が*かり", "meaning": "Lo lắng" },
+    { "word": "腰掛け", "reading": "こし*か*け", "meaning": "Ghế dựa/Chỗ ngồi" }
+  ],
+  "滑": [
+    { "word": "滑る", "reading": "*すべ*る", "meaning": "Trượt" },
+    { "word": "滑らか", "reading": "*なめ*らか", "meaning": "Trơn tru/Mượt mà" },
+    { "word": "円滑", "reading": "えん*かつ*", "meaning": "Trôi chảy/Thuận lợi" }
+  ],
+  "冠": [
+    { "word": "王冠", "reading": "おう*かん*", "meaning": "Vương miện" }
+  ],
+  "勘": [
+    { "word": "勘", "reading": "*かん*", "meaning": "Trực giác" },
+    { "word": "勘違い", "reading": "*かん*ちがい", "meaning": "Hiểu lầm" },
+    { "word": "勘定", "reading": "*かん*じょう", "meaning": "Thanh toán/Tính toán" }
+  ],
+  "喚": [
+    { "word": "喚く", "reading": "*わめ*く", "meaning": "Gào thét" }
+  ],
+  "換": [
+    { "word": "交換", "reading": "こう*かん*", "meaning": "Trao đổi" },
+    { "word": "乗り換え", "reading": "のり*か*え", "meaning": "Đổi tàu/xe" },
+    { "word": "換気", "reading": "*かん*き", "meaning": "Thông gió" }
+  ],
+  "敢": [
+    { "word": "敢えて", "reading": "*あ*えて", "meaning": "Dám/Mạnh dạn" },
+    { "word": "果敢", "reading": "か*かん*", "meaning": "Quả cảm" }
+  ],
+  "緩": [
+    { "word": "緩い", "reading": "*ゆる*い", "meaning": "Lỏng lẻo" },
+    { "word": "緩和", "reading": "*かん*わ", "meaning": "Nới lỏng/Làm dịu" }
+  ],
+  "肝": [
+    { "word": "肝心", "reading": "*かん*じん", "meaning": "Quan trọng/Cốt yếu" },
+    { "word": "肝臓", "reading": "*かん*ぞう", "meaning": "Gan" }
+  ],
+  "貫": [
+    { "word": "貫く", "reading": "*つらぬ*く", "meaning": "Xuyên qua/Quán triệt" },
+    { "word": "一貫", "reading": "いっ*かん*", "meaning": "Nhất quán" }
+  ],
+  "企": [
+    { "word": "企業", "reading": "*き*ぎょう", "meaning": "Doanh nghiệp" },
+    { "word": "企画", "reading": "*き*かく", "meaning": "Kế hoạch/Dự án" }
+  ],
+  "忌": [
+    { "word": "忌引", "reading": "*き*びき", "meaning": "Nghỉ tang" },
+    { "word": "忌まわしい", "reading": "*い*まわしい", "meaning": "Ghê tởm/Xui xẻo" }
+  ],
+  "既": [
+    { "word": "既に", "reading": "*すで*に", "meaning": "Đã/Rồi" },
+    { "word": "既製", "reading": "*き*せい", "meaning": "Hàng làm sẵn" },
+    { "word": "既婚", "reading": "*き*こん", "meaning": "Đã kết hôn" }
+  ],
+  "棋": [
+    { "word": "将棋", "reading": "しょう*ぎ*", "meaning": "Cờ Shogi (Cờ tướng Nhật)" }
+  ],
+  "棄": [
+    { "word": "放棄", "reading": "ほう*き*", "meaning": "Vứt bỏ/Chối bỏ" },
+    { "word": "廃棄", "reading": "はい*き*", "meaning": "Hủy bỏ/Phế thải" }
+  ],
+  "軌": [
+    { "word": "軌道", "reading": "*き*どう", "meaning": "Quỹ đạo" }
+  ],
+  "騎": [
+    { "word": "騎士", "reading": "*き*し", "meaning": "Kị sĩ" }
+  ],
+  "欺": [
+    { "word": "詐欺", "reading": "さ*ぎ*", "meaning": "Lừa đảo" },
+    { "word": "欺く", "reading": "*あざむ*く", "meaning": "Lừa dối" }
+  ],
+  "犠": [
+    { "word": "犠牲", "reading": "*ぎ*せい", "meaning": "Hy sinh" }
+  ],
+  "菊": [
+    { "word": "菊", "reading": "*きく*", "meaning": "Hoa cúc" }
+  ],
+  "吉": [
+    { "word": "吉", "reading": "*きち*", "meaning": "Điềm lành/Quẻ tốt" },
+    { "word": "不吉", "reading": "ふ*きつ*", "meaning": "Chẳng lành" }
+  ],
+  "喫": [
+    { "word": "喫茶店", "reading": "*きっ*さてん", "meaning": "Quán giải khát" },
+    { "word": "喫煙", "reading": "*きつ*えん", "meaning": "Hút thuốc" }
+  ],
+  "虐": [
+    { "word": "虐待", "reading": "*ぎゃく*たい", "meaning": "Ngược đãi" }
+  ],
+  "虚": [
+    { "word": "空虚", "reading": "くう*きょ*", "meaning": "Trống rỗng" },
+    { "word": "謙虚", "reading": "けん*きょ*", "meaning": "Khiêm tốn" },
+    { "word": "虚しい", "reading": "*むな*しい", "meaning": "Hư không/Vô vị" }
+  ],
+  "峡": [
+    { "word": "海峡", "reading": "かい*きょう*", "meaning": "Eo biển" }
+  ],
+  "脅": [
+    { "word": "脅す", "reading": "*おど*す", "meaning": "Dọa nạt" },
+    { "word": "脅迫", "reading": "*きょう*はく", "meaning": "Uy hiếp/Cưỡng bức" },
+    { "word": "脅かす", "reading": "*おびや*かす", "meaning": "Đe dọa" }
+  ],
+  "凝": [
+    { "word": "凝る", "reading": "*こ*る", "meaning": "Đông lại/Say mê/Mỏi (vai)" },
+    { "word": "凝縮", "reading": "*ぎょう*しゅく", "meaning": "Ngưng tụ/Cô đọng" }
+  ],
+  "斤": [
+    { "word": "一斤", "reading": "いっ*きん*", "meaning": "1 ổ (bánh mì gối)" }
+  ],
+  "緊": [
+    { "word": "緊張", "reading": "*きん*ちょう", "meaning": "Căng thẳng" },
+    { "word": "緊急", "reading": "*きん*きゅう", "meaning": "Khẩn cấp" }
+  ],
+  "愚": [
+    { "word": "愚か", "reading": "*おろ*か", "meaning": "Ngu ngốc" },
+    { "word": "愚痴", "reading": "*ぐ*ち", "meaning": "Than vãn" }
+  ],
+  "偶": [
+    { "word": "偶然", "reading": "*ぐう*ぜん", "meaning": "Ngẫu nhiên" },
+    { "word": "配偶者", "reading": "はい*ぐう*しゃ", "meaning": "Người phối ngẫu (vợ/chồng)" }
+  ],
+  "遇": [
+    { "word": "待遇", "reading": "たい*ぐう*", "meaning": "Đãi ngộ" },
+    { "word": "境遇", "reading": "きょう*ぐう*", "meaning": "Cảnh ngộ" }
+  ],
+  "桑": [
+    { "word": "桑", "reading": "*くわ*", "meaning": "Cây dâu tằm" }
+  ],
+  "刑": [
+    { "word": "刑事", "reading": "*けい*じ", "meaning": "Hình sự/Thanh tra" },
+    { "word": "死刑", "reading": "し*けい*", "meaning": "Tử hình" }
+  ],
+  "啓": [
+    { "word": "啓発", "reading": "*けい*はつ", "meaning": "Khơi gợi/Mở mang tri thức" }
+  ],
+  "契": [
+    { "word": "契約", "reading": "*けい*やく", "meaning": "Hợp đồng" },
+    { "word": "契機", "reading": "*けい*き", "meaning": "Thời cơ/Dịp" }
+  ],
+  "憩": [
+    { "word": "休憩", "reading": "きゅう*けい*", "meaning": "Nghỉ giải lao" },
+    { "word": "憩い", "reading": "*いこ*い", "meaning": "Nghỉ ngơi" }
+  ],
+  "掲": [
+    { "word": "掲示", "reading": "*けい*じ", "meaning": "Thông báo" },
+    { "word": "掲載", "reading": "*けい*さい", "meaning": "Đăng bài (báo/tạp chí)" }
+  ],
+  "携": [
+    { "word": "携帯", "reading": "*けい*たい", "meaning": "Di động/Mang theo" },
+    { "word": "連携", "reading": "れん*けい*", "meaning": "Hợp tác/Liên kết" }
+  ],
+  "鶏": [
+    { "word": "鶏", "reading": "*にわとり*", "meaning": "Con gà" }
+  ],
+  "鯨": [
+    { "word": "鯨", "reading": "*くじら*", "meaning": "Cá voi" }
+  ],
+  "倹": [
+    { "word": "倹約", "reading": "*けん*やく", "meaning": "Tiết kiệm" }
+  ],
+  "賢": [
+    { "word": "賢い", "reading": "*かしこ*い", "meaning": "Thông minh" },
+    { "word": "賢明", "reading": "*けん*めい", "meaning": "Sáng suốt/Khôn ngoan" }
+  ],
+  "幻": [
+    { "word": "幻想", "reading": "*げん*そう", "meaning": "Ảo tưởng" },
+    { "word": "幻", "reading": "*まぼろし*", "meaning": "Ảo ảnh/Huyền ảo" }
+  ],
+  "孤": [
+    { "word": "孤独", "reading": "*こ*どく", "meaning": "Cô độc" },
+    { "word": "孤立", "reading": "*こ*りつ", "meaning": "Cô lập" }
+  ],
+  "弧": [
+    { "word": "括弧", "reading": "かっ*こ*", "meaning": "Dấu ngoặc đơn" },
+    { "word": "円弧", "reading": "えん*こ*", "meaning": "Cung tròn" }
+  ],
+  "雇": [
+    { "word": "雇用", "reading": "*こ*よう", "meaning": "Tuyển dụng/Thuê" },
+    { "word": "雇う", "reading": "*やと*う", "meaning": "Thuê mướn" }
+  ],
+  "顧": [
+    { "word": "顧客", "reading": "*こ*きゃく", "meaning": "Khách hàng" },
+    { "word": "顧問", "reading": "*こ*もん", "meaning": "Cố vấn" },
+    { "word": "回顧", "reading": "かい*こ*", "meaning": "Hồi tưởng" }
+  ],
+  "娯": [
+    { "word": "娯楽", "reading": "*ご*らく", "meaning": "Giải trí" }
+  ],
+  "悟": [
+    { "word": "覚悟", "reading": "かく*ご*", "meaning": "Kiên quyết/Sẵn sàng" },
+    { "word": "悟る", "reading": "*さと*る", "meaning": "Giác ngộ/Nhận ra" }
+  ],
+  "坑": [
+    { "word": "炭坑", "reading": "たん*こう*", "meaning": "Mỏ than" }
+  ],
+  "孔": [
+    { "word": "瞳孔", "reading": "どう*こう*", "meaning": "Đồng tử (mắt)" },
+    { "word": "孔子", "reading": "*こう*し", "meaning": "Khổng Tử" }
+  ],
+  "巧": [
+    { "word": "精巧", "reading": "せい*こう*", "meaning": "Tinh xảo" },
+    { "word": "巧妙", "reading": "*こう*みょう", "meaning": "Khéo léo/Tài tình" }
+  ],
+  "慌": [
+    { "word": "慌てる", "reading": "*あわ*てる", "meaning": "Luống cuống/Vội vàng" },
+    { "word": "恐慌", "reading": "きょう*こう*", "meaning": "Khủng hoảng/Hoảng loạn" }
+  ],
+  "拘": [
+    { "word": "拘束", "reading": "*こう*そく", "meaning": "Ràng buộc/Bắt giữ" },
+    { "word": "拘る", "reading": "*こだ*わる", "meaning": "Câu nệ/Kén chọn/Để ý" }
+  ],
+  "控": [
+    { "word": "控える", "reading": "*ひか*える", "meaning": "Kiềm chế/Ghi lại/Chờ đợi" },
+    { "word": "控え室", "reading": "*ひか*えしつ", "meaning": "Phòng chờ" }
+  ],
+  "甲": [
+    { "word": "甲斐", "reading": "*か*い", "meaning": "Hiệu quả/Giá trị" },
+    { "word": "手の甲", "reading": "ての*こう*", "meaning": "Mu bàn tay" }
+  ],
+  "硬": [
+    { "word": "硬い", "reading": "*かた*い", "meaning": "Cứng" },
+    { "word": "硬貨", "reading": "*こう*か", "meaning": "Tiền xu" },
+    { "word": "強硬", "reading": "きょう*こう*", "meaning": "Cứng rắn/Kiên quyết" }
+  ],
+  "絞": [
+    { "word": "絞る", "reading": "*しぼ*る", "meaning": "Vắt (khăn)/Thu hẹp" },
+    { "word": "絞める", "reading": "*し*める", "meaning": "Siết/Thắt (cổ)" }
+  ],
+  "綱": [
+    { "word": "綱", "reading": "*つな*", "meaning": "Dây thừng" },
+    { "word": "横綱", "reading": "よこ*づな*", "meaning": "Yokozuna (Đô vật Sumo hạng nhất)" }
+  ],
+  "郊": [
+    { "word": "郊外", "reading": "*こう*がい", "meaning": "Ngoại ô" },
+    { "word": "近郊", "reading": "きん*こう*", "meaning": "Vùng lân cận" }
+  ],
+  "酵": [
+    { "word": "酵素", "reading": "*こう*そ", "meaning": "Enzyme/Men" },
+    { "word": "発酵", "reading": "はっ*こう*", "meaning": "Lên men" }
+  ],
+  "克": [
+    { "word": "克服", "reading": "*こく*ふく", "meaning": "Khắc phục" }
+  ],
+  "獄": [
+    { "word": "地獄", "reading": "じ*ごく*", "meaning": "Địa ngục" },
+    { "word": "監獄", "reading": "かん*ごく*", "meaning": "Nhà tù" }
+  ],
+  "墾": [
+    { "word": "開墾", "reading": "かい*こん*", "meaning": "Khai khẩn" }
+  ],
+  "恨": [
+    { "word": "恨む", "reading": "*うら*む", "meaning": "Hận/Căm ghét" },
+    { "word": "悔恨", "reading": "かい*こん*", "meaning": "Hối hận" }
+  ],
+  "紺": [
+    { "word": "紺色", "reading": "*こん*いろ", "meaning": "Màu xanh thẫm" }
+  ],
+  "魂": [
+    { "word": "魂", "reading": "*たましい*", "meaning": "Linh hồn" }
+  ],
+  "債": [
+    { "word": "負債", "reading": "ふ*さい*", "meaning": "Nợ nần" },
+    { "word": "国債", "reading": "こく*さい*", "meaning": "Trái phiếu chính phủ" }
+  ],
+  "催": [
+    { "word": "開催", "reading": "かい*さい*", "meaning": "Tổ chức/Đăng cai" },
+    { "word": "催促", "reading": "*さい*そく", "meaning": "Thúc giục" },
+    { "word": "催す", "reading": "*もよお*す", "meaning": "Tổ chức/Sắp sửa xảy ra" }
+  ],
+  "削": [
+    { "word": "削る", "reading": "*けず*る", "meaning": "Gọt/Bào/Cắt giảm" },
+    { "word": "削減", "reading": "*さく*げん", "meaning": "Cắt giảm" }
+  ],
+  "搾": [
+    { "word": "搾る", "reading": "*しぼ*る", "meaning": "Vắt (sữa/chanh)" },
+    { "word": "搾取", "reading": "*さく*しゅ", "meaning": "Bóc lột" }
+  ],
+  "錯": [
+    { "word": "錯覚", "reading": "*さっ*かく", "meaning": "Ảo giác/Nhầm lẫn" },
+    { "word": "試行錯誤", "reading": "しこう*さく*ご", "meaning": "Thử sai/Mò mẫm" }
+  ],
+  "撮": [
+    { "word": "撮影", "reading": "*さつ*えい", "meaning": "Chụp ảnh/Quay phim" },
+    { "word": "撮る", "reading": "*と*る", "meaning": "Chụp (ảnh)" }
+  ],
+  "擦": [
+    { "word": "摩擦", "reading": "ま*さつ*", "meaning": "Ma sát/Mâu thuẫn" },
+    { "word": "擦る", "reading": "*こす*る", "meaning": "Chà xát/Cọ" }
+  ],
+  "暫": [
+    { "word": "暫定", "reading": "*ざん*てい", "meaning": "Tạm định/Tạm thời" },
+    { "word": "暫く", "reading": "*しばら*く", "meaning": "Một lúc/Lâu ngày" }
+  ],
+  "施": [
+    { "word": "施設", "reading": "*し*せつ", "meaning": "Cơ sở vật chất/Thiết bị" },
+    { "word": "実施", "reading": "じっ*し*", "meaning": "Thực thi" },
+    { "word": "施す", "reading": "*ほどこ*す", "meaning": "Tiến hành/Bố thí" }
+  ],
+  "祉": [
+    { "word": "福祉", "reading": "ふく*し*", "meaning": "Phúc lợi" }
+  ],
+  "諮": [
+    { "word": "諮問", "reading": "*し*もん", "meaning": "Tư vấn/Hỏi ý kiến" }
+  ],
+  "侍": [
+    { "word": "侍", "reading": "*さむらい*", "meaning": "Võ sĩ đạo (Samurai)" }
+  ],
+  "慈": [
+    { "word": "慈悲", "reading": "*じ*ひ", "meaning": "Từ bi" },
+    { "word": "慈善", "reading": "*じ*ぜん", "meaning": "Từ thiện" }
+  ],
+  "軸": [
+    { "word": "車軸", "reading": "しゃ*じく*", "meaning": "Trục xe" },
+    { "word": "基軸", "reading": "き*じく*", "meaning": "Trục chính/Cơ sở" }
+  ],
+  "湿": [
+    { "word": "湿気", "reading": "*しっ*け", "meaning": "Hơi ẩm" },
+    { "word": "湿度", "reading": "*しつ*ど", "meaning": "Độ ẩm" },
+    { "word": "湿る", "reading": "*しめ*る", "meaning": "Ẩm ướt" }
+  ],
+  "疾": [
+    { "word": "疾患", "reading": "*しっ*かん", "meaning": "Bệnh tật" },
+    { "word": "疾走", "reading": "*しっ*そう", "meaning": "Lao nhanh/Chạy thục mạng" }
+  ],
+  "赦": [
+    { "word": "容赦", "reading": "よう*しゃ*", "meaning": "Tha thứ/Khoan dung" }
+  ],
+  "邪": [
+    { "word": "邪魔", "reading": "*じゃ*ま", "meaning": "Làm phiền/Cản trở" },
+    { "word": "風邪", "reading": "か*ぜ*", "meaning": "Cảm cúm" },
+    { "word": "無邪気", "reading": "む*じゃ*き", "meaning": "Ngây thơ/Hồn nhiên" }
+  ],
+  "殊": [
+    { "word": "特殊", "reading": "とく*しゅ*", "meaning": "Đặc thù" }
+  ],
+  "寿": [
+    { "word": "寿命", "reading": "*じゅ*みょう", "meaning": "Tuổi thọ" },
+    { "word": "寿司", "reading": "*す*し", "meaning": "Sushi" }
+  ],
+  "潤": [
+    { "word": "潤う", "reading": "*うるお*う", "meaning": "Ẩm ướt/Dư dả" },
+    { "word": "利潤", "reading": "り*じゅん*", "meaning": "Lợi nhuận" }
+  ],
+  "遵": [
+    { "word": "遵守", "reading": "*じゅん*しゅ", "meaning": "Tuân thủ" }
+  ],
+  "徐": [
+    { "word": "徐々に", "reading": "*じょ*じょに", "meaning": "Từ từ/Dần dần" }
+  ],
+  "匠": [
+    { "word": "巨匠", "reading": "きょ*しょう*", "meaning": "Bậc thầy/Giáo chủ" },
+    { "word": "師匠", "reading": "し*しょう*", "meaning": "Sư phụ" }
+  ],
+  "掌": [
+    { "word": "車掌", "reading": "しゃ*しょう*", "meaning": "Người soát vé" },
+    { "word": "掌", "reading": "*てのひら*", "meaning": "Lòng bàn tay" }
+  ],
+  "昇": [
+    { "word": "上昇", "reading": "じょう*しょう*", "meaning": "Tăng lên/Tiến lên" },
+    { "word": "昇る", "reading": "*のぼ*る", "meaning": "Lên cao/Thăng chức" }
+  ],
+  "晶": [
+    { "word": "結晶", "reading": "けっ*しょう*", "meaning": "Kết tinh/Tinh thể" },
+    { "word": "水晶", "reading": "すい*しょう*", "meaning": "Thủy tinh/Pha lê" }
+  ],
+  "焦": [
+    { "word": "焦げる", "reading": "*こ*げる", "meaning": "Bị cháy/Khét" },
+    { "word": "焦る", "reading": "*あせ*る", "meaning": "Vội vàng/Sốt ruột" },
+    { "word": "焦点", "reading": "*しょう*てん", "meaning": "Tiêu điểm" }
+  ],
+  "衝": [
+    { "word": "衝突", "reading": "*しょう*とつ", "meaning": "Xung đột/Va chạm" },
+    { "word": "衝撃", "reading": "*しょう*げき", "meaning": "Sốc/Ấn tượng mạnh" }
+  ],
+  "鐘": [
+    { "word": "鐘", "reading": "*かね*", "meaning": "Chuông" }
+  ],
+  "冗": [
+    { "word": "冗談", "reading": "*じょう*だん", "meaning": "Nói đùa" }
+  ],
+  "嬢": [
+    { "word": "お嬢さん", "reading": "お*じょう*さん", "meaning": "Tiểu thư/Cô gái (kính ngữ)" }
+  ],
+  "譲": [
+    { "word": "譲る", "reading": "*ゆず*る", "meaning": "Nhường" },
+    { "word": "譲歩", "reading": "*じょう*ほ", "meaning": "Nhượng bộ" }
+  ],
+  "錠": [
+    { "word": "手錠", "reading": "て*じょう*", "meaning": "Còng tay" },
+    { "word": "錠剤", "reading": "*じょう*ざい", "meaning": "Thuốc viên" }
+  ],
+  "嘱": [
+    { "word": "委嘱", "reading": "い*しょく*", "meaning": "Ủy thác/Bổ nhiệm" }
+  ],
+  "辱": [
+    { "word": "侮辱", "reading": "ぶ*じょく*", "meaning": "Vũ nhục/Lăng mạ" },
+    { "word": "恥辱", "reading": "ち*じょく*", "meaning": "Nỗi nhục" }
+  ],
+  "伸": [
+    { "word": "伸びる", "reading": "*の*びる", "meaning": "Kéo dài/Tăng trưởng" },
+    { "word": "伸ばす", "reading": "*の*ばす", "meaning": "Làm dài ra/Vươn tay" }
+  ],
+  "審": [
+    { "word": "審査", "reading": "*しん*さ", "meaning": "Thẩm tra/Xét duyệt" },
+    { "word": "審判", "reading": "*しん*ぱん", "meaning": "Trọng tài/Thẩm phán" }
+  ],
+  "辛": [
+    { "word": "辛い", "reading": "*から*い", "meaning": "Cay" },
+    { "word": "辛い", "reading": "*つら*い", "meaning": "Đau khổ/Khó khăn" }
+  ],
+  "炊": [
+    { "word": "炊飯器", "reading": "*すい*はんき", "meaning": "Nồi cơm điện" },
+    { "word": "炊く", "reading": "*た*く", "meaning": "Nấu (cơm)" }
+  ],
+  "粋": [
+    { "word": "純粋", "reading": "じゅん*すい*", "meaning": "Thuần túy/Trong sáng" },
+    { "word": "粋", "reading": "*いき*", "meaning": "Tinh tế/Sành điệu" }
+  ],
+  "衰": [
+    { "word": "衰える", "reading": "*おとろ*える", "meaning": "Suy yếu/Sa sút" },
+    { "word": "老衰", "reading": "ろう*すい*", "meaning": "Suy yếu do tuổi già" }
+  ],
+  "遂": [
+    { "word": "遂げる", "reading": "*と*げる", "meaning": "Đạt được/Hoàn thành" },
+    { "word": "遂行", "reading": "*すい*こう", "meaning": "Hoàn thành nhiệm vụ" }
+  ],
+  "酔": [
+    { "word": "酔う", "reading": "*よ*う", "meaning": "Say (rượu/xe)" },
+    { "word": "酔っ払い", "reading": "*よ*っぱらい", "meaning": "Kẻ say rượu" },
+    { "word": "麻酔", "reading": "ま*すい*", "meaning": "Ma túy/Thuốc mê" }
+  ],
+  "随": [
+    { "word": "随分", "reading": "*ずい*ぶん", "meaning": "Khá là/Tương đối" },
+    { "word": "随筆", "reading": "*ずい*ひつ", "meaning": "Tùy bút" }
+  ],
+  "髄": [
+    { "word": "骨髄", "reading": "こつ*ずい*", "meaning": "Tủy xương" },
+    { "word": "真髄", "reading": "しん*ずい*", "meaning": "Cốt tủy/Tinh hoa" }
+  ],
+  "瀬": [
+    { "word": "瀬戸物", "reading": "*せ*ともの", "meaning": "Đồ gốm sứ" },
+    { "word": "瀬戸内海", "reading": "*せ*とないかい", "meaning": "Biển nội địa Seto" }
+  ],
+  "牲": [
+    { "word": "犠牲", "reading": "ぎ*せい*", "meaning": "Hy sinh" }
+  ],
+  "請": [
+    { "word": "請求", "reading": "*せい*きゅう", "meaning": "Yêu cầu/Thanh toán" },
+    { "word": "申請", "reading": "しん*せい*", "meaning": "Đăng ký/Xin xỏ" },
+    { "word": "請う", "reading": "*こ*う", "meaning": "Xin/Cầu khẩn" }
+  ],
+  "隻": [
+    { "word": "数隻", "reading": "すう*せき*", "meaning": "Vài chiếc (tàu)" }
+  ],
+  "惜": [
+    { "word": "惜しい", "reading": "*お*しい", "meaning": "Đáng tiếc" }
+  ],
+  "斥": [
+    { "word": "排斥", "reading": "はい*せき*", "meaning": "Bài xích/Tẩy chay" }
+  ],
+  "籍": [
+    { "word": "国籍", "reading": "こく*せき*", "meaning": "Quốc tịch" },
+    { "word": "戸籍", "reading": "こ*せき*", "meaning": "Hộ tịch" },
+    { "word": "書籍", "reading": "しょ*せき*", "meaning": "Sách vở" }
+  ],
+  "摂": [
+    { "word": "摂取", "reading": "*せっ*しゅ", "meaning": "Hấp thụ/Tiêu thụ" },
+    { "word": "摂氏", "reading": "*せっ*し", "meaning": "Độ C (Celsius)" }
+  ],
+  "潜": [
+    { "word": "潜る", "reading": "*もぐ*る", "meaning": "Lặn/Trốn" },
+    { "word": "潜在", "reading": "*せん*ざい", "meaning": "Tiềm tàng/Tiềm ẩn" }
+  ],
+  "繕": [
+    { "word": "修繕", "reading": "しゅう*ぜん*", "meaning": "Tu sửa/Chỉnh trang" }
+  ],
+  "措": [
+    { "word": "措置", "reading": "*そ*ち", "meaning": "Biện pháp xử lý" }
+  ],
+  "礎": [
+    { "word": "基礎", "reading": "き*そ*", "meaning": "Cơ sở/Nền tảng" }
+  ],
+  "粗": [
+    { "word": "粗末", "reading": "*そ*まつ", "meaning": "Thô sơ/Đơn giản" },
+    { "word": "粗い", "reading": "*あら*い", "meaning": "Thô/Nhám" },
+    { "word": "粗品", "reading": "*そ*しな", "meaning": "Quà mọn" }
+  ],
+  "阻": [
+    { "word": "阻止", "reading": "*そ*し", "meaning": "Ngăn chặn" },
+    { "word": "阻む", "reading": "*はば*む", "meaning": "Cản trở" }
+  ],
+  "双": [
+    { "word": "双子", "reading": "*ふた*ご", "meaning": "Sinh đôi" },
+    { "word": "双眼鏡", "reading": "*そう*がんきょう", "meaning": "Ống nhòm" }
+  ],
+  "掃": [
+    { "word": "掃除", "reading": "*そう*じ", "meaning": "Dọn dẹp" },
+    { "word": "清掃", "reading": "せい*そう*", "meaning": "Vệ sinh/Quét tước" },
+    { "word": "掃く", "reading": "*は*く", "meaning": "Quét" }
+  ],
+  "葬": [
+    { "word": "葬式", "reading": "*そう*しき", "meaning": "Đám tang" },
+    { "word": "埋葬", "reading": "まい*そう*", "meaning": "Mai táng" }
+  ],
+  "遭": [
+    { "word": "遭う", "reading": "*あ*う", "meaning": "Gặp (tai nạn/chuyện xấu)" },
+    { "word": "遭遇", "reading": "*そう*ぐう", "meaning": "Chạm trán" }
+  ],
+  "憎": [
+    { "word": "憎む", "reading": "*にく*む", "meaning": "Ghét/Căm hờn" },
+    { "word": "憎い", "reading": "*にく*い", "meaning": "Đáng ghét" }
+  ],
+  "促": [
+    { "word": "催促", "reading": "さい*そく*", "meaning": "Thúc giục" },
+    { "word": "促進", "reading": "*そく*しん", "meaning": "Xúc tiến/Thúc đẩy" },
+    { "word": "促す", "reading": "*うなが*す", "meaning": "Kêu gọi/Khuyến khích" }
+  ],
+  "賊": [
+    { "word": "盗賊", "reading": "とう*ぞく*", "meaning": "Đạo tặc" },
+    { "word": "海賊", "reading": "かい*ぞく*", "meaning": "Hải tặc" }
+  ],
+  "怠": [
+    { "word": "怠ける", "reading": "*なま*ける", "meaning": "Lười biếng" },
+    { "word": "怠る", "reading": "*おこた*る", "meaning": "Bỏ bê/Sao nhãng" }
+  ],
+  "滞": [
+    { "word": "滞在", "reading": "*たい*ざい", "meaning": "Lưu trú" },
+    { "word": "渋滞", "reading": "じゅう*たい*", "meaning": "Tắc nghẽn (giao thông)" },
+    { "word": "停滞", "reading": "てい*たい*", "meaning": "Đình trệ" }
+  ],
+  "胎": [
+    { "word": "胎児", "reading": "*たい*じ", "meaning": "Thai nhi" }
+  ],
+  "袋": [
+    { "word": "袋", "reading": "*ふくろ*", "meaning": "Cái túi" },
+    { "word": "手袋", "reading": "て*ぶくろ*", "meaning": "Găng tay" },
+    { "word": "レジ袋", "reading": "レジ*ぶくろ*", "meaning": "Túi ni lông" }
+  ],
+  "逮": [
+    { "word": "逮捕", "reading": "*たい*ほ", "meaning": "Bắt giữ" }
+  ],
+  "滝": [
+    { "word": "滝", "reading": "*たき*", "meaning": "Thác nước" }
+  ],
+  "卓": [
+    { "word": "卓球", "reading": "*たっ*きゅう", "meaning": "Bóng bàn" },
+    { "word": "食卓", "reading": "しょく*たく*", "meaning": "Bàn ăn" }
+  ],
+  "択": [
+    { "word": "選択", "reading": "せん*たく*", "meaning": "Lựa chọn" },
+    { "word": "二者択一", "reading": "にしゃ*たく*いつ", "meaning": "Chọn 1 trong 2" }
+  ],
+  "託": [
+    { "word": "信託", "reading": "しん*たく*", "meaning": "Tín thác" },
+    { "word": "委託", "reading": "い*たく*", "meaning": "Ủy thác" }
+  ],
+  "諾": [
+    { "word": "承諾", "reading": "しょう*だく*", "meaning": "Chấp thuận" },
+    { "word": "許諾", "reading": "きょ*だく*", "meaning": "Cho phép" }
+  ],
+  "奪": [
+    { "word": "奪う", "reading": "*うば*う", "meaning": "Cướp/Đoạt" },
+    { "word": "略奪", "reading": "りゃく*だつ*", "meaning": "Cướp bóc" }
+  ],
+  "胆": [
+    { "word": "大胆", "reading": "だい*たん*", "meaning": "Táo bạo/Gan dạ" },
+    { "word": "落胆", "reading": "らく*たん*", "meaning": "Chán nản/Thất vọng" }
+  ],
+  "鍛": [
+    { "word": "鍛える", "reading": "*きた*える", "meaning": "Rèn luyện" },
+    { "word": "鍛錬", "reading": "*たん*れん", "meaning": "Rèn luyện/Tu dưỡng" }
+  ],
+  "壇": [
+    { "word": "花壇", "reading": "か*だん*", "meaning": "Bồn hoa" },
+    { "word": "演壇", "reading": "えん*だん*", "meaning": "Bục diễn thuyết" }
+  ],
+  "稚": [
+    { "word": "幼稚園", "reading": "よう*ち*えん", "meaning": "Nhà trẻ/Mẫu giáo" },
+    { "word": "稚拙", "reading": "*ち*せつ", "meaning": "Non nớt/Vụng về" }
+  ],
+  "畜": [
+    { "word": "家畜", "reading": "か*ちく*", "meaning": "Gia súc" },
+    { "word": "畜産", "reading": "*ちく*さん", "meaning": "Chăn nuôi" }
+  ],
+  "窒": [
+    { "word": "窒息", "reading": "*ちっ*そく", "meaning": "Ngạt thở" }
+  ],
+  "抽": [
+    { "word": "抽象", "reading": "*ちゅう*しょう", "meaning": "Trừu tượng" },
+    { "word": "抽選", "reading": "*ちゅう*せん", "meaning": "Bốc thăm/Xổ số" }
+  ],
+  "鋳": [
+    { "word": "鋳造", "reading": "*ちゅう*ぞう", "meaning": "Đúc (kim loại)" }
+  ],
+  "駐": [
+    { "word": "駐車", "reading": "*ちゅう*しゃ", "meaning": "Đỗ xe" },
+    { "word": "駐在", "reading": "*ちゅう*ざい", "meaning": "Thường trú" }
+  ],
+  "彫": [
+    { "word": "彫刻", "reading": "*ちょう*こく", "meaning": "Điêu khắc" },
+    { "word": "彫る", "reading": "*ほ*る", "meaning": "Khắc/Tạc" }
+  ],
+  "聴": [
+    { "word": "聴解", "reading": "*ちょう*かい", "meaning": "Nghe hiểu" },
+    { "word": "聴く", "reading": "*き*く", "meaning": "Nghe (chăm chú)" }
+  ],
+  "超": [
+    { "word": "超える", "reading": "*こ*える", "meaning": "Vượt quá" },
+    { "word": "超過", "reading": "*ちょう*か", "meaning": "Vượt mức" },
+    { "word": "超人", "reading": "*ちょう*じん", "meaning": "Siêu nhân" }
+  ],
+  "鎮": [
+    { "word": "鎮める", "reading": "*しず*める", "meaning": "Làm dịu/Trấn an" },
+    { "word": "鎮痛剤", "reading": "*ちん*つうざい", "meaning": "Thuốc giảm đau" }
+  ],
+  "陳": [
+    { "word": "陳列", "reading": "*ちん*れつ", "meaning": "Trưng bày" },
+    { "word": "陳述", "reading": "*ちん*じゅつ", "meaning": "Trần thuật" }
+  ],
+  "墜": [
+    { "word": "墜落", "reading": "*つい*らく", "meaning": "Rơi (máy bay)" }
+  ],
+  "帝": [
+    { "word": "皇帝", "reading": "こう*てい*", "meaning": "Hoàng đế" },
+    { "word": "帝国", "reading": "*てい*こく", "meaning": "Đế quốc" }
+  ],
+  "締": [
+    { "word": "締め切り", "reading": "*し*めきり", "meaning": "Hạn chót" },
+    { "word": "締結", "reading": "*てい*けつ", "meaning": "Ký kết" }
+  ],
+  "訂": [
+    { "word": "訂正", "reading": "*てい*せい", "meaning": "Đính chính" },
+    { "word": "改訂", "reading": "かい*てい*", "meaning": "Chỉnh sửa/Tái bản" }
+  ],
+  "哲": [
+    { "word": "哲学", "reading": "*てつ*がく", "meaning": "Triết học" }
+  ],
+  "塗": [
+    { "word": "塗る", "reading": "*ぬ*る", "meaning": "Sơn/Bôi/Trát" },
+    { "word": "塗装", "reading": "*と*そう", "meaning": "Lớp sơn phủ" }
+  ],
+  "斗": [
+    { "word": "北斗七星", "reading": "ほく*と*しちせい", "meaning": "Sao Bắc Đẩu" }
+  ],
+  "凍": [
+    { "word": "凍る", "reading": "*こお*る", "meaning": "Đóng băng" },
+    { "word": "冷凍", "reading": "*れい*とう", "meaning": "Đông lạnh" }
+  ],
+  "痘": [
+    { "word": "天然痘", "reading": "てんねん*とう*", "meaning": "Bệnh đậu mùa" }
+  ],
+  "陶": [
+    { "word": "陶器", "reading": "*とう*き", "meaning": "Đồ gốm" }
+  ],
+  "匿": [
+    { "word": "匿名", "reading": "*とく*めい", "meaning": "Ẩn danh" },
+    { "word": "隠匿", "reading": "いん*とく*", "meaning": "Che giấu" }
+  ],
+  "篤": [
+    { "word": "危篤", "reading": "き*とく*", "meaning": "Hấp hối/Nguy kịch" }
+  ],
+  "豚": [
+    { "word": "豚肉", "reading": "*ぶた*にく", "meaning": "Thịt lợn" },
+    { "word": "豚", "reading": "*ぶた*", "meaning": "Con lợn" }
+  ],
+  "如": [
+    { "word": "突如", "reading": "とつ*じょ*", "meaning": "Đột nhiên" },
+    { "word": "如実", "reading": "*にょ*じつ", "meaning": "Rõ ràng/Đúng như thật" }
+  ],
+  "尿": [
+    { "word": "糖尿病", "reading": "とう*にょう*びょう", "meaning": "Bệnh tiểu đường" },
+    { "word": "尿", "reading": "*にょう*", "meaning": "Nước tiểu" }
+  ],
+  "粘": [
+    { "word": "粘る", "reading": "*ねば*る", "meaning": "Dính/Kiên trì" },
+    { "word": "粘土", "reading": "*ねん*ど", "meaning": "Đất sét" }
+  ],
+  "婆": [
+    { "word": "老婆", "reading": "ろう*ば*", "meaning": "Bà lão" }
+  ],
+  "排": [
+    { "word": "排出", "reading": "*はい*しゅつ", "meaning": "Thải ra" },
+    { "word": "排除", "reading": "*はい*じょ", "meaning": "Loại trừ/Bài trừ" }
+  ],
+  "陪": [
+    { "word": "陪審", "reading": "*ばい*しん", "meaning": "Bồi thẩm" }
+  ],
+  "縛": [
+    { "word": "縛る", "reading": "*しば*る", "meaning": "Buộc/Trói" },
+    { "word": "束縛", "reading": "そく*ばく*", "meaning": "Ràng buộc/Trói buộc" }
+  ],
+  "伐": [
+    { "word": "伐採", "reading": "*ばっ*さい", "meaning": "Chặt cây" }
+  ],
+  "伴": [
+    { "word": "伴う", "reading": "*ともな*う", "meaning": "Kéo theo/Đi cùng" },
+    { "word": "同伴", "reading": "どう*はん*", "meaning": "Đồng hành" }
+  ],
+  "帆": [
+    { "word": "帆船", "reading": "*はん*せん", "meaning": "Thuyền buồm" },
+    { "word": "帆", "reading": "*ほ*", "meaning": "Cánh buồm" }
+  ],
+  "畔": [
+    { "word": "湖畔", "reading": "こ*はん*", "meaning": "Bờ hồ" }
+  ],
+  "藩": [
+    { "word": "藩", "reading": "*はん*", "meaning": "Phiên (lãnh địa phong kiến)" }
+  ],
+  "蛮": [
+    { "word": "野蛮", "reading": "や*ばん*", "meaning": "Dã man" }
+  ],
+  "卑": [
+    { "word": "卑しい", "reading": "*いや*しい", "meaning": "Đê tiện/Hạ cấp" },
+    { "word": "卑屈", "reading": "*ひ*くつ", "meaning": "Bỉ ổi/Thấp hèn" }
+  ],
+  "泌": [
+    { "word": "分泌", "reading": "ぶん*ぴつ*", "meaning": "Bài tiết" },
+    { "word": "泌尿器科", "reading": "*ひ*にょうきか", "meaning": "Khoa tiết niệu" }
+  ],
+  "碑": [
+    { "word": "記念碑", "reading": "きねん*ひ*", "meaning": "Đài kỷ niệm" },
+    { "word": "石碑", "reading": "せき*ひ*", "meaning": "Bia đá" }
+  ],
+  "姫": [
+    { "word": "姫", "reading": "*ひめ*", "meaning": "Công chúa/Tiểu thư" },
+    { "word": "お姫様", "reading": "お*ひめ*さま", "meaning": "Nàng công chúa" }
+  ],
+  "漂": [
+    { "word": "漂う", "reading": "*ただよ*う", "meaning": "Trôi nổi/Lang thang" },
+    { "word": "漂白剤", "reading": "*ひょう*はくざい", "meaning": "Chất tẩy trắng" }
+  ],
+  "苗": [
+    { "word": "苗", "reading": "*なえ*", "meaning": "Cây con" },
+    { "word": "苗字", "reading": "*みょう*じ", "meaning": "Họ (tên)" }
+  ],
+  "符": [
+    { "word": "切符", "reading": "きっ*ぷ*", "meaning": "Vé" },
+    { "word": "符号", "reading": "*ふ*ごう", "meaning": "Phù hiệu/Dấu hiệu" }
+  ],
+  "赴": [
+    { "word": "赴任", "reading": "*ふ*にん", "meaning": "Nhậm chức (ở nơi khác)" }
+  ],
+  "封": [
+    { "word": "封筒", "reading": "*ふう*とう", "meaning": "Phong bì" },
+    { "word": "開封", "reading": "かい*ふう*", "meaning": "Mở thư/Mở bao" }
+  ],
+  "伏": [
+    { "word": "伏せる", "reading": "*ふ*せる", "meaning": "Cúi xuống/Giấu giếm" },
+    { "word": "起伏", "reading": "き*ふく*", "meaning": "Nhấp nhô/Thăng trầm" }
+  ],
+  "覆": [
+    { "word": "覆う", "reading": "*おお*う", "meaning": "Che phủ/Bao trùm" },
+    { "word": "覆す", "reading": "*くつがえ*す", "meaning": "Lật ngược/Lật đổ" }
+  ],
+  "墳": [
+    { "word": "古墳", "reading": "こ*ふん*", "meaning": "Mộ cổ" }
+  ],
+  "紛": [
+    { "word": "紛れる", "reading": "*まぎ*れる", "meaning": "Bị lẫn vào/Phân tâm" },
+    { "word": "紛失", "reading": "*ふん*しつ", "meaning": "Làm mất" },
+    { "word": "紛らわしい", "reading": "*まぎ*らわしい", "meaning": "Dễ nhầm lẫn" }
+  ],
+  "癖": [
+    { "word": "癖", "reading": "*くせ*", "meaning": "Thói hư/Tật" },
+    { "word": "口癖", "reading": "くち*ぐせ*", "meaning": "Câu cửa miệng" }
+  ],
+  "穂": [
+    { "word": "稲穂", "reading": "いな*ほ*", "meaning": "Bông lúa" }
+  ],
+  "募": [
+    { "word": "募集", "reading": "*ぼ*しゅう", "meaning": "Tuyển dụng/Chiêu mộ" },
+    { "word": "募る", "reading": "*つの*る", "meaning": "Chiêu mộ/Ngày càng mạnh" }
+  ],
+  "慕": [
+    { "word": "慕う", "reading": "*した*う", "meaning": "Hâm mộ/Tưởng nhớ" }
+  ],
+  "簿": [
+    { "word": "家計簿", "reading": "かけい*ぼ*", "meaning": "Sổ chi tiêu gia đình" },
+    { "word": "名簿", "reading": "めい*ぼ*", "meaning": "Danh sách tên" }
+  ],
+  "倣": [
+    { "word": "模倣", "reading": "も*ほう*", "meaning": "Mô phỏng/Bắt chước" }
+  ],
+  "奉": [
+    { "word": "奉仕", "reading": "*ほう*し", "meaning": "Phụng sự/Lao động công ích" }
+  ],
+  "崩": [
+    { "word": "崩れる", "reading": "*くず*れる", "meaning": "Sụp đổ/Hư hỏng" },
+    { "word": "崩す", "reading": "*くず*す", "meaning": "Phá vỡ/Đổi tiền lẻ" }
+  ],
+  "縫": [
+    { "word": "縫う", "reading": "*ぬ*う", "meaning": "Khâu/May" },
+    { "word": "裁縫", "reading": "さい*ほう*", "meaning": "Khâu vá" }
+  ],
+  "胞": [
+    { "word": "細胞", "reading": "さい*ぼう*", "meaning": "Tế bào" }
+  ],
+  "芳": [
+    { "word": "芳香剤", "reading": "*ほう*こうざい", "meaning": "Sáp thơm/Chất tạo mùi" }
+  ],
+  "邦": [
+    { "word": "連邦", "reading": "れん*ぽう*", "meaning": "Liên bang" },
+    { "word": "本邦", "reading": "ほん*ぽう*", "meaning": "Nước Nhật/Nước ta" }
+  ],
+  "飽": [
+    { "word": "飽きる", "reading": "*あ*きる", "meaning": "Chán/Ngán" },
+    { "word": "飽和", "reading": "*ほう*わ", "meaning": "Bão hòa" }
+  ],
+  "乏": [
+    { "word": "乏しい", "reading": "*とぼ*しい", "meaning": "Nghèo nàn/Thiếu thốn" }
+  ],
+  "妨": [
+    { "word": "妨げる", "reading": "*さまた*げる", "meaning": "Cản trở/Gây trở ngại" },
+    { "word": "妨害", "reading": "*ぼう*がい", "meaning": "Phương hại/Cản trở" }
+  ],
+  "房": [
+    { "word": "冷房", "reading": "れい*ぼう*", "meaning": "Máy lạnh" },
+    { "word": "文房具", "reading": "ぶん*ぼう*ぐ", "meaning": "Văn phòng phẩm" }
+  ],
+  "某": [
+    { "word": "某氏", "reading": "*ぼう*し", "meaning": "Ông nào đó (giấu tên)" }
+  ],
+  "膨": [
+    { "word": "膨らむ", "reading": "*ふく*らむ", "meaning": "Phồng lên/To lên" },
+    { "word": "膨大", "reading": "*ぼう*だい", "meaning": "Khổng lồ/To lớn" }
+  ],
+  "謀": [
+    { "word": "陰謀", "reading": "いん*ぼう*", "meaning": "Âm mưu" },
+    { "word": "無謀", "reading": "む*ぼう*", "meaning": "Khinh suất/Thiếu suy nghĩ" }
+  ],
+  "墨": [
+    { "word": "墨", "reading": "*すみ*", "meaning": "Mực tàu" }
+  ],
+  "没": [
+    { "word": "没収", "reading": "*ぼっ*しゅう", "meaning": "Tịch thu" },
+    { "word": "沈没", "reading": "ちん*ぼつ*", "meaning": "Chìm tàu" }
+  ],
+  "翻": [
+    { "word": "翻訳", "reading": "*ほん*やく", "meaning": "Biên dịch" },
+    { "word": "翻す", "reading": "*ひるがえ*す", "meaning": "Lật lại/Thay đổi thái độ" }
+  ],
+  "魔": [
+    { "word": "悪魔", "reading": "あく*ま*", "meaning": "Ác ma" },
+    { "word": "魔法", "reading": "*ま*ほう", "meaning": "Ma thuật/Phép thuật" }
+  ],
+  "埋": [
+    { "word": "埋める", "reading": "*う*める", "meaning": "Chôn/Lấp" },
+    { "word": "埋まる", "reading": "*う*まる", "meaning": "Bị chôn vùi" }
+  ],
+  "膜": [
+    { "word": "膜", "reading": "*まく*", "meaning": "Màng/Lớp phủ" }
+  ],
+  "又": [
+    { "word": "又は", "reading": "*また*は", "meaning": "Hoặc là" }
+  ],
+  "魅": [
+    { "word": "魅力", "reading": "*み*りょく", "meaning": "Sức quyến rũ/Hấp dẫn" }
+  ],
+  "婿": [
+    { "word": "花婿", "reading": "はな*むこ*", "meaning": "Chú rể" }
+  ],
+  "滅": [
+    { "word": "全滅", "reading": "ぜん*めつ*", "meaning": "Tiêu diệt hoàn toàn" },
+    { "word": "滅びる", "reading": "*ほろ*びる", "meaning": "Diệt vong" }
+  ],
+  "免": [
+    { "word": "免許", "reading": "*めん*きょ", "meaning": "Giấy phép" },
+    { "word": "免税", "reading": "*めん*ぜい", "meaning": "Miễn thuế" }
+  ],
+  "幽": [
+    { "word": "幽霊", "reading": "*ゆう*れい", "meaning": "Ma quỷ" }
+  ],
+  "憂": [
+    { "word": "憂鬱", "reading": "*ゆう*うつ", "meaning": "U sầu/Chán nản" },
+    { "word": "憂える", "reading": "*うれ*える", "meaning": "Lo lắng/Trăn trở" }
+  ],
+  "誘": [
+    { "word": "誘う", "reading": "*さそ*う", "meaning": "Mời/Rủ" },
+    { "word": "誘導", "reading": "*ゆう*どう", "meaning": "Dẫn đường/Xúi giục" }
+  ],
+  "揚": [
+    { "word": "揚げる", "reading": "*あ*げる", "meaning": "Rán/Chiên/Treo cờ" },
+    { "word": "抑揚", "reading": "よく*よう*", "meaning": "Ngữ điệu" }
+  ],
+  "揺": [
+    { "word": "揺れる", "reading": "*ゆ*れる", "meaning": "Rung/Lắc" },
+    { "word": "動揺", "reading": "どう*よう*", "meaning": "Dao động (tinh thần)" }
+  ],
+  "擁": [
+    { "word": "擁護", "reading": "*よう*ご", "meaning": "Ủng hộ/Bảo vệ" }
+  ],
+  "抑": [
+    { "word": "抑える", "reading": "*おさ*える", "meaning": "Kìm nén/Hạn chế" },
+    { "word": "抑制", "reading": "*よく*せい", "meaning": "Ức chế/Kiềm chế" }
+  ],
+  "裸": [
+    { "word": "裸", "reading": "*はだか*", "meaning": "Khỏa thân/Trần trụi" },
+    { "word": "裸足", "reading": "*はだ*し", "meaning": "Chân trần" }
+  ],
+  "濫": [
+    { "word": "濫用", "reading": "*らん*よう", "meaning": "Lạm dụng" }
+  ],
+  "吏": [
+    { "word": "官吏", "reading": "かん*り*", "meaning": "Quan lại/Công chức" }
+  ],
+  "隆": [
+    { "word": "隆盛", "reading": "*りゅう*せい", "meaning": "Phồn thịnh/Thịnh vượng" }
+  ],
+  "了": [
+    { "word": "完了", "reading": "かん*りょう*", "meaning": "Hoàn thành" },
+    { "word": "了解", "reading": "*りょう*かい", "meaning": "Hiểu rõ/Đã rõ" },
+    { "word": "終了", "reading": "しゅう*りょう*", "meaning": "Kết thúc" }
+  ],
+  "猟": [
+    { "word": "狩猟", "reading": "しゅ*りょう*", "meaning": "Săn bắt" }
+  ],
+  "糧": [
+    { "word": "食糧", "reading": "しょく*りょう*", "meaning": "Lương thực" }
+  ],
+  "陵": [
+    { "word": "丘陵", "reading": "きゅう*りょう*", "meaning": "Đồi núi" }
+  ],
+  "厘": [
+    { "word": "九分九厘", "reading": "くぶく*りん*", "meaning": "Gần như chắc chắn/99%" }
+  ],
+  "励": [
+    { "word": "励ます", "reading": "*はげ*ます", "meaning": "Khích lệ/Động viên" },
+    { "word": "激励", "reading": "げき*れい*", "meaning": "Khích lệ" }
+  ],
+  "零": [
+    { "word": "零点", "reading": "*れい*てん", "meaning": "Điểm 0" },
+    { "word": "零下", "reading": "*れい*か", "meaning": "Dưới 0 độ (âm)" }
+  ],
+  "霊": [
+    { "word": "幽霊", "reading": "ゆう*れい*", "meaning": "Ma" },
+    { "word": "亡霊", "reading": "ぼう*れい*", "meaning": "Vong linh" }
+  ],
+  "裂": [
+    { "word": "裂ける", "reading": "*さ*ける", "meaning": "Bị xé/Rách" },
+    { "word": "破裂", "reading": "は*れつ*", "meaning": "Phá vỡ/Bùng nổ" }
+  ],
+  "廉": [
+    { "word": "廉価", "reading": "*れん*か", "meaning": "Giá rẻ" },
+    { "word": "清廉", "reading": "せい*れん*", "meaning": "Thanh liêm" }
+  ],
+  "錬": [
+    { "word": "鍛錬", "reading": "たん*れん*", "meaning": "Rèn luyện" }
+  ],
+  "炉": [
+    { "word": "暖炉", "reading": "だん*ろ*", "meaning": "Lò sưởi" }
+  ],
+  "廊": [
+    { "word": "廊下", "reading": "*ろう*か", "meaning": "Hành lang" }
+  ],
+  "楼": [
+    { "word": "摩天楼", "reading": "まてん*ろう*", "meaning": "Nhà chọc trời" }
+  ],
+  "浪": [
+    { "word": "浪費", "reading": "*ろう*ひ", "meaning": "Lãng phí" }
+  ],
+  "漏": [
+    { "word": "漏れる", "reading": "*も*れる", "meaning": "Rò rỉ/Lộ ra" },
+    { "word": "漏電", "reading": "*ろう*でん", "meaning": "Rò điện" }
+  ],
+  "湾": [
+    { "word": "台湾", "reading": "たい*わん*", "meaning": "Đài Loan" },
+    { "word": "東京湾", "reading": "とうきょう*わん*", "meaning": "Vịnh Tokyo" }
+  ],
+  "鑑": [
+    { "word": "印鑑", "reading": "いん*かん*", "meaning": "Con dấu" },
+    { "word": "図鑑", "reading": "ず*かん*", "meaning": "Sách tranh/Từ điển bằng tranh" },
+    { "word": "鑑賞", "reading": "*かん*しょう", "meaning": "Thưởng thức/Đánh giá" }
   ]
 }
