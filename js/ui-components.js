@@ -179,7 +179,7 @@ const HeaderSection = ({ char, paths, loading, failed, config, dbData }) => {
 
                     <span className="font-bold text-sm leading-none text-black whitespace-nowrap uppercase">{info.sound}</span>
 
-                    {info.meaning && info.meaning.trim() !== "" && (<span className="text-[12px] font-normal text-black leading-none whitespace-nowrap">({info.meaning})</span>)}
+                    {info.meaning && info.meaning.trim() !== "" && (<span className="text-[13px] font-normal text-black leading-none whitespace-nowrap">({info.meaning})</span>)}
 
                 </div>
 
@@ -209,7 +209,7 @@ const HeaderSection = ({ char, paths, loading, failed, config, dbData }) => {
 
                         if (isJLPT) {
 
-                            return (<div className="h-full flex items-end pb-[3px] text-[12px] text-black italic w-full leading-none whitespace-nowrap"><div className="truncate w-full"><span className="font-bold text-black mr-1 uppercase">On:</span><span className="mr-3 not-italic font-medium">{readings.on || '---'}</span><span className="font-bold text-black mr-1 uppercase">Kun:</span><span className="not-italic font-medium">{readings.kun || '---'}</span></div></div>);
+                            return (<div className="h-full flex items-end pb-[3px] text-[13px] text-black italic w-full leading-none whitespace-nowrap"><div className="truncate w-full"><span className="font-bold text-black mr-1 uppercase">On:</span><span className="mr-3 not-italic font-medium">{readings.on || '---'}</span><span className="font-bold text-black mr-1 uppercase">Kun:</span><span className="not-italic font-medium">{readings.kun || '---'}</span></div></div>);
 
                         }
 
@@ -223,11 +223,11 @@ const HeaderSection = ({ char, paths, loading, failed, config, dbData }) => {
             if (config.displayMode === 'vocab') {
                 const vocabs = dbData.VOCAB_DB ? (dbData.VOCAB_DB[char] || []) : [];
                 
-                if (vocabs.length === 0) return <div className="h-full flex items-end pb-[3px] text-[12px] text-gray-400 italic">---</div>;
+                if (vocabs.length === 0) return <div className="h-full flex items-end pb-[3px] text-[13px] text-gray-400 italic">---</div>;
 
                 return (
                     // Thay đổi: pb-[3px] -> pb-0 | leading-none -> leading-normal
-                    <div className="h-full flex items-end pb-0 text-[12px] text-black w-full leading-normal whitespace-nowrap overflow-hidden">
+                    <div className="h-full flex items-end pb-0 text-[13px] text-black w-full leading-normal whitespace-nowrap overflow-hidden">
                         <div className="truncate w-full"> 
                             {vocabs.map((v, i) => (
                                 <span key={i} className="mr-3 inline-block">
