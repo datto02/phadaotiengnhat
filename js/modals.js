@@ -1,36 +1,82 @@
-// --- SỬA LẠI: REVIEW LIST MODAL (Rõ hàng 3, nút Xem thêm nằm dưới, căn giữa) ---
+const FutureDateItem = ({ date, items }) => {
+    const [isExpanded, setIsExpanded] = React.useState(false);
+    const containerRef = React.useRef(null);
+    const [needsExpand, setNeedsExpand] = React.useState(false);
+
+    // Kiểm tra chiều cao thực tế để quyết định có hiện nút "Xem thêm" không
+    React.useLayoutEffect(() => {
+        if (containerRef.current) {
+            // 1 hàng ~ 30-34px. 3 hàng + gap ~ 108px.
+            if (containerRef.current.scrollHeight > 108) {
+                setNeedsExpand(true);
+            }
+        }
+    }, [items]);
+
+    return (
+        <div className="bg-gray-50 rounded-xl p-3 border border-gray-100 flex flex-col">
+            {/* Header của thẻ ngày */}
+            <div className="flex items-center justify-between mb-2">
+                <span className="text-xs font-bold text-gray-600 flex items-center gap-1">
+                    <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+                    Ngày {date}
+                </span>
+                <span className="bg-gray-200 text-gray-600 text-[10px] font-bold px-1.5 rounded">{items.length} chữ</span>
+            </div>
+
+            {/* Danh sách Kanji */}
+            <div 
+                ref={containerRef}
+                className={`flex flex-wrap gap-1 transition-all duration-300 ease-in-out ${isExpanded ? '' : 'max-h-[108px] overflow-hidden'}`}
+            >
+                {items.map((char, i) => (
+                    <span key={i} className="inline-block bg-white text-gray-500 border border-gray-200 rounded px-1.5 py-0.5 text-base font-['Klee_One'] min-w-[28px] text-center opacity-70">{char}</span>
+                ))}
+            </div>
+
+            {/* Nút Xem thêm / Thu gọn (Chỉ hiện khi danh sách dài quá 3 hàng) */}
+            {(needsExpand || isExpanded) && (
+                <div className="mt-2 pt-2 border-t border-dashed border-gray-200 text-center">
+                    <button 
+                        onClick={(e) => {
+                            e.stopPropagation();
+                            setIsExpanded(!isExpanded);
+                        }}
+                        className="text-[11px] font-bold text-blue-500 hover:text-blue-700 hover:bg-blue-50 px-3 py-1 rounded transition-colors"
+                    >
+                        {isExpanded ? "Thu gọn" : `Xem thêm... (${items.length} chữ)`}
+                    </button>
+                </div>
+            )}
+        </div>
+    );
+};
+
 const ReviewListModal = ({ isOpen, onClose, srsData, onResetSRS }) => {
     const [isConfirmOpen, setIsConfirmOpen] = React.useState(false);
     const [isHelpOpen, setIsHelpOpen] = React.useState(false);
-    
-    // State lưu trạng thái mở rộng
-    const [expandedSections, setExpandedSections] = React.useState({});
 
-    // Reset trạng thái khi đóng Modal
-    React.useEffect(() => {
-        if (!isOpen) {
-            setIsConfirmOpen(false);
-            setIsHelpOpen(false);
-            setExpandedSections({}); 
-        }
-    }, [isOpen]);
-
-    const toggleExpand = (key) => {
-        setExpandedSections(prev => ({ ...prev, [key]: !prev[key] }));
-    };
-
-    // --- CÁC HÀM XỬ LÝ FILE (GIỮ NGUYÊN) ---
     const handleExport = () => {
         const data = localStorage.getItem('phadao_srs_data');
-        if (!data || data === '{}') { alert("Chưa có dữ liệu!"); return; }
+        if (!data || data === '{}') {
+            alert("Chưa có dữ liệu để sao lưu!");
+            return;
+        }
         const blob = new Blob([data], { type: 'application/json' });
         const url = URL.createObjectURL(blob);
         const date = new Date();
+        const dateStr = `${date.getDate()}-${date.getMonth() + 1}-${date.getFullYear()}`;
+        const fileName = `backup_tiengnhat_${dateStr}.json`;
+        
         const a = document.createElement('a');
         a.href = url;
-        a.download = `backup_tiengnhat_${date.getDate()}-${date.getMonth()+1}.json`;
-        document.body.appendChild(a); a.click(); document.body.removeChild(a);
+        a.download = fileName;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
     };
+
 
     const handleImport = (e) => {
         const file = e.target.files[0];
@@ -40,11 +86,14 @@ const ReviewListModal = ({ isOpen, onClose, srsData, onResetSRS }) => {
             try {
                 const json = event.target.result;
                 JSON.parse(json); 
-                if (confirm("⚠️ CẢNH BÁO: Dữ liệu hiện tại sẽ bị ghi đè. Bạn chắc chắn chứ?")) {
+                if (confirm("⚠️ CẢNH BÁO:\nDữ liệu hiện tại sẽ bị thay thế hoàn toàn bởi bản sao lưu này.\nBạn có chắc chắn muốn khôi phục không?")) {
                     localStorage.setItem('phadao_srs_data', json);
+                    alert("Khôi phục thành công! Trang web sẽ tải lại.");
                     window.location.reload();
                 }
-            } catch (err) { alert("File lỗi!"); }
+            } catch (err) {
+                alert("File lỗi! Vui lòng chọn đúng file .json");
+            }
         };
         reader.readAsText(file);
         e.target.value = '';
@@ -56,7 +105,15 @@ const ReviewListModal = ({ isOpen, onClose, srsData, onResetSRS }) => {
         return () => { document.body.style.overflow = 'unset'; };
     }, [isOpen]);
 
-    // --- LOGIC GOM NHÓM DỮ LIỆU ---
+    
+    React.useEffect(() => {
+        if (!isOpen) {
+            setIsConfirmOpen(false);
+            setIsHelpOpen(false);
+        }
+    }, [isOpen]);
+
+    
     const groupedData = React.useMemo(() => {
         const groups = { today: [] }; 
         const now = Date.now();
@@ -82,127 +139,139 @@ const ReviewListModal = ({ isOpen, onClose, srsData, onResetSRS }) => {
         return m1 === m2 ? d1 - d2 : m1 - m2;
     });
 
-    // === COMPONENT CON: RENDER LIST (ĐÃ SỬA LOGIC HIỂN THỊ) ===
-    const RenderListSection = ({ title, count, items, bgColor, borderColor, sectionKey, isToday }) => {
-        const LIMIT = 33; 
-        // Kiểm tra xem có cần thu gọn không
-        const shouldCollapse = !isToday && items.length > LIMIT;
-        const isExpanded = expandedSections[sectionKey];
-
-        // Logic quan trọng: Nếu cần thu gọn và chưa bấm mở, chỉ lấy LIMIT phần tử đầu tiên.
-        // Ngược lại thì lấy toàn bộ.
-        const displayedItems = (shouldCollapse && !isExpanded) ? items.slice(0, LIMIT) : items;
-
-        return (
-            <div className={`${bgColor} rounded-xl p-3 border ${borderColor} relative transition-all`}>
-                {/* Header */}
-                <div className="flex items-center justify-between mb-2">
-                    {isToday ? (
-                        <span className="text-sm font-black text-orange-600 uppercase">{title}</span>
-                    ) : (
-                        <span className="text-xs font-bold text-gray-600 flex items-center gap-1">
-                            <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
-                            {title}
-                        </span>
-                    )}
-                    <span className={`${isToday ? 'bg-orange-200 text-orange-700' : 'bg-gray-200 text-gray-600'} text-[10px] font-bold px-1.5 rounded`}>{count} chữ</span>
-                </div>
-
-                {/* Danh sách Kanji */}
-                {items.length > 0 ? (
-                    <div>
-                        {/* Hiển thị danh sách đã được cắt gọn (hoặc full) */}
-                        <div className="flex flex-wrap gap-1">
-                            {displayedItems.map((char, i) => (
-                                <span key={i} className={`inline-block bg-white border ${isToday ? 'border-orange-200 text-gray-800' : 'border-gray-200 text-gray-500'} rounded px-1.5 py-0.5 text-base font-['Klee_One'] min-w-[28px] text-center shadow-sm ${!isToday && 'opacity-70'}`}>{char}</span>
-                            ))}
-                        </div>
-                        
-                        {/* Nút "Xem thêm" - Nằm DƯỚI danh sách, căn giữa, màu xám nhạt */}
-                        {shouldCollapse && !isExpanded && (
-                            <div 
-                                className="flex justify-center mt-3 pt-2 border-t border-dashed border-gray-200 cursor-pointer hover:bg-gray-100/50 rounded-b-lg transition-colors"
-                                onClick={() => toggleExpand(sectionKey)}
-                            >
-                                <button className="text-[10px] font-bold text-gray-400 hover:text-gray-600 flex items-center gap-1 transition-colors">
-                                    Xem thêm {items.length - LIMIT} chữ...
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
-                                </button>
-                            </div>
-                        )}
-                    </div>
-                ) : (
-                    <p className="text-[12px] text-gray-400 italic">Không có Kanji cần ôn. Giỏi quá! 🎉</p>
-                )}
-                
-                {/* Nút "Thu gọn" - Nằm dưới cùng khi đã mở full */}
-                {shouldCollapse && isExpanded && (
-                     <div className="flex justify-center mt-3 pt-2 border-t border-dashed border-gray-200">
-                        <button 
-                            onClick={() => toggleExpand(sectionKey)}
-                            className="text-[10px] font-bold text-gray-400 hover:text-gray-600 flex items-center gap-1 transition-colors"
-                        >
-                            Thu gọn
-                            <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="18 15 12 9 6 15"/></svg>
-                        </button>
-                     </div>
-                )}
-            </div>
-        );
-    };
-
     return (
         <div className="fixed inset-0 z-[400] flex items-center justify-center bg-gray-900/60 backdrop-blur-sm p-4 animate-in fade-in duration-200 cursor-pointer" onClick={onClose}>
             <div className={`bg-white rounded-2xl shadow-2xl w-full flex flex-col max-h-[80vh] animate-in zoom-in-95 duration-200 overflow-hidden relative transition-all cursor-default ${isConfirmOpen ? 'max-w-[300px]' : 'max-w-md'}`} onClick={e => e.stopPropagation()}>
                 
                 {isHelpOpen ? (
-                    // === GIAO DIỆN HƯỚNG DẪN (GIỮ NGUYÊN) ===
+                    // === GIAO DIỆN HƯỚNG DẪN (SRS GUIDE) ===
+                    
                     <>
                          <div className="p-4 border-b border-gray-100 flex justify-between items-center bg-indigo-50">
-                            <h3 className="text-base font-black text-indigo-700 uppercase flex items-center gap-2">🎓 HƯỚNG DẪN</h3>
+                            <h3 className="text-base font-black text-indigo-700 uppercase flex items-center gap-2">
+                                🎓 HƯỚNG DẪN
+                            </h3>
                             <button onClick={() => setIsHelpOpen(false)} className="text-indigo-400 hover:text-indigo-600 transition-colors">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
                             </button>
                         </div>
+                        
                         <div className="p-6 overflow-y-auto custom-scrollbar text-sm text-gray-600 space-y-6 flex-1">
-                            <div><h4 className="font-bold text-gray-800 mb-1">🧠 1. PHƯƠNG PHÁP HỌC</h4><p className="text-justify">Hệ thống sử dụng thuật toán <b>Lặp lại ngắt quãng</b> để nhắc bạn ôn tập đúng thời điểm.</p></div>
-                            <div className="bg-indigo-50 p-3 rounded-xl border border-indigo-100"><h4 className="font-bold text-indigo-700 mb-1">⚙️ 2. CƠ CHẾ</h4><p>Hệ thống tự tính toán lịch ôn. Thông báo sẽ hiện khi đến hạn (5h sáng).</p></div>
-                            <div className="bg-yellow-50 p-3 rounded-xl border border-yellow-100"><h4 className="font-bold text-yellow-700 mb-1">⚠️ 3. LƯU Ý DỮ LIỆU</h4><p>Dữ liệu lưu trên trình duyệt. Xóa lịch sử hoặc dùng ẩn danh sẽ mất dữ liệu.</p></div>
-                            <div className="bg-emerald-50 p-3 rounded-xl border border-emerald-100">
-                                <h4 className="font-bold text-emerald-800 mb-2">💾 4. SAO LƯU & KHÔI PHỤC</h4>
-                                <div className="grid grid-cols-2 gap-3">
-                                    <button onClick={handleExport} className="flex flex-col items-center justify-center gap-1 py-2 bg-white border border-emerald-200 text-emerald-700 font-bold rounded-lg shadow-sm"><span>TẢI FILE VỀ</span><span className="text-[9px] font-normal opacity-80">(.json)</span></button>
-                                    <label className="flex flex-col items-center justify-center gap-1 py-2 bg-emerald-600 border border-emerald-600 text-white font-bold rounded-lg shadow-sm cursor-pointer"><span>KHÔI PHỤC</span><span className="text-[9px] font-normal opacity-80">(Chọn file)</span><input type="file" accept=".json" className="hidden" onChange={handleImport} /></label>
+                            
+                            {/* 1. Phương pháp học */}
+                            <div>
+                                <h4 className="font-bold text-gray-800 mb-1 flex items-center gap-2">
+                                    <span className="text-lg">🧠</span> 1. PHƯƠNG PHÁP HỌC
+                                </h4>
+                                <p className="text-sm leading-relaxed text-justify">
+                                    Hệ thống sử dụng thuật toán <b>Lặp lại ngắt quãng</b> (Spaced Repetition) tích hợp vào <b>FLASHCARD</b>. Thay vì học nhồi nhét, hệ thống sẽ tính toán <b>"thời điểm lãng quên"</b> của não bộ để nhắc bạn ôn lại <b>đúng lúc bạn sắp quên</b>.
+                                </p>
+                            </div>
+
+                            {/* 2. Cơ chế hoạt động */}
+                            <div className="bg-indigo-50 p-3 rounded-xl border border-indigo-100 text-sm">
+                                <h4 className="font-bold text-indigo-700 mb-1 flex items-center gap-2">
+                                    <span className="text-lg">⚙️</span> 2. CƠ CHẾ HOẠT ĐỘNG
+                                </h4>
+                                <div className="text-indigo-900 leading-relaxed">
+                                    <p className="mb-2">
+                                        Hệ thống tự động tính toán <b>mức độ ghi nhớ</b> của bạn đối với từng Kanji (dựa trên quá trình và kết quả học Flashcard). Từ đó đưa ra <b>lịch trình ôn tập phù hợp</b> riêng cho từng chữ.
+                                    </p>
+                                    <p className="flex gap-1 items-start mt-2 font-medium">
+                                        <span>🔔</span>
+                                        <span><b>Nhắc nhở:</b> Thông báo sẽ tự động xuất hiện trên giao diện web khi đến hạn ôn tập (vào lúc 5 giờ sáng).</span>
+                                    </p>
                                 </div>
                             </div>
-                            <button onClick={() => setIsHelpOpen(false)} className="w-full py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-xl shadow-lg active:scale-95 text-xs uppercase">QUAY LẠI</button>
+                            
+                            {/* 3. Lưu ý dữ liệu */}
+                            <div className="bg-yellow-50 p-3 rounded-xl border border-yellow-100 text-sm">
+                                <h4 className="font-bold text-yellow-700 mb-1 flex items-center gap-1">
+                                    ⚠️ 3. LƯU Ý QUAN TRỌNG VỀ DỮ LIỆU
+                                </h4>
+                                <ul className="list-disc list-inside space-y-1.5 text-gray-600">
+                                    <li><b>Lưu trữ:</b> Dữ liệu học tập được lưu trực tiếp trên <b>Trình duyệt</b> của thiết bị bạn đang dùng.</li>
+                                    <li><b>Dung lượng:</b> Cực kỳ nhẹ! Toàn bộ 2136 Kanji chỉ chiếm khoảng 300KB (nhẹ hơn 1 bức ảnh mờ), hoàn toàn không gây nặng máy.</li>
+                                    <li><b>Cảnh báo:</b> Dữ liệu sẽ mất nếu bạn <b>Xóa lịch sử duyệt web</b> hoặc dùng <b>Tab ẩn danh</b>. Hãy dùng trình duyệt thường để học nhé!</li>
+                                </ul>
+                            </div>
+                                
+                            {/* --- MỤC 4: SAO LƯU & KHÔI PHỤC --- */}
+                            <div className="bg-emerald-50 p-3 rounded-xl border border-emerald-100 text-sm">
+                                <h4 className="font-bold text-emerald-800 mb-2 flex items-center gap-2">
+                                    <span className="text-lg">💾</span> 4. SAO LƯU & KHÔI PHỤC
+                                </h4>
+                                
+                                <div className="text-emerald-900 leading-relaxed mb-3 text-justify">
+                                    <p className="mb-1">
+                                        <b>Tại sao cần sao lưu?</b> Để chuyển dữ liệu học tập sang máy khác (điện thoại/máy tính), hoặc phòng trường hợp lỡ tay xóa mất lịch sử duyệt web.
+                                    </p>
+                                </div>
+
+                                {/* Cụm nút bấm */}
+                                <div className="grid grid-cols-2 gap-3">
+                                    {/* NÚT TẢI VỀ */}
+                                    <button 
+                                        onClick={handleExport}
+                                        className="flex flex-col items-center justify-center gap-1 py-2 bg-white border border-emerald-200 text-emerald-700 font-bold rounded-lg shadow-sm hover:bg-emerald-600 hover:text-white transition-all active:scale-95"
+                                    >
+                                        <div className="flex items-center gap-1">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                                            <span>TẢI FILE VỀ</span>
+                                        </div>
+                                        <span className="text-[9px] font-normal opacity-80">(Lưu file .json)</span>
+                                    </button>
+
+                                    {/* NÚT TẢI LÊN */}
+                                    <label className="flex flex-col items-center justify-center gap-1 py-2 bg-emerald-600 border border-emerald-600 text-white font-bold rounded-lg shadow-sm hover:bg-emerald-700 transition-all active:scale-95 cursor-pointer">
+                                        <div className="flex items-center gap-1">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                                            <span>KHÔI PHỤC</span>
+                                        </div>
+                                        <span className="text-[9px] font-normal opacity-80">(Chọn file đã lưu)</span>
+                                        <input type="file" accept=".json" className="hidden" onChange={handleImport} />
+                                    </label>
+                                </div>
+                            </div>
+                            <button onClick={() => setIsHelpOpen(false)} className="w-full py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-xl shadow-lg transition-all active:scale-95 text-xs uppercase">
+                                quay lại lịch trình ôn tập
+                            </button>
                         </div>
                     </>
+
                 ) : !isConfirmOpen ? (
-                    // === GIAO DIỆN CHÍNH ===
+                    // === GIAO DIỆN 1: DANH SÁCH (Mặc định) ===
                     <>
                         <div className="p-4 border-b border-gray-100 flex justify-between items-center bg-gray-50">
                             <div className="flex items-baseline gap-3">
                                 <h3 className="text-sm font-bold text-gray-800 uppercase flex items-center gap-2">📅 LỊCH TRÌNH ÔN TẬP</h3>
-                                <button onClick={() => setIsHelpOpen(true)} className="text-[12px] font-bold text-blue-500 hover:text-blue-700 underline decoration-blue-300 underline-offset-2">xem hướng dẫn</button>
+                                <button onClick={() => setIsHelpOpen(true)} className="text-[12px] font-bold text-blue-500 hover:text-blue-700 underline decoration-blue-300 hover:decoration-blue-700 underline-offset-2 transition-all">
+                                    xem hướng dẫn
+                                </button>
                             </div>
-                            <button onClick={onClose} className="text-gray-400 hover:text-red-500"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></button>
+                            <button onClick={onClose} className="text-gray-400 hover:text-red-500 transition-colors">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                            </button>
                         </div>
 
                         <div className="p-4 overflow-y-auto custom-scrollbar flex-1">
                             <div className="space-y-4">
-                                {/* HÔM NAY: isToday={true} -> Luôn hiện full */}
-                                <RenderListSection 
-                                    title="Cần ôn ngay"
-                                    count={groupedData.today.length}
-                                    items={groupedData.today}
-                                    bgColor="bg-orange-50"
-                                    borderColor="border-orange-100"
-                                    sectionKey="today"
-                                    isToday={true} 
-                                />
+                                {/* KHUNG TODAY - GIỮ NGUYÊN */}
+                                <div className="bg-orange-50 rounded-xl p-3 border border-orange-100">
+                                    <div className="flex items-center justify-between mb-2">
+                                        <span className="text-sm font-black text-orange-600 uppercase">Cần ôn ngay</span>
+                                        <span className="bg-orange-200 text-orange-700 text-sm font-bold px-1.5 rounded">{groupedData.today.length} chữ</span>
+                                    </div>
+                                    {groupedData.today.length > 0 ? (
+                                        <div className="flex flex-wrap gap-1">
+                                            {groupedData.today.map((char, i) => (
+                                                <span key={i} className="inline-block bg-white text-gray-800 border border-orange-200 rounded px-1.5 py-0.5 text-lg font-['Klee_One'] min-w-[32px] text-center shadow-sm">{char}</span>
+                                            ))}
+                                        </div>
+                                    ) : (<p className="text-[12px] text-gray-400 italic">Không có Kanji cần ôn. Giỏi quá! 🎉</p>)}
+                                </div>
 
-                                {/* TƯƠNG LAI: isToday={false} -> Cắt nếu > 33 chữ */}
+                                {/* KHUNG FUTURE - THAY ĐỔI LOGIC HIỂN THỊ */}
                                 {futureDates.length > 0 && (
                                     <div className="space-y-3">
                                          <div className="flex items-center gap-2 mt-2">
@@ -211,15 +280,10 @@ const ReviewListModal = ({ isOpen, onClose, srsData, onResetSRS }) => {
                                             <span className="h-[1px] flex-1 bg-gray-100"></span>
                                         </div>
                                         {futureDates.map(date => (
-                                            <RenderListSection 
-                                                key={date}
-                                                title={`Ngày ${date}`}
-                                                count={groupedData[date].length}
-                                                items={groupedData[date]}
-                                                bgColor="bg-gray-50"
-                                                borderColor="border-gray-100"
-                                                sectionKey={date}
-                                                isToday={false}
+                                            <FutureDateItem 
+                                                key={date} 
+                                                date={date} 
+                                                items={groupedData[date]} 
                                             />
                                         ))}
                                     </div>
@@ -227,7 +291,16 @@ const ReviewListModal = ({ isOpen, onClose, srsData, onResetSRS }) => {
                             </div>
 
                             <div className="mt-8 pt-6 border-t border-dashed border-gray-200 text-center pb-2">
-                                <button onClick={() => { if (!srsData || Object.keys(srsData).length === 0) { alert("Danh sách trống"); return; } setIsConfirmOpen(true); }} className="text-red-700 hover:text-red-600 hover:bg-red-50 px-4 py-2 rounded-lg text-xs font-bold transition-all flex items-center justify-center gap-2 mx-auto">
+                                <button 
+                                    onClick={() => {
+                                        if (!srsData || Object.keys(srsData).length === 0) {
+                                            alert("Danh sách trống");
+                                            return;
+                                        }
+                                        setIsConfirmOpen(true);
+                                    }}
+                                    className="text-red-700 hover:text-red-600 hover:bg-red-50 px-4 py-2 rounded-lg text-xs font-bold transition-all flex items-center justify-center gap-2 mx-auto"
+                                >
                                     <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg>
                                     XÓA TOÀN BỘ TIẾN ĐỘ
                                 </button>
@@ -235,16 +308,31 @@ const ReviewListModal = ({ isOpen, onClose, srsData, onResetSRS }) => {
                         </div>
                     </>
                 ) : (
-                    // === GIAO DIỆN CẢNH BÁO XÓA (GIỮ NGUYÊN) ===
-                    <div className="p-7 text-center animate-in fade-in zoom-in-95 flex flex-col items-center justify-center min-h-[300px]" onClick={(e) => { e.stopPropagation(); setIsConfirmOpen(false); }}>
-                        <div className="w-16 h-16 bg-red-50 text-red-500 rounded-full flex items-center justify-center mb-5 animate-bounce">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
-                        </div>
-                        <h3 className="text-xl font-black text-gray-800 mb-2 uppercase">Cảnh báo</h3>
-                        <p className="text-sm text-gray-500 mb-8 max-w-[260px]">Lịch sử học tập sẽ bị xóa vĩnh viễn.<br/><span className="text-red-500 font-bold">Không thể khôi phục lại!</span></p>
-                        <div className="flex flex-col gap-3 w-full max-w-[260px]">
-                            <button onClick={() => setIsConfirmOpen(false)} className="w-full py-3.5 bg-indigo-600 hover:bg-indigo-700 text-white font-black rounded-xl shadow-lg active:scale-95 uppercase text-xs">KHÔNG XÓA NỮA</button>
-                            <button onClick={() => { onResetSRS(); setIsConfirmOpen(false); onClose(); }} className="w-full py-3 text-red-600 hover:text-red-700 bg-red-50 hover:bg-red-100 font-bold rounded-xl text-xs">Vẫn xóa dữ liệu</button>
+                    // === GIAO DIỆN 2: CẢNH BÁO XÓA ===
+                    <div 
+                        className="p-7 text-center animate-in fade-in zoom-in-95 duration-200 flex flex-col items-center justify-center min-h-[300px] cursor-pointer"
+                        onClick={(e) => {
+                            e.stopPropagation(); 
+                            setIsConfirmOpen(false); 
+                        }}
+                    >
+                        <div 
+                            className="w-full h-full flex flex-col items-center justify-center cursor-default" 
+                            onClick={(e) => e.stopPropagation()} 
+                        >
+                            <div className="w-16 h-16 bg-red-50 text-red-500 rounded-full flex items-center justify-center mb-5 animate-bounce">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+                            </div>
+                            <h3 className="text-xl font-black text-gray-800 mb-2 uppercase">Cảnh báo</h3>
+                            <p className="text-sm text-gray-500 mb-8 leading-relaxed max-w-[260px]">
+                                Lịch sử học tập sẽ bị xóa vĩnh viễn.<br/>
+                                <span className="text-red-500 font-bold">Không thể khôi phục lại!</span>
+                            </p>
+                            
+                            <div className="flex flex-col gap-3 w-full max-w-[260px]">
+                                <button onClick={() => setIsConfirmOpen(false)} className="w-full py-3.5 bg-indigo-600 hover:bg-indigo-700 text-white font-black rounded-xl shadow-lg shadow-indigo-200 transition-all active:scale-95 uppercase text-xs tracking-wider">KHÔNG XÓA NỮA</button>
+                                <button onClick={() => { onResetSRS(); setIsConfirmOpen(false); onClose(); }} className="w-full py-3 text-red-600 hover:text-red-700 bg-red-50 hover:bg-red-100 font-bold rounded-xl transition-all text-xs">Vẫn xóa dữ liệu</button>
+                            </div>
                         </div>
                     </div>
                 )}
