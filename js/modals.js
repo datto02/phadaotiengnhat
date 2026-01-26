@@ -293,6 +293,307 @@ const ReviewListModal = ({ isOpen, onClose, srsData, onResetSRS }) => {
         </div>
     );
 };
+// --- COMPONENT MỚI: CHẾ ĐỘ HỌC (GAME) ---
+const LearnGameModal = ({ isOpen, onClose, text, dbData }) => {
+    const [queue, setQueue] = useState([]);
+    const [currentIndex, setCurrentIndex] = useState(0);
+    const [gameState, setGameState] = useState('quiz'); // 'quiz', 'penalty', 'match', 'finished'
+    
+    // State cho Quiz
+    const [wrongItem, setWrongItem] = useState(null); // Lưu câu sai để bắt phạt
+    const [penaltyInput, setPenaltyInput] = useState(''); // Ô nhập phạt
+    const [penaltyFeedback, setPenaltyFeedback] = useState(null); // 'correct', 'incorrect'
+
+    // State cho Match
+    const [matchCards, setMatchCards] = useState([]);
+    const [selectedCardId, setSelectedCardId] = useState(null);
+    const [matchedIds, setMatchedIds] = useState([]);
+
+    // 1. Hàm khởi tạo dữ liệu học
+    useEffect(() => {
+        if (isOpen && text && dbData) {
+            // Lọc ra các chữ Kanji hợp lệ
+            const validChars = Array.from(new Set(text.split('').filter(c => dbData.KANJI_DB[c])));
+            
+            if (validChars.length === 0) {
+                alert("Không có Kanji hợp lệ để học!");
+                onClose();
+                return;
+            }
+
+            let newQueue = [];
+            // Cứ 5 câu trắc nghiệm thì chèn 1 màn ghép thẻ
+            const CHUNK_SIZE = 5;
+            
+            for (let i = 0; i < validChars.length; i += CHUNK_SIZE) {
+                const chunk = validChars.slice(i, i + CHUNK_SIZE);
+                
+                // 1. Tạo câu trắc nghiệm cho từng chữ trong nhóm này
+                chunk.forEach(char => {
+                    newQueue.push({ type: 'quiz', char });
+                });
+
+                // 2. Tạo màn ghép thẻ cho nhóm này (nếu nhóm >= 2 chữ)
+                if (chunk.length >= 2) {
+                    newQueue.push({ type: 'match', chars: chunk });
+                }
+            }
+
+            setQueue(newQueue);
+            setCurrentIndex(0);
+            setGameState(newQueue[0].type);
+            setPenaltyInput('');
+            setMatchedIds([]);
+        }
+    }, [isOpen, text, dbData]);
+
+    // 2. Hàm sinh đáp án trắc nghiệm (1 đúng, 3 sai)
+    const currentQuizData = useMemo(() => {
+        if (!queue[currentIndex] || queue[currentIndex].type !== 'quiz') return null;
+        
+        const targetChar = queue[currentIndex].char;
+        const targetInfo = dbData.KANJI_DB[targetChar];
+        
+        // Lấy 3 đáp án sai ngẫu nhiên từ DB
+        const allKanji = Object.keys(dbData.KANJI_DB);
+        const distractors = [];
+        while (distractors.length < 3) {
+            const r = allKanji[Math.floor(Math.random() * allKanji.length)];
+            if (r !== targetChar && !distractors.includes(r)) distractors.push(r);
+        }
+
+        const options = [
+            { label: targetInfo.sound, correct: true, full: targetInfo },
+            ...distractors.map(d => ({ label: dbData.KANJI_DB[d].sound, correct: false, full: dbData.KANJI_DB[d] }))
+        ];
+
+        // Xáo trộn đáp án
+        for (let i = options.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [options[i], options[j]] = [options[j], options[i]];
+        }
+
+        return { targetChar, targetInfo, options };
+    }, [queue, currentIndex, dbData]);
+
+    // 3. Khởi tạo thẻ bài khi gặp màn Match
+    useEffect(() => {
+        if (queue[currentIndex]?.type === 'match') {
+            const chars = queue[currentIndex].chars;
+            let cards = [];
+            chars.forEach((c, idx) => {
+                cards.push({ id: `k-${idx}`, content: c, type: 'kanji', matchId: idx });
+                cards.push({ id: `m-${idx}`, content: dbData.KANJI_DB[c].sound, type: 'meaning', matchId: idx });
+            });
+            // Xáo trộn thẻ
+            cards.sort(() => Math.random() - 0.5);
+            setMatchCards(cards);
+            setMatchedIds([]);
+            setSelectedCardId(null);
+        }
+    }, [queue, currentIndex, dbData]);
+
+    // --- LOGIC XỬ LÝ TRẮC NGHIỆM ---
+    const handleAnswer = (isCorrect, itemData) => {
+        if (isCorrect) {
+            // Đúng -> Next
+            goNext();
+        } else {
+            // Sai -> Phạt
+            setWrongItem(itemData); // Lưu lại thông tin câu sai
+            setGameState('penalty'); // Chuyển màn hình phạt
+            
+            // Logic tái xuất hiện: Đẩy câu này xuống vị trí +5
+            const currentQ = queue[currentIndex];
+            const nextQ = [...queue];
+            // Xóa câu hiện tại ở vị trí đầu (vì tí nữa goNext sẽ tăng index, ta cần xử lý mảng sao cho hợp lý)
+            // Cách đơn giản: Chỉ cần chèn thêm bản sao vào sau.
+            // Chèn vào vị trí hiện tại + 5 (hoặc cuối cùng)
+            const insertIndex = Math.min(currentIndex + 5, nextQ.length);
+            nextQ.splice(insertIndex, 0, currentQ);
+            
+            setQueue(nextQ);
+        }
+    };
+
+    // --- LOGIC XỬ LÝ PHẠT (NHẬP TAY) ---
+    const checkPenalty = () => {
+        if (!wrongItem) return;
+        
+        // Chuẩn hóa input và đáp án (bỏ dấu, lowercase để so sánh tương đối)
+        const inputClean = removeAccents(penaltyInput.trim().toLowerCase());
+        const targetClean = removeAccents(wrongItem.targetInfo.sound.toLowerCase());
+
+        if (inputClean === targetClean) {
+            // Đúng -> Tha
+            setPenaltyFeedback('correct');
+            setTimeout(() => {
+                setPenaltyFeedback(null);
+                setPenaltyInput('');
+                goNext(); // Đi tiếp
+            }, 800);
+        } else {
+            // Vẫn sai -> Rung lắc
+            setPenaltyFeedback('incorrect');
+            setTimeout(() => setPenaltyFeedback(null), 500);
+        }
+    };
+
+    // --- LOGIC XỬ LÝ GHÉP THẺ ---
+    const handleCardClick = (card) => {
+        if (matchedIds.includes(card.id)) return; // Đã ghép rồi thì thôi
+        
+        if (selectedCardId === null) {
+            // Chưa chọn thẻ nào -> Chọn thẻ này
+            setSelectedCardId(card.id);
+        } else {
+            // Đã chọn 1 thẻ -> So khớp
+            if (selectedCardId === card.id) { setSelectedCardId(null); return; } // Bấm lại thẻ cũ -> Hủy chọn
+
+            const firstCard = matchCards.find(c => c.id === selectedCardId);
+            const secondCard = card;
+
+            if (firstCard.matchId === secondCard.matchId) {
+                // Đúng cặp
+                setMatchedIds(prev => [...prev, firstCard.id, secondCard.id]);
+                setSelectedCardId(null);
+                
+                // Kiểm tra xem hết chưa
+                if (matchedIds.length + 2 === matchCards.length) {
+                    setTimeout(() => goNext(), 1000);
+                }
+            } else {
+                // Sai cặp -> Reset chọn sau xíu
+                setSelectedCardId(card.id); // Hack: tráo đổi focus để user biết
+                setTimeout(() => setSelectedCardId(null), 400);
+            }
+        }
+    };
+
+    const goNext = () => {
+        if (currentIndex < queue.length - 1) {
+            const nextIdx = currentIndex + 1;
+            setCurrentIndex(nextIdx);
+            setGameState(queue[nextIdx].type);
+        } else {
+            setGameState('finished');
+        }
+    };
+
+    if (!isOpen) return null;
+
+    // --- RENDER GIAO DIỆN ---
+    return (
+        <div className="fixed inset-0 z-[500] flex items-center justify-center bg-gray-900/95 backdrop-blur-md p-4 animate-in fade-in">
+            <div className="w-full max-w-md bg-white rounded-3xl shadow-2xl overflow-hidden min-h-[500px] flex flex-col relative">
+                
+                {/* Header: Progress Bar & Close */}
+                <div className="p-4 flex items-center gap-3 border-b border-gray-100">
+                    <div className="flex-1 h-2 bg-gray-100 rounded-full overflow-hidden">
+                        <div className="h-full bg-indigo-500 transition-all duration-500" style={{ width: `${((currentIndex) / queue.length) * 100}%` }}></div>
+                    </div>
+                    <button onClick={onClose} className="text-gray-400 hover:text-red-500">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                    </button>
+                </div>
+
+                {/* BODY */}
+                <div className="flex-1 flex flex-col p-6 items-center justify-center">
+                    
+                    {/* 1. MÀN HÌNH TRẮC NGHIỆM */}
+                    {gameState === 'quiz' && currentQuizData && (
+                        <div className="w-full flex flex-col items-center animate-in zoom-in-95 duration-300">
+                            <span className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-4">Âm Hán Việt là gì?</span>
+                            <div className="text-[120px] leading-none font-['Klee_One'] text-gray-800 mb-8">{currentQuizData.targetChar}</div>
+                            
+                            <div className="grid grid-cols-2 gap-3 w-full">
+                                {currentQuizData.options.map((opt, i) => (
+                                    <button 
+                                        key={i}
+                                        onClick={() => handleAnswer(opt.correct, currentQuizData)}
+                                        className="py-4 bg-gray-50 hover:bg-indigo-50 border-2 border-gray-100 hover:border-indigo-200 rounded-2xl font-bold text-gray-700 text-lg transition-all active:scale-95"
+                                    >
+                                        {opt.label}
+                                    </button>
+                                ))}
+                            </div>
+                        </div>
+                    )}
+
+                    {/* 2. MÀN HÌNH PHẠT (NHẬP TAY) */}
+                    {gameState === 'penalty' && wrongItem && (
+                        <div className="w-full flex flex-col items-center animate-in slide-in-from-right duration-300">
+                            <div className="w-16 h-16 bg-red-100 text-red-500 rounded-full flex items-center justify-center mb-4 text-2xl animate-bounce">⚠️</div>
+                            <h3 className="text-xl font-bold text-gray-800 mb-1">Sai rồi!</h3>
+                            <p className="text-sm text-gray-500 mb-6">Hãy nhập lại âm Hán Việt để ghi nhớ.</p>
+                            
+                            <div className="text-6xl font-['Klee_One'] text-gray-800 mb-2">{wrongItem.targetChar}</div>
+                            <p className="text-indigo-600 font-black text-xl mb-6 uppercase tracking-widest">{wrongItem.targetInfo.sound}</p>
+
+                            <input 
+                                type="text" 
+                                autoFocus
+                                value={penaltyInput}
+                                onChange={(e) => setPenaltyInput(e.target.value)}
+                                onKeyDown={(e) => e.key === 'Enter' && checkPenalty()}
+                                placeholder="Nhập âm Hán Việt..."
+                                className={`w-full p-4 text-center text-lg font-bold border-2 rounded-xl outline-none transition-all ${penaltyFeedback === 'incorrect' ? 'border-red-500 bg-red-50 animate-shake' : penaltyFeedback === 'correct' ? 'border-green-500 bg-green-50' : 'border-gray-200 focus:border-indigo-500'}`}
+                            />
+                            <button 
+                                onClick={checkPenalty}
+                                className="w-full mt-4 py-3 bg-gray-900 hover:bg-black text-white font-bold rounded-xl active:scale-95 transition-all"
+                            >
+                                KIỂM TRA
+                            </button>
+                        </div>
+                    )}
+
+                    {/* 3. MÀN HÌNH GHÉP THẺ */}
+                    {gameState === 'match' && (
+                        <div className="w-full h-full flex flex-col">
+                            <span className="text-xs font-bold text-center text-gray-400 uppercase tracking-widest mb-4 block">Ghép cặp Kanji - Âm Hán</span>
+                            <div className="grid grid-cols-2 gap-3 flex-1">
+                                {matchCards.map((card) => {
+                                    const isMatched = matchedIds.includes(card.id);
+                                    const isSelected = selectedCardId === card.id;
+                                    return (
+                                        <button 
+                                            key={card.id}
+                                            onClick={() => handleCardClick(card)}
+                                            disabled={isMatched}
+                                            className={`rounded-xl border-2 font-bold text-xl flex items-center justify-center transition-all duration-300 ${
+                                                isMatched 
+                                                    ? 'opacity-0 scale-50 pointer-events-none' 
+                                                    : isSelected 
+                                                        ? 'bg-indigo-600 border-indigo-600 text-white scale-105 shadow-lg' 
+                                                        : 'bg-white border-gray-200 text-gray-700 hover:border-indigo-300'
+                                            } ${card.type === 'kanji' ? "font-['Klee_One'] text-3xl" : "uppercase text-sm"}`}
+                                        >
+                                            {card.content}
+                                        </button>
+                                    );
+                                })}
+                            </div>
+                        </div>
+                    )}
+
+                    {/* 4. MÀN HÌNH KẾT THÚC */}
+                    {gameState === 'finished' && (
+                        <div className="text-center animate-in zoom-in duration-300">
+                            <div className="text-6xl mb-4">🏆</div>
+                            <h2 className="text-2xl font-black text-gray-800 mb-2">XUẤT SẮC!</h2>
+                            <p className="text-gray-500 mb-8">Bạn đã hoàn thành phiên học.</p>
+                            <button onClick={onClose} className="px-8 py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-xl shadow-lg active:scale-95 transition-all">
+                                ĐÓNG
+                            </button>
+                        </div>
+                    )}
+
+                </div>
+            </div>
+        </div>
+    );
+};
 // --- BƯỚC 4: FLASHCARD MODAL (ĐÃ GẮN SỰ KIỆN LƯU DỮ LIỆU) ---
 const FlashcardModal = ({ isOpen, onClose, text, dbData, onSrsUpdate, srsData, onSrsRestore }) => { 
     const [originalQueue, setOriginalQueue] = React.useState([]);
