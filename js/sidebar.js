@@ -1,7 +1,5 @@
 const Sidebar = ({ config, onChange, onPrint, srsData, isMenuOpen, setIsMenuOpen, isConfigOpen, setIsConfigOpen, isCafeModalOpen, setIsCafeModalOpen, showMobilePreview, setShowMobilePreview, dbData, setIsFlashcardOpen, onOpenReviewList }) => {
-   
 
-// 1. Logic bộ lọc mới
 const dueChars = useMemo(() => {
     const now = Date.now();
     return Object.keys(srsData || {}).filter(char => {
