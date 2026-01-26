@@ -1237,7 +1237,7 @@ return (
         </div>
     );
     };
-// --- COMPONENT MỚI: TRÒ CHƠI HỌC TẬP (FINAL UI: BALANCED CENTER + COMPACT SIZES) ---
+// --- COMPONENT MỚI: TRÒ CHƠI HỌC TẬP (FINAL UI: FLASHCARD-STYLE FINISH SCREEN) ---
 const LearnGameModal = ({ isOpen, onClose, text, dbData, onSwitchToFlashcard }) => {
     const [queue, setQueue] = useState([]);
     const [currentIndex, setCurrentIndex] = useState(0);
@@ -1462,19 +1462,22 @@ const LearnGameModal = ({ isOpen, onClose, text, dbData, onSwitchToFlashcard }) 
             <div className="w-full max-w-sm bg-white rounded-2xl shadow-2xl overflow-hidden min-h-[450px] flex flex-col relative">
                 
                 {/* --- HEADER --- */}
-                <div className="px-4 py-3 flex items-center gap-3 border-b border-gray-100 bg-white">
-                    <div className="flex-1 flex items-center gap-3">
-                        <div className="flex-1 h-2.5 bg-gray-100 rounded-full overflow-hidden">
-                            <div className="h-full bg-blue-600 transition-all duration-500 ease-out" style={{ width: `${visualPercent}%` }}></div>
+                {/* Ẩn Header khi ở màn hình Kết thúc để giống giao diện Flashcard Finished */}
+                {gameState !== 'finished' && (
+                    <div className="px-4 py-3 flex items-center gap-3 border-b border-gray-100 bg-white">
+                        <div className="flex-1 flex items-center gap-3">
+                            <div className="flex-1 h-2.5 bg-gray-100 rounded-full overflow-hidden">
+                                <div className="h-full bg-blue-600 transition-all duration-500 ease-out" style={{ width: `${visualPercent}%` }}></div>
+                            </div>
+                            <div className="text-xs font-black text-blue-900 bg-blue-50 px-2 py-0.5 rounded-md min-w-[40px] text-center">
+                                {finishedCount}/{totalKanji}
+                            </div>
                         </div>
-                        <div className="text-xs font-black text-blue-900 bg-blue-50 px-2 py-0.5 rounded-md min-w-[40px] text-center">
-                            {finishedCount}/{totalKanji}
-                        </div>
+                        <button onClick={onClose} className="text-gray-300 hover:text-red-500 transition-colors font-black text-2xl leading-none ml-1">
+                            ✕
+                        </button>
                     </div>
-                    <button onClick={onClose} className="text-gray-300 hover:text-red-500 transition-colors font-black text-2xl leading-none ml-1">
-                        ✕
-                    </button>
-                </div>
+                )}
 
                 <div className="flex-1 flex flex-col p-4 bg-white h-full">
                     
@@ -1482,14 +1485,12 @@ const LearnGameModal = ({ isOpen, onClose, text, dbData, onSwitchToFlashcard }) 
                     {(gameState === 'quiz_sound' || gameState === 'quiz_meaning') && currentQuizData && (
                         <div className="w-full h-full flex flex-col">
                             
-                            {/* Khu vực Kanji + Gợi ý: Căn giữa tuyệt đối trong khoảng trống */}
+                            {/* KHU VỰC KANJI: Căn giữa tuyệt đối */}
                             <div className="flex-1 flex flex-col items-center justify-center min-h-0">
-                                {/* Kanji: text-[85px] (Nhỏ hơn chút cho cân đối) */}
                                 <div className="text-[85px] leading-none font-['Klee_One'] text-slate-800 drop-shadow-sm">
                                     {currentQuizData.targetChar}
                                 </div>
                                 
-                                {/* Gợi ý nghĩa (Chỉ hiện ở vòng 1) - Text nhỏ hơn */}
                                 {gameState === 'quiz_sound' && (
                                     <p className="mt-4 text-sm font-bold text-slate-600 italic bg-slate-50 px-5 py-1.5 rounded-full border border-slate-200 shadow-sm">
                                         {currentQuizData.targetInfo.meaning}
@@ -1497,17 +1498,19 @@ const LearnGameModal = ({ isOpen, onClose, text, dbData, onSwitchToFlashcard }) 
                                 )}
                             </div>
                             
-                            {/* Khu vực đáp án: Nút thấp hơn (h-16), chữ nhỏ hơn (text-sm) */}
-                            <div className="grid grid-cols-2 gap-3 w-full mt-4 pb-2">
-                                {currentQuizData.options.map((opt, i) => (
-                                    <button 
-                                        key={i} 
-                                        onClick={() => handleAnswer(opt.correct, currentQuizData)} 
-                                        className="h-16 w-full px-2 bg-white border-2 border-slate-100 text-slate-700 rounded-2xl font-bold text-sm flex items-center justify-center text-center shadow-sm break-words leading-tight transition-all active:scale-95 outline-none md:hover:bg-blue-50 md:hover:border-blue-400 md:hover:text-blue-700"
-                                    >
-                                        {opt.label}
-                                    </button>
-                                ))}
+                            {/* KHU VỰC NÚT BẤM: Đẩy xuống đáy */}
+                            <div className="w-full pt-2">
+                                <div className="grid grid-cols-2 gap-3 w-full">
+                                    {currentQuizData.options.map((opt, i) => (
+                                        <button 
+                                            key={i} 
+                                            onClick={() => handleAnswer(opt.correct, currentQuizData)} 
+                                            className="h-16 w-full px-2 bg-white border-2 border-slate-100 text-slate-700 rounded-2xl font-bold text-sm flex items-center justify-center text-center shadow-sm break-words leading-tight transition-all active:scale-95 outline-none md:hover:bg-blue-50 md:hover:border-blue-400 md:hover:text-blue-700"
+                                        >
+                                            {opt.label}
+                                        </button>
+                                    ))}
+                                </div>
                             </div>
                         </div>
                     )}
@@ -1558,25 +1561,35 @@ const LearnGameModal = ({ isOpen, onClose, text, dbData, onSwitchToFlashcard }) 
                         </div>
                     )}
 
-                    {/* 4. FINISHED (ĐÃ SỬA: DỊCH XUỐNG DƯỚI, NÚT GỌN HƠN) */}
+                    {/* 4. FINISHED (STYLE FLASHCARD HOÀN CHỈNH) */}
                     {gameState === 'finished' && (
-                        // pt-10 để dịch nội dung xuống dưới 1 chút
-                        <div className="text-center animate-in zoom-in w-full h-full flex flex-col items-center justify-center pt-10">
-                            {/* Icon nhỏ hơn: text-4xl */}
-                            <div className="text-4xl mb-4 animate-bounce">🎉</div>
-                            <h2 className="text-xl font-black text-slate-800 mb-2">XUẤT SẮC!</h2>
-                            <p className="text-slate-400 mb-6 text-sm font-medium">Bạn đã hoàn thành phiên học.</p>
+                        <div className="w-full h-full flex flex-col items-center justify-center animate-in zoom-in duration-300">
                             
-                            <div className="flex flex-col items-center gap-4 w-full">
-                                {/* Nút gọn hơn: w-56, py-3 */}
-                                <button onClick={onSwitchToFlashcard} className="w-56 py-3 bg-blue-600 text-white font-black rounded-xl shadow-lg shadow-blue-200 active:scale-95 transition-all flex items-center justify-center gap-2 uppercase tracking-wide text-xs outline-none md:hover:bg-blue-700">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+                            {/* Pháo hoa to hơn, nảy sinh động */}
+                            <div className="text-7xl mb-6 animate-bounce">🎉</div>
+                            
+                            {/* Tiêu đề to đậm, màu tối */}
+                            <h2 className="text-3xl font-black text-slate-800 uppercase tracking-tight mb-2">
+                                XUẤT SẮC!
+                            </h2>
+                            
+                            {/* Subtitle màu xám nhẹ */}
+                            <p className="text-slate-500 font-medium text-sm mb-10">
+                                Bạn đã hoàn thành phiên học.
+                            </p>
+                            
+                            {/* Nút bấm trải rộng nhưng có giới hạn chiều ngang */}
+                            <div className="flex flex-col items-center gap-4 w-full px-6">
+                                <button onClick={onSwitchToFlashcard} className="w-full py-4 bg-blue-600 text-white font-black rounded-xl shadow-lg shadow-blue-200 active:scale-95 transition-all flex items-center justify-center gap-2 uppercase tracking-wide text-sm outline-none md:hover:bg-blue-700">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
                                     FLASHCARD
                                 </button>
-                                <button onClick={handleRestart} className="w-56 py-3 bg-slate-100 text-slate-600 font-bold rounded-xl active:scale-95 transition-all uppercase tracking-wide text-xs outline-none md:hover:bg-slate-200">
+                                
+                                <button onClick={handleRestart} className="w-full py-3.5 bg-slate-100 text-slate-600 font-bold rounded-xl active:scale-95 transition-all uppercase tracking-wide text-xs outline-none md:hover:bg-slate-200">
                                     Học lại từ đầu
                                 </button>
-                                <button onClick={onClose} className="w-56 py-2 text-slate-400 font-bold text-[10px] uppercase tracking-widest transition-colors outline-none md:hover:text-red-500">
+                                
+                                <button onClick={onClose} className="w-full py-2 text-slate-400 font-bold text-[10px] uppercase tracking-widest transition-colors outline-none md:hover:text-red-500">
                                     Thoát
                                 </button>
                             </div>
