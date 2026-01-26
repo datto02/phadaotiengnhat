@@ -929,111 +929,90 @@ LÀM SẠCH
                         <span className="font-bold text-xs whitespace-nowrap">TÙY CHỈNH</span>
                     </button>
                     
-{isConfigOpen && (
-<div className="absolute bottom-full right-0 mb-2 z-50 w-72 bg-white border border-gray-200 rounded-2xl shadow-2xl p-4 space-y-3.5 animate-in fade-in zoom-in-95 duration-200">
+{isConfigOpen && (() => {
+    // Kiểm tra xem có dấu chấm Nhật không
+    const isVocabMode = config.text.includes('。');
 
-    {/* MỤC 1: SỐ CHỮ MẪU */}
-    <div className="space-y-0">
-        <div className="flex justify-between items-center">
-            <label className="text-[11px] font-bold text-gray-600">Số chữ mẫu</label>
-            <span className="text-[11px] font-black text-indigo-600 bg-indigo-50 px-1.5 rounded">{config.traceCount} chữ</span>
-        </div>
-        <input type="range" min="0" max="12" step="1" className="w-full h-1.5 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-indigo-600" value={config.traceCount} onChange={(e) => handleChange('traceCount', parseInt(e.target.value))} />
-    </div>
-
-    {/* MỤC 2: ĐỘ ĐẬM CHỮ */}
-    <div className="space-y-0">
-        <div className="flex justify-between items-center">
-            <label className="text-[11px] font-bold text-gray-600">Độ đậm chữ</label>
-            <span className="text-[11px] font-black text-indigo-600 bg-indigo-50 px-1.5 rounded">{Math.round(config.traceOpacity * 100)}%</span>
-        </div>
-        <input type="range" min="0.05" max="0.5" step="0.05" className="w-full h-1.5 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-indigo-600" value={config.traceOpacity} onChange={(e) => handleChange('traceOpacity', parseFloat(e.target.value))} />
-    </div>
-
-    {/* MỤC 3: CỠ CHỮ */}
-    <div className="space-y-0">
-        <div className="flex justify-between items-center">
-            <label className="text-[11px] font-bold text-gray-600">Cỡ chữ</label>
-            <span className="text-[11px] font-black text-indigo-600 bg-indigo-50 px-1.5 rounded">{config.fontSize} pt</span>
-        </div>
-        <input type="range" min="30" max="40" step="1" className="w-full h-1.5 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-indigo-600" value={config.fontSize} onChange={(e) => handleChange('fontSize', parseInt(e.target.value))} />
-    </div>
-
-    {/* MỤC 4: ĐỘ ĐẬM KHUNG */}
-    <div className="space-y-1">
-        <div className="flex justify-between items-center">
-            <label className="text-[11px] font-bold text-gray-600">Độ đậm khung</label>
-            <span className="text-[11px] font-black text-indigo-600 bg-indigo-50 px-1.5 rounded">{Math.round(config.gridOpacity * 100)}%</span>
-        </div>
-        <input type="range" min="0.1" max="1" step="0.1" className="w-full h-1.5 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-indigo-600" value={config.gridOpacity} onChange={(e) => handleChange('gridOpacity', parseFloat(e.target.value))} />
-    </div>
-
-{/* MỤC 5: CHẾ ĐỘ HIỂN THỊ (RADIO BUTTONS - GỌN GÀNG) */}
-<div className="pt-0"> 
-    <div className="space-y-2">
-        
-        {/* Hàng chứa 3 nút Radio */}
-        <div className="flex items-center justify-between px-1">
+    return (
+        <div className="absolute bottom-full right-0 mb-2 z-50 w-72 bg-white border border-gray-200 rounded-2xl shadow-2xl p-4 space-y-3.5 animate-in fade-in zoom-in-95 duration-200">
             
-            {/* 1. Nét viết */}
-            <label className="flex items-center gap-1.5 cursor-pointer group select-none">
-                <input 
-                    type="radio" 
-                    name="display_mode" 
-                    checked={config.displayMode === 'strokes'}
-                    onChange={() => handleChange('displayMode', 'strokes')}
-                    className="w-3.5 h-3.5 accent-indigo-600 cursor-pointer"
-                />
-                <span className={`text-[11px] font-bold transition-colors ${config.displayMode === 'strokes' ? 'text-indigo-700' : 'text-gray-500 group-hover:text-indigo-600'}`}>
-                    Nét viết
-                </span>
-            </label>
+            {/* THÔNG BÁO TỰ ĐỘNG */}
+            {isVocabMode && (
+                <div className="bg-orange-50 text-orange-600 text-[10px] font-bold p-2 rounded-lg mb-2 flex items-center gap-2 border border-orange-100">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                    <span>Đang ở chế độ Từ vựng (Phát hiện dấu 。)</span>
+                </div>
+            )}
 
-            {/* 2. On/Kun */}
-            <label className="flex items-center gap-1.5 cursor-pointer group select-none">
-                <input 
-                    type="radio" 
-                    name="display_mode" 
-                    checked={config.displayMode === 'readings'}
-                    onChange={() => handleChange('displayMode', 'readings')}
-                    className="w-3.5 h-3.5 accent-indigo-600 cursor-pointer"
-                />
-                <span className={`text-[11px] font-bold transition-colors ${config.displayMode === 'readings' ? 'text-indigo-700' : 'text-gray-500 group-hover:text-indigo-600'}`}>
-                    On/Kun
-                </span>
-            </label>
+            {/* MỤC 1: SỐ CHỮ MẪU (BỊ KHÓA KHI Ở CHẾ ĐỘ TỪ VỰNG) */}
+            <div className={`space-y-1 transition-all duration-300 ${isVocabMode ? "opacity-30 pointer-events-none grayscale filter" : ""}`}>
+                <div className="flex justify-between items-center">
+                    <label className="text-[11px] font-bold text-gray-600">Số chữ mẫu</label>
+                    <span className="text-[11px] font-black text-indigo-600 bg-indigo-50 px-1.5 rounded">{config.traceCount} chữ</span>
+                </div>
+                <input type="range" min="0" max="12" step="1" className="w-full h-1.5 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-indigo-600" value={config.traceCount} onChange={(e) => handleChange('traceCount', parseInt(e.target.value))} />
+            </div>
 
-            {/* 3. Từ vựng */}
-            <label className="flex items-center gap-1.5 cursor-pointer group select-none">
-                <input 
-                    type="radio" 
-                    name="display_mode" 
-                    checked={config.displayMode === 'vocab'}
-                    onChange={() => handleChange('displayMode', 'vocab')}
-                    className="w-3.5 h-3.5 accent-indigo-600 cursor-pointer"
-                />
-                <span className={`text-[11px] font-bold transition-colors ${config.displayMode === 'vocab' ? 'text-indigo-700' : 'text-gray-500 group-hover:text-indigo-600'}`}>
-                    Từ vựng
-                </span>
-            </label>
+            {/* MỤC 2: ĐỘ ĐẬM CHỮ (VẪN CHO CHỈNH) */}
+            <div className="space-y-1">
+                <div className="flex justify-between items-center">
+                    <label className="text-[11px] font-bold text-gray-600">Độ đậm chữ</label>
+                    <span className="text-[11px] font-black text-indigo-600 bg-indigo-50 px-1.5 rounded">{Math.round(config.traceOpacity * 100)}%</span>
+                </div>
+                <input type="range" min="0.05" max="0.5" step="0.05" className="w-full h-1.5 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-indigo-600" value={config.traceOpacity} onChange={(e) => handleChange('traceOpacity', parseFloat(e.target.value))} />
+            </div>
 
+            {/* MỤC 3: CỠ CHỮ (VẪN CHO CHỈNH) */}
+            <div className="space-y-1">
+                <div className="flex justify-between items-center">
+                    <label className="text-[11px] font-bold text-gray-600">Cỡ chữ</label>
+                    <span className="text-[11px] font-black text-indigo-600 bg-indigo-50 px-1.5 rounded">{config.fontSize} pt</span>
+                </div>
+                <input type="range" min="30" max="40" step="1" className="w-full h-1.5 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-indigo-600" value={config.fontSize} onChange={(e) => handleChange('fontSize', parseInt(e.target.value))} />
+            </div>
+
+            {/* MỤC 4: ĐỘ ĐẬM KHUNG (VẪN CHO CHỈNH) */}
+            <div className="space-y-1">
+                <div className="flex justify-between items-center">
+                    <label className="text-[11px] font-bold text-gray-600">Độ đậm khung</label>
+                    <span className="text-[11px] font-black text-indigo-600 bg-indigo-50 px-1.5 rounded">{Math.round(config.gridOpacity * 100)}%</span>
+                </div>
+                <input type="range" min="0.1" max="1" step="0.1" className="w-full h-1.5 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-indigo-600" value={config.gridOpacity} onChange={(e) => handleChange('gridOpacity', parseFloat(e.target.value))} />
+            </div>
+
+            {/* MỤC 5: CHẾ ĐỘ HIỂN THỊ (BỊ KHÓA KHI Ở CHẾ ĐỘ TỪ VỰNG) */}
+            <div className={`pt-0 transition-all duration-300 ${isVocabMode ? "opacity-30 pointer-events-none grayscale filter" : ""}`}> 
+                <div className="space-y-2">
+                    <div className="flex items-center justify-between px-1">
+                        <label className="flex items-center gap-1.5 cursor-pointer group select-none">
+                            <input type="radio" name="display_mode" checked={config.displayMode === 'strokes'} onChange={() => handleChange('displayMode', 'strokes')} className="w-3.5 h-3.5 accent-indigo-600 cursor-pointer" />
+                            <span className={`text-[11px] font-bold transition-colors ${config.displayMode === 'strokes' ? 'text-indigo-700' : 'text-gray-500 group-hover:text-indigo-600'}`}>Nét viết</span>
+                        </label>
+                        <label className="flex items-center gap-1.5 cursor-pointer group select-none">
+                            <input type="radio" name="display_mode" checked={config.displayMode === 'readings'} onChange={() => handleChange('displayMode', 'readings')} className="w-3.5 h-3.5 accent-indigo-600 cursor-pointer" />
+                            <span className={`text-[11px] font-bold transition-colors ${config.displayMode === 'readings' ? 'text-indigo-700' : 'text-gray-500 group-hover:text-indigo-600'}`}>On/Kun</span>
+                        </label>
+                        <label className="flex items-center gap-1.5 cursor-pointer group select-none">
+                            <input type="radio" name="display_mode" checked={config.displayMode === 'vocab'} onChange={() => handleChange('displayMode', 'vocab')} className="w-3.5 h-3.5 accent-indigo-600 cursor-pointer" />
+                            <span className={`text-[11px] font-bold transition-colors ${config.displayMode === 'vocab' ? 'text-indigo-700' : 'text-gray-500 group-hover:text-indigo-600'}`}>Từ vựng</span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            {/* NÚT KHÔI PHỤC MẶC ĐỊNH */}
+            <div className="pt-2 mt-1 border-t border-gray-200">
+                <button 
+                    onClick={() => onChange({ ...config, fontSize: 33, traceCount: 9, traceOpacity: 0.15, gridOpacity: 0.8, displayMode: 'strokes' })} 
+                    className="w-full py-1.5 text-[10px] font-bold text-red-500 bg-red-50 md:hover:bg-red-500 md:hover:text-white active:bg-red-500 active:text-white rounded-lg flex items-center justify-center gap-1 transition-all active:scale-95"
+                >
+                    <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg> 
+                    KHÔI PHỤC MẶC ĐỊNH
+                </button>
+            </div>
         </div>
-    </div>
-</div>
-{/* NÚT ĐẶT LẠI MẶC ĐỊNH - Đã thu gọn */}
-<div className="pt-2 mt-1 border-t border-gray-200"> {/* Giảm padding top từ pt-1 về pt-0 */}
-<button 
-    onClick={() => onChange({ ...config, fontSize: 33, traceCount: 9, traceOpacity: 0.15, gridOpacity: 0.8, displayMode: 'strokes' })} 
-    className="w-full py-1.5 text-[10px] font-bold text-red-500 bg-red-50 hover:bg-red-500 hover:text-white rounded-lg flex items-center justify-center gap-1 transition-all active:scale-95"
->
-    {/* Giảm size icon từ 12 xuống 10 */}
-    <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg> 
-    KHÔI PHỤC MẶC ĐỊNH
-</button>
-</div>
-
-</div>
-)}
+    );
+})()}
                     </div>
                 </div>
 
