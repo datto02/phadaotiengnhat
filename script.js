@@ -1237,9 +1237,157 @@ return (
         </div>
     );
     };
+// --- COMPONENT MỚI: TRÒ CHƠI HỌC TẬP (Quiz + Match + Penalty) ---
+const LearnGameModal = ({ isOpen, onClose, text, dbData }) => {
+    const [queue, setQueue] = useState([]);
+    const [currentIndex, setCurrentIndex] = useState(0);
+    const [gameState, setGameState] = useState('quiz'); 
+    const [wrongItem, setWrongItem] = useState(null); 
+    const [penaltyInput, setPenaltyInput] = useState(''); 
+    const [penaltyFeedback, setPenaltyFeedback] = useState(null); 
+    const [matchCards, setMatchCards] = useState([]);
+    const [selectedCardId, setSelectedCardId] = useState(null);
+    const [matchedIds, setMatchedIds] = useState([]);
 
+    useEffect(() => {
+        if (isOpen && text && dbData) {
+            const validChars = Array.from(new Set(text.split('').filter(c => dbData.KANJI_DB && dbData.KANJI_DB[c])));
+            if (validChars.length === 0) { alert("Chưa có dữ liệu Kanji để học!"); onClose(); return; }
+
+            let newQueue = [];
+            const CHUNK_SIZE = 5;
+            for (let i = 0; i < validChars.length; i += CHUNK_SIZE) {
+                const chunk = validChars.slice(i, i + CHUNK_SIZE);
+                chunk.forEach(char => newQueue.push({ type: 'quiz', char }));
+                if (chunk.length >= 2) newQueue.push({ type: 'match', chars: chunk });
+            }
+            setQueue(newQueue); setCurrentIndex(0); setGameState(newQueue[0].type); setPenaltyInput(''); setMatchedIds([]);
+        }
+    }, [isOpen, text, dbData]);
+
+    const currentQuizData = useMemo(() => {
+        if (!queue[currentIndex] || queue[currentIndex].type !== 'quiz') return null;
+        const targetChar = queue[currentIndex].char;
+        const targetInfo = dbData.KANJI_DB[targetChar];
+        const allKanji = Object.keys(dbData.KANJI_DB);
+        const distractors = [];
+        while (distractors.length < 3) {
+            const r = allKanji[Math.floor(Math.random() * allKanji.length)];
+            if (r !== targetChar && !distractors.includes(r)) distractors.push(r);
+        }
+        const options = [{ label: targetInfo.sound, correct: true }, ...distractors.map(d => ({ label: dbData.KANJI_DB[d].sound, correct: false }))];
+        for (let i = options.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [options[i], options[j]] = [options[j], options[i]]; }
+        return { targetChar, targetInfo, options };
+    }, [queue, currentIndex, dbData]);
+
+    useEffect(() => {
+        if (queue[currentIndex]?.type === 'match') {
+            const chars = queue[currentIndex].chars;
+            let cards = [];
+            chars.forEach((c, idx) => {
+                cards.push({ id: `k-${idx}`, content: c, type: 'kanji', matchId: idx });
+                cards.push({ id: `m-${idx}`, content: dbData.KANJI_DB[c].sound, type: 'meaning', matchId: idx });
+            });
+            cards.sort(() => Math.random() - 0.5);
+            setMatchCards(cards); setMatchedIds([]); setSelectedCardId(null);
+        }
+    }, [queue, currentIndex, dbData]);
+
+    const handleAnswer = (isCorrect, itemData) => {
+        if (isCorrect) goNext();
+        else {
+            setWrongItem(itemData); setGameState('penalty');
+            const nextQ = [...queue];
+            nextQ.splice(Math.min(currentIndex + 5, nextQ.length), 0, queue[currentIndex]);
+            setQueue(nextQ);
+        }
+    };
+
+    const checkPenalty = () => {
+        if (!wrongItem) return;
+        if (removeAccents(penaltyInput.trim().toLowerCase()) === removeAccents(wrongItem.targetInfo.sound.toLowerCase())) {
+            setPenaltyFeedback('correct'); setTimeout(() => { setPenaltyFeedback(null); setPenaltyInput(''); goNext(); }, 800);
+        } else { setPenaltyFeedback('incorrect'); setTimeout(() => setPenaltyFeedback(null), 500); }
+    };
+
+    const handleCardClick = (card) => {
+        if (matchedIds.includes(card.id)) return;
+        if (selectedCardId === null) setSelectedCardId(card.id);
+        else {
+            if (selectedCardId === card.id) { setSelectedCardId(null); return; }
+            const first = matchCards.find(c => c.id === selectedCardId);
+            if (first.matchId === card.matchId) {
+                setMatchedIds(p => [...p, first.id, card.id]); setSelectedCardId(null);
+                if (matchedIds.length + 2 === matchCards.length) setTimeout(() => goNext(), 500);
+            } else { setSelectedCardId(card.id); setTimeout(() => setSelectedCardId(null), 400); }
+        }
+    };
+
+    const goNext = () => {
+        if (currentIndex < queue.length - 1) { const next = currentIndex + 1; setCurrentIndex(next); setGameState(queue[next].type); } 
+        else setGameState('finished');
+    };
+
+    if (!isOpen) return null;
+
+    return (
+        <div className="fixed inset-0 z-[500] flex items-center justify-center bg-gray-900/95 backdrop-blur-md p-4 animate-in fade-in select-none">
+            <div className="w-full max-w-md bg-white rounded-3xl shadow-2xl overflow-hidden min-h-[500px] flex flex-col relative">
+                <div className="p-4 flex items-center gap-3 border-b border-gray-100">
+                    <div className="flex-1 h-2 bg-gray-100 rounded-full overflow-hidden"><div className="h-full bg-emerald-500 transition-all duration-500" style={{ width: `${((currentIndex) / queue.length) * 100}%` }}></div></div>
+                    <button onClick={onClose} className="text-gray-400 hover:text-red-500">✕</button>
+                </div>
+                <div className="flex-1 flex flex-col p-6 items-center justify-center">
+                    {gameState === 'quiz' && currentQuizData && (
+                        <div className="w-full flex flex-col items-center animate-in zoom-in-95">
+                            <span className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-4">Âm Hán Việt là gì?</span>
+                            <div className="text-[120px] leading-none font-['Klee_One'] text-gray-800 mb-8">{currentQuizData.targetChar}</div>
+                            <div className="grid grid-cols-2 gap-3 w-full">
+                                {currentQuizData.options.map((opt, i) => (
+                                    <button key={i} onClick={() => handleAnswer(opt.correct, currentQuizData)} className="py-4 bg-gray-50 hover:bg-indigo-50 border-2 border-gray-100 hover:border-indigo-200 rounded-2xl font-bold text-gray-700 text-lg active:scale-95 transition-all">{opt.label}</button>
+                                ))}
+                            </div>
+                        </div>
+                    )}
+                    {gameState === 'penalty' && wrongItem && (
+                        <div className="w-full flex flex-col items-center animate-in slide-in-from-right">
+                            <div className="w-16 h-16 bg-red-100 text-red-500 rounded-full flex items-center justify-center mb-4 text-2xl animate-bounce">⚠️</div>
+                            <h3 className="text-xl font-bold text-gray-800 mb-1">Sai rồi!</h3>
+                            <p className="text-sm text-gray-500 mb-6">Nhập lại âm Hán Việt để ghi nhớ:</p>
+                            <div className="text-6xl font-['Klee_One'] text-gray-800 mb-2">{wrongItem.targetChar}</div>
+                            <p className="text-indigo-600 font-black text-xl mb-6 uppercase tracking-widest">{wrongItem.targetInfo.sound}</p>
+                            <input type="text" autoFocus value={penaltyInput} onChange={(e) => setPenaltyInput(e.target.value)} onKeyDown={(e) => e.key === 'Enter' && checkPenalty()} placeholder="Nhập vào đây..." className={`w-full p-4 text-center text-lg font-bold border-2 rounded-xl outline-none transition-all ${penaltyFeedback === 'incorrect' ? 'border-red-500 bg-red-50' : penaltyFeedback === 'correct' ? 'border-green-500 bg-green-50' : 'border-gray-200'}`} />
+                            <button onClick={checkPenalty} className="w-full mt-4 py-3 bg-gray-900 hover:bg-black text-white font-bold rounded-xl active:scale-95">KIỂM TRA</button>
+                        </div>
+                    )}
+                    {gameState === 'match' && (
+                        <div className="w-full h-full flex flex-col">
+                            <span className="text-xs font-bold text-center text-gray-400 uppercase tracking-widest mb-4">Ghép cặp Kanji - Âm Hán</span>
+                            <div className="grid grid-cols-2 gap-3 flex-1 content-center">
+                                {matchCards.map((card) => {
+                                    const isMatched = matchedIds.includes(card.id);
+                                    const isSelected = selectedCardId === card.id;
+                                    return (
+                                        <button key={card.id} onClick={() => handleCardClick(card)} disabled={isMatched} className={`h-24 rounded-xl border-2 font-bold text-xl flex items-center justify-center transition-all duration-300 ${isMatched ? 'opacity-0 scale-50' : isSelected ? 'bg-indigo-600 border-indigo-600 text-white scale-105 shadow-lg' : 'bg-white border-gray-200 text-gray-700'} ${card.type === 'kanji' ? "font-['Klee_One'] text-3xl" : "uppercase text-sm"}`}>{card.content}</button>
+                                    );
+                                })}
+                            </div>
+                        </div>
+                    )}
+                    {gameState === 'finished' && (
+                        <div className="text-center animate-in zoom-in">
+                            <div className="text-6xl mb-4">🏆</div>
+                            <h2 className="text-2xl font-black text-gray-800 mb-2">XUẤT SẮC!</h2>
+                            <button onClick={onClose} className="mt-6 px-8 py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-xl shadow-lg active:scale-95">ĐÓNG</button>
+                        </div>
+                    )}
+                </div>
+            </div>
+        </div>
+    );
+};
 // 5. Sidebar (Phiên bản: Final)
-    const Sidebar = ({ config, onChange, onPrint, srsData, isMenuOpen, setIsMenuOpen, isConfigOpen, setIsConfigOpen, isCafeModalOpen, setIsCafeModalOpen, showMobilePreview, setShowMobilePreview, dbData, setIsFlashcardOpen, onOpenReviewList }) => {
+   const Sidebar = ({ config, onChange, onPrint, srsData, isMenuOpen, setIsMenuOpen, isConfigOpen, setIsConfigOpen, isCafeModalOpen, setIsCafeModalOpen, showMobilePreview, setShowMobilePreview, dbData, setIsFlashcardOpen, onOpenReviewList, setIsLearnGameOpen }) => {
    
 
 // 1. Logic bộ lọc mới
@@ -2108,6 +2256,24 @@ LÀM SẠCH
                                     Xáo trộn danh sách hiện tại
                                 </button>
                             </div>
+                     {/* --- NÚT HỌC (GAME) MỚI --- */}
+<div className="pt-0">
+    <div className="flex items-center gap-2 mb-2">
+        <p className="text-[10px] font-bold text-gray-400 uppercase tracking-tight">HỌC TẬP</p>
+        <span className="flex-1 border-b border-gray-50"></span>
+    </div>
+    <button 
+        onClick={() => {
+            if (!config.text) return alert("Vui lòng nhập chữ để học!");
+            setIsLearnGameOpen(true); 
+            setIsUtilsOpen(false);
+        }}
+        className="w-full py-3 bg-emerald-500 hover:bg-emerald-600 text-white rounded-xl flex items-center justify-center gap-2 shadow-md transition-all active:scale-95 mb-2 group"
+    >
+        <span className="text-lg group-hover:scale-110 transition-transform">🎮</span>
+        <span className="text-xs font-black tracking-wide uppercase">HỌC (GAME)</span>
+    </button>
+</div>
 
                             {/* Tạo Flashcard */}
                             <div className="pt-0">
@@ -2622,6 +2788,7 @@ const [showMobilePreview, setShowMobilePreview] = useState(false);
 const [isConfigOpen, setIsConfigOpen] = React.useState(false);
 const [isMenuOpen, setIsMenuOpen] = useState(false);
 const [isFlashcardOpen, setIsFlashcardOpen] = useState(false);
+        const [isLearnGameOpen, setIsLearnGameOpen] = useState(false);
         const [isReviewListOpen, setIsReviewListOpen] = useState(false);
         const [srsData, setSrsData] = useState(() => {
     // Tự động lấy dữ liệu cũ từ máy người dùng khi mở web
@@ -2718,7 +2885,7 @@ return (
         isCafeModalOpen={isCafeModalOpen} setIsCafeModalOpen={setIsCafeModalOpen} 
         showMobilePreview={showMobilePreview} setShowMobilePreview={setShowMobilePreview}
         setIsFlashcardOpen={setIsFlashcardOpen}
-        
+        setIsLearnGameOpen={setIsLearnGameOpen}
         dbData={dbData} // <--- QUAN TRỌNG: Truyền dữ liệu xuống Sidebar
             srsData={srsData}
          onOpenReviewList={() => setIsReviewListOpen(true)}
@@ -2771,6 +2938,12 @@ return (
         setSrsData(newData);
         localStorage.setItem('phadao_srs_data', JSON.stringify(newData));
     }}
+/>
+<LearnGameModal 
+    isOpen={isLearnGameOpen}
+    onClose={() => setIsLearnGameOpen(false)}
+    text={config.text}
+    dbData={dbData}
 />
        {/* 3. RENDER MODAL MỚI */}
             <ReviewListModal 
