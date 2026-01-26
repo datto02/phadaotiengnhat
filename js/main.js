@@ -154,6 +154,12 @@ return (
         localStorage.setItem('phadao_srs_data', JSON.stringify(newData));
     }}
 />
+<LearnGameModal 
+    isOpen={isLearnGameOpen}
+    onClose={() => setIsLearnGameOpen(false)}
+    text={config.text}
+    dbData={dbData}
+/>
        {/* 3. RENDER MODAL MỚI */}
             <ReviewListModal 
                 isOpen={isReviewListOpen}
