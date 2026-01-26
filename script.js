@@ -1461,29 +1461,29 @@ const LearnGameModal = ({ isOpen, onClose, text, dbData, onSwitchToFlashcard }) 
         <div className="fixed inset-0 z-[500] flex items-center justify-center bg-slate-900/95 backdrop-blur-md p-4 animate-in fade-in select-none">
             <div className="w-full max-w-sm bg-white rounded-2xl shadow-2xl overflow-hidden min-h-[420px] flex flex-col relative">
                 
-                {/* --- HEADER ĐÃ SỬA: DẤU X TO + THANH TIẾN ĐỘ NGẮN --- */}
-                <div className="px-4 py-3 flex items-center justify-between border-b border-gray-100 bg-white">
-                    
-                    {/* Nhóm Trái: Tiến độ + Số đếm */}
-                    <div className="flex items-center gap-3">
-                        {/* Thanh màu xanh: w-24 (Cố định độ dài ngắn gọn) */}
-                        <div className="w-24 h-2 bg-gray-100 rounded-full overflow-hidden">
-                            <div className="h-full bg-blue-600 transition-all duration-500 ease-out" style={{ width: `${visualPercent}%` }}></div>
-                        </div>
-                        {/* Số đếm */}
-                        <div className="text-[10px] font-black text-blue-900 bg-blue-50 px-2 py-0.5 rounded-md">
-                            {finishedCount}/{totalKanji}
-                        </div>
-                    </div>
+              {/* --- HEADER (ĐÃ SỬA: CĂN PHẢI, GẦN DẤU X) --- */}
+<div className="px-4 py-3 flex items-center justify-end gap-4 border-b border-gray-100 bg-white">
+    
+    {/* Nhóm Thanh Tiến độ + Số đếm */}
+    <div className="flex items-center gap-3">
+        {/* Thanh màu xanh */}
+        <div className="w-24 h-2 bg-gray-100 rounded-full overflow-hidden">
+            <div className="h-full bg-blue-600 transition-all duration-500 ease-out" style={{ width: `${visualPercent}%` }}></div>
+        </div>
+        {/* Số đếm */}
+        <div className="text-[10px] font-black text-blue-900 bg-blue-50 px-2 py-0.5 rounded-md">
+            {finishedCount}/{totalKanji}
+        </div>
+    </div>
 
-                    {/* Nút Đóng: text-2xl font-black (To, Đậm) */}
-                    <button 
-                        onClick={onClose} 
-                        className="text-gray-300 hover:text-red-500 transition-colors font-black text-2xl leading-none"
-                    >
-                        ✕
-                    </button>
-                </div>
+    {/* Nút Đóng */}
+    <button 
+        onClick={onClose} 
+        className="text-gray-300 hover:text-red-500 transition-colors font-black text-2xl leading-none"
+    >
+        ✕
+    </button>
+</div>
 
                 <div className="flex-1 flex flex-col p-4 items-center justify-center bg-white">
                     
@@ -1491,7 +1491,7 @@ const LearnGameModal = ({ isOpen, onClose, text, dbData, onSwitchToFlashcard }) 
                     {(gameState === 'quiz_sound' || gameState === 'quiz_meaning') && currentQuizData && (
                         <div className="w-full flex flex-col items-center animate-in zoom-in-95">
                             
-                            <div className="text-[80px] leading-none font-['Klee_One'] text-slate-800 mb-2 drop-shadow-sm">{currentQuizData.targetChar}</div>
+                            <div className="text-[120px] -mt-10 leading-none font-['Klee_One'] text-slate-800 mb-6 drop-shadow-sm">{currentQuizData.targetChar}</div>
                             
                             {/* Gợi ý (Chỉ hiện ở vòng 1) */}
                             {gameState === 'quiz_sound' ? (
