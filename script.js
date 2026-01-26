@@ -1237,7 +1237,7 @@ return (
         </div>
     );
     };
-// --- COMPONENT MỚI: TRÒ CHƠI HỌC TẬP (FIX: HEADER TO RÕ, THANH TIẾN ĐỘ NGẮN GỌN) ---
+// --- COMPONENT MỚI: TRÒ CHƠI HỌC TẬP (FINAL UI: BALANCED KANJI + WIDE PROGRESS BAR) ---
 const LearnGameModal = ({ isOpen, onClose, text, dbData, onSwitchToFlashcard }) => {
     const [queue, setQueue] = useState([]);
     const [currentIndex, setCurrentIndex] = useState(0);
@@ -1459,55 +1459,62 @@ const LearnGameModal = ({ isOpen, onClose, text, dbData, onSwitchToFlashcard }) 
 
     return (
         <div className="fixed inset-0 z-[500] flex items-center justify-center bg-slate-900/95 backdrop-blur-md p-4 animate-in fade-in select-none">
-            <div className="w-full max-w-sm bg-white rounded-2xl shadow-2xl overflow-hidden min-h-[420px] flex flex-col relative">
+            <div className="w-full max-w-sm bg-white rounded-2xl shadow-2xl overflow-hidden min-h-[450px] flex flex-col relative">
                 
-              {/* --- HEADER (ĐÃ SỬA: CĂN PHẢI, GẦN DẤU X) --- */}
-<div className="px-4 py-3 flex items-center justify-end gap-4 border-b border-gray-100 bg-white">
-    
-    {/* Nhóm Thanh Tiến độ + Số đếm */}
-    <div className="flex items-center gap-3">
-        {/* Thanh màu xanh */}
-        <div className="w-24 h-2 bg-gray-100 rounded-full overflow-hidden">
-            <div className="h-full bg-blue-600 transition-all duration-500 ease-out" style={{ width: `${visualPercent}%` }}></div>
-        </div>
-        {/* Số đếm */}
-        <div className="text-[10px] font-black text-blue-900 bg-blue-50 px-2 py-0.5 rounded-md">
-            {finishedCount}/{totalKanji}
-        </div>
-    </div>
+                {/* --- HEADER SỬA ĐỔI: THANH TIẾN ĐỘ DÀI RA LỀ TRÁI --- */}
+                <div className="px-4 py-3 flex items-center gap-3 border-b border-gray-100 bg-white">
+                    {/* Container cho thanh bar và số (flex-1 để chiếm hết chỗ trống bên trái) */}
+                    <div className="flex-1 flex items-center gap-3">
+                        {/* Thanh Bar (flex-1 để dài ra hết cỡ) */}
+                        <div className="flex-1 h-2.5 bg-gray-100 rounded-full overflow-hidden">
+                            <div className="h-full bg-blue-600 transition-all duration-500 ease-out" style={{ width: `${visualPercent}%` }}></div>
+                        </div>
+                        {/* Số đếm (Nằm bên phải thanh bar) */}
+                        <div className="text-xs font-black text-blue-900 bg-blue-50 px-2 py-0.5 rounded-md min-w-[40px] text-center">
+                            {finishedCount}/{totalKanji}
+                        </div>
+                    </div>
 
-    {/* Nút Đóng */}
-    <button 
-        onClick={onClose} 
-        className="text-gray-300 hover:text-red-500 transition-colors font-black text-2xl leading-none"
-    >
-        ✕
-    </button>
-</div>
+                    {/* Nút Đóng (Nằm sát lề phải) */}
+                    <button 
+                        onClick={onClose} 
+                        className="text-gray-300 hover:text-red-500 transition-colors font-black text-2xl leading-none ml-1"
+                    >
+                        ✕
+                    </button>
+                </div>
 
-                <div className="flex-1 flex flex-col p-4 items-center justify-center bg-white">
+                <div className="flex-1 flex flex-col p-4 bg-white h-full">
                     
-                    {/* 1. QUIZ */}
+                    {/* 1. QUIZ (CÂN BẰNG GIỮA & FONT TO) */}
                     {(gameState === 'quiz_sound' || gameState === 'quiz_meaning') && currentQuizData && (
-                        <div className="w-full flex flex-col items-center animate-in zoom-in-95">
+                        <div className="w-full h-full flex flex-col">
                             
-                            <div className="text-[120px] -mt-10 leading-none font-['Klee_One'] text-slate-800 mb-6 drop-shadow-sm">{currentQuizData.targetChar}</div>
+                            {/* Phần Trên: Kanji + Gợi ý (Căn giữa theo chiều dọc) */}
+                            <div className="flex-1 flex flex-col items-center justify-center min-h-0">
+                                {/* Kanji: Text 100px, không margin âm, tự căn giữa */}
+                                <div className="text-[100px] leading-none font-['Klee_One'] text-slate-800 drop-shadow-sm">
+                                    {currentQuizData.targetChar}
+                                </div>
+                                
+                                {/* Gợi ý nghĩa: Đẩy xuống một chút */}
+                                {gameState === 'quiz_sound' ? (
+                                    <p className="mt-4 text-sm font-medium text-slate-500 italic bg-slate-50 px-4 py-1.5 rounded-full border border-slate-100">
+                                        {currentQuizData.targetInfo.meaning}
+                                    </p>
+                                ) : (
+                                    /* Giữ chỗ để không bị nhảy layout */
+                                    <div className="h-10 mt-4 w-full"></div>
+                                )}
+                            </div>
                             
-                            {/* Gợi ý (Chỉ hiện ở vòng 1) */}
-                            {gameState === 'quiz_sound' ? (
-                                <p className="text-xs font-medium text-slate-500 italic mb-6 bg-slate-50 px-3 py-1 rounded-full border border-slate-100">
-                                    {currentQuizData.targetInfo.meaning}
-                                </p>
-                            ) : (
-                                <div className="h-8 mb-4"></div>
-                            )}
-                            
-                            <div className="grid grid-cols-2 gap-2 w-full">
+                            {/* Phần Dưới: Nút bấm (Font to hơn) */}
+                            <div className="grid grid-cols-2 gap-3 w-full mt-4 pb-2">
                                 {currentQuizData.options.map((opt, i) => (
                                     <button 
                                         key={i} 
                                         onClick={() => handleAnswer(opt.correct, currentQuizData)} 
-                                        className="h-16 w-full px-2 bg-white hover:bg-blue-50 border border-slate-200 hover:border-blue-400 text-slate-700 hover:text-blue-700 rounded-xl font-bold text-sm transition-all active:scale-95 flex items-center justify-center text-center shadow-sm break-words leading-tight"
+                                        className="h-20 w-full px-2 bg-white hover:bg-blue-50 border-2 border-slate-100 hover:border-blue-400 text-slate-700 hover:text-blue-700 rounded-2xl font-bold text-xl transition-all active:scale-95 flex items-center justify-center text-center shadow-sm break-words leading-tight"
                                     >
                                         {opt.label}
                                     </button>
@@ -1518,23 +1525,27 @@ const LearnGameModal = ({ isOpen, onClose, text, dbData, onSwitchToFlashcard }) 
 
                     {/* 2. PENALTY */}
                     {gameState === 'penalty' && wrongItem && (
-                        <div className="w-full flex flex-col items-center animate-in slide-in-from-right">
-                            <h3 className="text-lg font-black text-slate-800 mb-4">Viết lại để ghi nhớ</h3>
+                        <div className="w-full flex flex-col items-center justify-center h-full animate-in slide-in-from-right">
+                            <div className="w-14 h-14 bg-blue-50 text-blue-600 rounded-full flex items-center justify-center mb-4 text-3xl animate-bounce border border-blue-100 shadow-sm">
+                                ✍️
+                            </div>
+                            <h3 className="text-xl font-black text-slate-800 mb-6">Viết lại để ghi nhớ</h3>
                             
-                            <div className="text-6xl font-['Klee_One'] text-slate-800 mb-1">{wrongItem.targetChar}</div>
+                            <div className="text-7xl font-['Klee_One'] text-slate-800 mb-2">{wrongItem.targetChar}</div>
                             
-                            <p className="text-blue-600 font-black text-xl uppercase tracking-widest mb-0.5">{wrongItem.targetInfo.sound}</p>
-                            <p className="text-[11px] text-slate-400 font-medium italic mb-5">({wrongItem.targetInfo.meaning})</p>
+                            <p className="text-blue-600 font-black text-2xl uppercase tracking-widest mb-1">{wrongItem.targetInfo.sound}</p>
+                            <p className="text-sm text-slate-400 font-medium italic mb-8">({wrongItem.targetInfo.meaning})</p>
 
-                            <input type="text" autoFocus value={penaltyInput} onChange={(e) => setPenaltyInput(e.target.value)} onKeyDown={(e) => e.key === 'Enter' && checkPenalty()} placeholder="Nhập âm Hán Việt..." className={`w-full p-3 text-center text-base font-bold border-2 rounded-xl outline-none transition-all shadow-inner ${penaltyFeedback === 'incorrect' ? 'border-red-500 bg-red-50' : penaltyFeedback === 'correct' ? 'border-green-500 bg-green-50' : 'border-slate-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-100'}`} />
-                            <button onClick={checkPenalty} className="w-full mt-3 py-3 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl active:scale-95 shadow-md transition-all uppercase tracking-widest text-[10px]">KIỂM TRA</button>
+                            <input type="text" autoFocus value={penaltyInput} onChange={(e) => setPenaltyInput(e.target.value)} onKeyDown={(e) => e.key === 'Enter' && checkPenalty()} placeholder="Nhập âm Hán Việt..." className={`w-full p-4 text-center text-lg font-bold border-2 rounded-xl outline-none transition-all shadow-inner ${penaltyFeedback === 'incorrect' ? 'border-red-500 bg-red-50' : penaltyFeedback === 'correct' ? 'border-green-500 bg-green-50' : 'border-slate-200 focus:border-blue-500 focus:ring-4 focus:ring-blue-50'}`} />
+                            <button onClick={checkPenalty} className="w-full mt-4 py-3.5 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl active:scale-95 shadow-lg shadow-blue-200 transition-all uppercase tracking-widest text-xs">KIỂM TRA</button>
                         </div>
                     )}
 
-                    {/* 3. MATCHING */}
+                    {/* 3. MATCHING (FONT TO CÂN ĐỐI) */}
                     {gameState === 'match' && (
                         <div className="w-full h-full flex flex-col">
-                            <div className="h-4"></div>
+                            {/* Khoảng trống để đẩy lưới xuống giữa */}
+                            <div className="h-6"></div>
                             
                             <div className="grid grid-cols-3 gap-2 flex-1 content-center">
                                 {matchCards.map((card) => {
@@ -1547,12 +1558,16 @@ const LearnGameModal = ({ isOpen, onClose, text, dbData, onSwitchToFlashcard }) 
                                             key={card.id} 
                                             onClick={() => handleCardClick(card)} 
                                             disabled={isMatched} 
-                                            className={`h-16 rounded-xl border font-bold flex items-center justify-center transition-all duration-200 p-1 shadow-sm
+                                            className={`h-20 rounded-xl border-2 font-bold flex items-center justify-center transition-all duration-200 p-1 shadow-sm
                                                 ${isMatched ? 'opacity-0 scale-50 pointer-events-none' : 
                                                   isWrong ? 'bg-red-500 border-red-500 text-white animate-shake' : 
                                                   isSelected ? 'bg-blue-600 border-blue-600 text-white scale-105 shadow-md' : 
                                                   'bg-white border-slate-200 text-slate-700 hover:border-blue-300 active:scale-95'} 
-                                                ${card.type === 'kanji' ? "font-['Klee_One'] text-3xl" : "uppercase text-xs leading-tight break-words"}`}
+                                                
+                                                ${card.type === 'kanji' 
+                                                    ? "font-['Klee_One'] text-3xl"  // Kanji to
+                                                    : "uppercase text-sm md:text-base leading-tight break-words" // Tiếng Việt to hơn (text-sm)
+                                                }`}
                                         >
                                             {card.content}
                                         </button>
@@ -1564,17 +1579,17 @@ const LearnGameModal = ({ isOpen, onClose, text, dbData, onSwitchToFlashcard }) 
 
                     {/* 4. FINISHED */}
                     {gameState === 'finished' && (
-                        <div className="text-center animate-in zoom-in w-full flex flex-col items-center">
-                            <div className="text-6xl mb-3 animate-bounce">🎉</div>
-                            <h2 className="text-xl font-black text-slate-800 mb-1">XUẤT SẮC!</h2>
-                            <p className="text-slate-400 mb-6 text-xs font-medium">Bạn đã hoàn thành phiên học.</p>
+                        <div className="text-center animate-in zoom-in w-full flex flex-col items-center justify-center h-full">
+                            <div className="text-7xl mb-4 animate-bounce">🎉</div>
+                            <h2 className="text-2xl font-black text-slate-800 mb-2">XUẤT SẮC!</h2>
+                            <p className="text-slate-400 mb-8 text-sm font-medium">Bạn đã hoàn thành phiên học.</p>
                             
-                            <div className="flex flex-col items-center gap-2 w-full">
+                            <div className="flex flex-col items-center gap-3 w-full">
                                 <button 
                                     onClick={onSwitchToFlashcard} 
-                                    className="w-64 py-3 bg-blue-600 hover:bg-blue-700 text-white font-black rounded-xl shadow-lg shadow-blue-200 active:scale-95 transition-all flex items-center justify-center gap-2 uppercase tracking-wide text-xs"
+                                    className="w-64 py-3.5 bg-blue-600 hover:bg-blue-700 text-white font-black rounded-xl shadow-lg shadow-blue-200 active:scale-95 transition-all flex items-center justify-center gap-2 uppercase tracking-wide text-xs"
                                 >
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
                                     FLASHCARD
                                 </button>
 
