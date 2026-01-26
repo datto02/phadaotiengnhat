@@ -1237,7 +1237,7 @@ return (
         </div>
     );
     };
-// --- COMPONENT MỚI: TRÒ CHƠI HỌC TẬP (FINAL UI: NO ICON + ADJUSTED TEXT SIZES) ---
+// --- COMPONENT MỚI: TRÒ CHƠI HỌC TẬP (FINAL: MOBILE FIX + TEXT SIZE ADJUSTMENT) ---
 const LearnGameModal = ({ isOpen, onClose, text, dbData, onSwitchToFlashcard }) => {
     const [queue, setQueue] = useState([]);
     const [currentIndex, setCurrentIndex] = useState(0);
@@ -1478,31 +1478,34 @@ const LearnGameModal = ({ isOpen, onClose, text, dbData, onSwitchToFlashcard }) 
 
                 <div className="flex-1 flex flex-col p-4 bg-white h-full">
                     
-                    {/* 1. QUIZ (ĐÃ SỬA: CHỮ ĐÁP ÁN NHỎ HƠN 1 CHÚT) */}
+                    {/* 1. QUIZ (ĐÃ SỬA: CĂN GIỮA + CỠ CHỮ NHỎ HƠN) */}
                     {(gameState === 'quiz_sound' || gameState === 'quiz_meaning') && currentQuizData && (
                         <div className="w-full h-full flex flex-col">
                             
+                            {/* Khu vực Kanji + Gợi ý (Căn giữa tuyệt đối) */}
                             <div className="flex-1 flex flex-col items-center justify-center min-h-0">
+                                {/* Kanji (Giữ to 100px) */}
                                 <div className="text-[100px] leading-none font-['Klee_One'] text-slate-800 drop-shadow-sm">
                                     {currentQuizData.targetChar}
                                 </div>
                                 
-                                {gameState === 'quiz_sound' ? (
-                                    <p className="mt-4 text-xl font-bold text-slate-600 italic bg-slate-50 px-6 py-2 rounded-full border border-slate-200 shadow-sm">
+                                {/* Gợi ý nghĩa (Chỉ hiện ở vòng 1, Cỡ chữ nhỏ: text-sm) */}
+                                {gameState === 'quiz_sound' && (
+                                    <p className="mt-4 text-sm font-bold text-slate-600 italic bg-slate-50 px-6 py-2 rounded-full border border-slate-200 shadow-sm">
                                         {currentQuizData.targetInfo.meaning}
                                     </p>
-                                ) : (
-                                    <div className="h-14 mt-4 w-full"></div>
                                 )}
+                                {/* Lưu ý: Đã bỏ div h-14 để khi ẩn gợi ý, Kanji tự động căn giữa */}
                             </div>
                             
+                            {/* Khu vực đáp án (Cỡ chữ vừa: text-base) */}
+                            {/* Thêm outline-none và md:hover để fix lỗi dính màu trên mobile */}
                             <div className="grid grid-cols-2 gap-3 w-full mt-4 pb-2">
                                 {currentQuizData.options.map((opt, i) => (
                                     <button 
                                         key={i} 
                                         onClick={() => handleAnswer(opt.correct, currentQuizData)} 
-                                        // ĐÃ SỬA: text-lg (thay vì text-xl)
-                                        className="h-20 w-full px-2 bg-white hover:bg-blue-50 border-2 border-slate-100 hover:border-blue-400 text-slate-700 hover:text-blue-700 rounded-2xl font-bold text-lg transition-all active:scale-95 flex items-center justify-center text-center shadow-sm break-words leading-tight"
+                                        className="h-20 w-full px-2 bg-white border-2 border-slate-100 text-slate-700 rounded-2xl font-bold text-base flex items-center justify-center text-center shadow-sm break-words leading-tight transition-all active:scale-95 outline-none md:hover:bg-blue-50 md:hover:border-blue-400 md:hover:text-blue-700"
                                     >
                                         {opt.label}
                                     </button>
@@ -1511,24 +1514,20 @@ const LearnGameModal = ({ isOpen, onClose, text, dbData, onSwitchToFlashcard }) 
                         </div>
                     )}
 
-                    {/* 2. PENALTY (ĐÃ SỬA: XÓA ICON CÂY BÚT) */}
+                    {/* 2. PENALTY */}
                     {gameState === 'penalty' && wrongItem && (
                         <div className="w-full flex flex-col items-center justify-center h-full animate-in slide-in-from-right">
-                            {/* ĐÃ XÓA ICON TẠI ĐÂY */}
-                            
                             <h3 className="text-xl font-black text-slate-800 mb-6 mt-4">Viết lại để ghi nhớ</h3>
-                            
                             <div className="text-7xl font-['Klee_One'] text-slate-800 mb-2">{wrongItem.targetChar}</div>
-                            
                             <p className="text-blue-600 font-black text-2xl uppercase tracking-widest mb-1">{wrongItem.targetInfo.sound}</p>
                             <p className="text-sm text-slate-400 font-medium italic mb-8">({wrongItem.targetInfo.meaning})</p>
 
                             <input type="text" autoFocus value={penaltyInput} onChange={(e) => setPenaltyInput(e.target.value)} onKeyDown={(e) => e.key === 'Enter' && checkPenalty()} placeholder="Nhập âm Hán Việt..." className={`w-full p-4 text-center text-lg font-bold border-2 rounded-xl outline-none transition-all shadow-inner ${penaltyFeedback === 'incorrect' ? 'border-red-500 bg-red-50' : penaltyFeedback === 'correct' ? 'border-green-500 bg-green-50' : 'border-slate-200 focus:border-blue-500 focus:ring-4 focus:ring-blue-50'}`} />
-                            <button onClick={checkPenalty} className="w-full mt-4 py-3.5 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl active:scale-95 shadow-lg shadow-blue-200 transition-all uppercase tracking-widest text-xs">KIỂM TRA</button>
+                            <button onClick={checkPenalty} className="w-full mt-4 py-3.5 bg-blue-600 text-white font-bold rounded-xl active:scale-95 shadow-lg shadow-blue-200 transition-all uppercase tracking-widest text-xs outline-none md:hover:bg-blue-700">KIỂM TRA</button>
                         </div>
                     )}
 
-                    {/* 3. MATCHING (GIỮ NGUYÊN) */}
+                    {/* 3. MATCHING */}
                     {gameState === 'match' && (
                         <div className="w-full h-full flex flex-col items-center justify-center">
                             <div className="grid grid-cols-3 gap-2 w-full">
@@ -1542,15 +1541,15 @@ const LearnGameModal = ({ isOpen, onClose, text, dbData, onSwitchToFlashcard }) 
                                             key={card.id} 
                                             onClick={() => handleCardClick(card)} 
                                             disabled={isMatched} 
-                                            className={`h-20 rounded-xl border-2 font-bold flex items-center justify-center transition-all duration-200 p-1 shadow-sm
+                                            className={`h-20 rounded-xl border-2 font-bold flex items-center justify-center transition-all duration-200 p-1 shadow-sm outline-none
                                                 ${isMatched ? 'opacity-0 scale-50 pointer-events-none' : 
                                                   isWrong ? 'bg-red-500 border-red-500 text-white animate-shake' : 
                                                   isSelected ? 'bg-blue-600 border-blue-600 text-white scale-105 shadow-md' : 
-                                                  'bg-white border-slate-200 text-slate-700 hover:border-blue-300 active:scale-95'} 
+                                                  'bg-white border-slate-200 text-slate-700 active:scale-95 md:hover:border-blue-300'} 
                                                 
                                                 ${card.type === 'kanji' 
                                                     ? "font-['Klee_One'] text-3xl"  
-                                                    : "uppercase text-sm leading-tight break-words" // Giữ nguyên theo yêu cầu
+                                                    : "uppercase text-sm leading-tight break-words"
                                                 }`}
                                         >
                                             {card.content}
@@ -1561,24 +1560,22 @@ const LearnGameModal = ({ isOpen, onClose, text, dbData, onSwitchToFlashcard }) 
                         </div>
                     )}
 
-                    {/* 4. FINISHED (ĐÃ SỬA: ICON NHỎ HƠN, NÚT CÁCH XA, CHỮ TO HƠN) */}
+                    {/* 4. FINISHED (ĐÃ SỬA: CĂN GIỮA DỌC) */}
                     {gameState === 'finished' && (
-                        <div className="text-center animate-in zoom-in w-full flex flex-col items-center justify-center h-full">
-                            {/* Pháo hoa nhỏ hơn: text-5xl */}
+                        <div className="text-center animate-in zoom-in w-full h-full flex flex-col items-center justify-center">
                             <div className="text-5xl mb-4 animate-bounce">🎉</div>
                             <h2 className="text-2xl font-black text-slate-800 mb-2">XUẤT SẮC!</h2>
                             <p className="text-slate-400 mb-8 text-sm font-medium">Bạn đã hoàn thành phiên học.</p>
                             
-                            {/* Khoảng cách các nút rộng hơn: gap-5 */}
                             <div className="flex flex-col items-center gap-5 w-full">
-                                <button onClick={onSwitchToFlashcard} className="w-64 py-3.5 bg-blue-600 hover:bg-blue-700 text-white font-black rounded-xl shadow-lg shadow-blue-200 active:scale-95 transition-all flex items-center justify-center gap-2 uppercase tracking-wide text-sm">
+                                <button onClick={onSwitchToFlashcard} className="w-64 py-3.5 bg-blue-600 text-white font-black rounded-xl shadow-lg shadow-blue-200 active:scale-95 transition-all flex items-center justify-center gap-2 uppercase tracking-wide text-sm outline-none md:hover:bg-blue-700">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
                                     FLASHCARD
                                 </button>
-                                <button onClick={handleRestart} className="w-64 py-3 bg-slate-100 hover:bg-slate-200 text-slate-600 font-bold rounded-xl active:scale-95 transition-all uppercase tracking-wide text-sm">
+                                <button onClick={handleRestart} className="w-64 py-3 bg-slate-100 text-slate-600 font-bold rounded-xl active:scale-95 transition-all uppercase tracking-wide text-sm outline-none md:hover:bg-slate-200">
                                     Học lại từ đầu
                                 </button>
-                                <button onClick={onClose} className="w-64 py-2 text-slate-400 hover:text-red-500 font-bold text-xs uppercase tracking-widest transition-colors">
+                                <button onClick={onClose} className="w-64 py-2 text-slate-400 font-bold text-xs uppercase tracking-widest transition-colors outline-none md:hover:text-red-500">
                                     Thoát
                                 </button>
                             </div>
