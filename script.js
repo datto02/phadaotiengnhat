@@ -1701,7 +1701,7 @@ const visualPercent = queue.length > 0 ? (currentIndex / queue.length) * 100 : 0
                                                         handleAnswer(opt.correct, currentQuizData);
                                                         setSelectedIdx(null);
                                                         setIsChecking(false);
-                                                    }, 600);
+                                                    }, 400);
                                                 }} 
                                                 className={`h-14 w-full px-2 border rounded-xl font-bold flex items-center justify-center text-center shadow-lg backdrop-blur-sm transition-all duration-200 active:scale-95
                                                     ${statusClass}
