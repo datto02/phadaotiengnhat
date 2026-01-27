@@ -1254,22 +1254,24 @@ return (
     );
     };
 const LearnGameModal = ({ isOpen, onClose, text, dbData, onSwitchToFlashcard }) => {
-const getCharInfo = (c) => {
-    if (!dbData) return null;
-    // 1. Tìm trong Hiragana
-    if (dbData.ALPHABETS?.hiragana?.[c]) return { ...dbData.ALPHABETS.hiragana[c], type: 'hiragana' };
-    // 2. Tìm trong Katakana
-    if (dbData.ALPHABETS?.katakana?.[c]) return { ...dbData.ALPHABETS.katakana[c], type: 'katakana' };
-    // 3. Tìm trong Kanji (Bao gồm cả bộ thủ nằm trong DB này)
-    if (dbData.KANJI_DB?.[c]) return { ...dbData.KANJI_DB[c], type: 'kanji' };
-    return null;
-};
+    const getCharInfo = (c) => {
+        if (!dbData) return null;
+        // 1. Tìm trong Hiragana
+        if (dbData.ALPHABETS?.hiragana?.[c]) return { ...dbData.ALPHABETS.hiragana[c], type: 'hiragana' };
+        // 2. Tìm trong Katakana
+        if (dbData.ALPHABETS?.katakana?.[c]) return { ...dbData.ALPHABETS.katakana[c], type: 'katakana' };
+        // 3. Tìm trong Kanji (Bao gồm cả bộ thủ nằm trong DB này)
+        if (dbData.KANJI_DB?.[c]) return { ...dbData.KANJI_DB[c], type: 'kanji' };
+        return null;
+    };
+
     const [queue, setQueue] = useState([]);
     const [currentIndex, setCurrentIndex] = useState(0);
     const [gameState, setGameState] = useState('loading'); 
 
     const [selectedIdx, setSelectedIdx] = React.useState(null);
     const [isChecking, setIsChecking] = React.useState(false);
+
     // State Tiến độ
     const [totalKanji, setTotalKanji] = useState(0);       
     const [finishedCount, setFinishedCount] = useState(0); 
@@ -1299,6 +1301,8 @@ const getCharInfo = (c) => {
             setQueue([]);
             setFinishedCount(0);
             setWrongItem(null);
+            setSelectedIdx(null); // Reset trạng thái chọn
+            setIsChecking(false); // Reset trạng thái kiểm tra
         }
     }, [isOpen]);
 
@@ -1566,6 +1570,8 @@ const getCharInfo = (c) => {
         setPenaltyInput('');
         setMatchedIds([]);
         setWrongPairIds([]);
+        setSelectedIdx(null);
+        setIsChecking(false);
 
         // 2. Thực hiện lại logic khởi tạo dữ liệu (giống useEffect)
         let validChars = Array.from(new Set(text.split('').filter(c => getCharInfo(c))));
@@ -1664,52 +1670,55 @@ const visualPercent = queue.length > 0 ? (currentIndex / queue.length) * 100 : 0
                                     )}
                                 </div>
 
-                             {/* 4 NÚT ĐÁP ÁN */}
-<div className="grid grid-cols-2 gap-3 w-full">
-    {currentQuizData.options.map((opt, i) => {
-        const isSelected = selectedIdx === i;
-        
-        // Xác định class màu sắc dựa trên trạng thái bấm
-        let statusClass = "bg-white/10 border-white/10 text-white"; // Mặc định
-        if (isSelected) {
-            statusClass = opt.correct 
-                ? "bg-green-500 border-green-500 text-white shadow-[0_0_20px_rgba(34,197,94,0.6)]" // Đúng -> Xanh
-                : "bg-red-500 border-red-500 text-white shadow-[0_0_20px_rgba(239,68,68,0.6)]";   // Sai -> Đỏ
-        }
+                                {/* 4 NÚT ĐÁP ÁN (ĐÃ FIX LỖI MOBILE VÀ THÊM MÀU) */}
+                                <div className="grid grid-cols-2 gap-3 w-full">
+                                    {currentQuizData.options.map((opt, i) => {
+                                        const isSelected = selectedIdx === i;
+                                        
+                                        // Xác định class màu sắc dựa trên trạng thái bấm
+                                        let statusClass = "bg-white/10 border-white/10 text-white"; // Mặc định
+                                        if (isSelected) {
+                                            statusClass = opt.correct 
+                                                ? "bg-green-500 border-green-500 text-white shadow-[0_0_20px_rgba(34,197,94,0.6)]" // Đúng -> Xanh
+                                                : "bg-red-500 border-red-500 text-white shadow-[0_0_20px_rgba(239,68,68,0.6)]";   // Sai -> Đỏ
+                                        }
 
-        return (
-            <button 
-                key={i} 
-                disabled={isChecking}
-                onClick={(e) => {
-                    // 1. Fix lỗi dính màu trên điện thoại
-                    e.currentTarget.blur(); 
-                    if (isChecking) return;
+                                        return (
+                                            <button 
+                                                key={i} 
+                                                disabled={isChecking}
+                                                onClick={(e) => {
+                                                    // 1. Fix lỗi dính màu trên điện thoại
+                                                    e.currentTarget.blur(); 
+                                                    if (isChecking) return;
 
-                    // 2. Hiển thị trạng thái màu
-                    setSelectedIdx(i);
-                    setIsChecking(true);
+                                                    // 2. Hiển thị trạng thái màu
+                                                    setSelectedIdx(i);
+                                                    setIsChecking(true);
 
-                    // 3. Đợi một chút để người dùng nhìn thấy màu rồi mới chuyển câu
-                    setTimeout(() => {
-                        handleAnswer(opt.correct, currentQuizData);
-                        setSelectedIdx(null);
-                        setIsChecking(false);
-                    }, 600);
-                }} 
-                className={`h-14 w-full px-2 border rounded-xl font-bold flex items-center justify-center text-center shadow-lg backdrop-blur-sm transition-all duration-200 active:scale-95
-                    ${statusClass}
-                    ${!isChecking ? 'md:hover:bg-white/20' : ''} 
-                    ${opt.isKanji 
-                        ? "text-3xl font-['Klee_One']" 
-                        : getDynamicFontSize(opt.label, 'button') + " font-sans uppercase break-words leading-tight" 
-                    }`}
-            >
-                {opt.label}
-            </button>
-        );
-    })}
-</div>
+                                                    // 3. Đợi một chút để người dùng nhìn thấy màu rồi mới chuyển câu
+                                                    setTimeout(() => {
+                                                        handleAnswer(opt.correct, currentQuizData);
+                                                        setSelectedIdx(null);
+                                                        setIsChecking(false);
+                                                    }, 600);
+                                                }} 
+                                                className={`h-14 w-full px-2 border rounded-xl font-bold flex items-center justify-center text-center shadow-lg backdrop-blur-sm transition-all duration-200 active:scale-95
+                                                    ${statusClass}
+                                                    ${!isChecking ? 'md:hover:bg-white/20' : ''} 
+                                                    ${opt.isKanji 
+                                                        ? "text-3xl font-['Klee_One']" 
+                                                        : getDynamicFontSize(opt.label, 'button') + " font-sans uppercase break-words leading-tight" 
+                                                    }`}
+                                            >
+                                                {opt.label}
+                                            </button>
+                                        );
+                                    })}
+                                </div>
+                            </>
+                        )}
+
                         {/* --- DẠNG BÀI: PENALTY (Phạt viết lại) --- */}
                         {gameState === 'penalty' && wrongItem && (
                              <div className="bg-white rounded-[2rem] w-full max-w-[300px] p-6 flex flex-col items-center justify-center shadow-2xl animate-in slide-in-from-right duration-300">
