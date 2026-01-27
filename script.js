@@ -51,40 +51,56 @@ const calculateSRS = (currentData, quality) => {
   }
 };
 
- // --- FETCH DATA FROM GITHUB --- 
+// --- FETCH DATA FROM GITHUB (ĐÃ SỬA: TẢI THÊM N5-N1) --- 
 const fetchDataFromGithub = async () => {
   try { 
-  
+    // 1. Tải các file cơ sở dữ liệu chính
     const [dbResponse, onkunResponse, vocabResponse] = await Promise.all([
       fetch('./data/kanji_db.json'),
       fetch('./data/onkun.json'),
       fetch('./data/vocab.json')  
     ]);
 
+    // 2. Tải thêm 5 file danh sách cấp độ (N5 -> N1) để dùng cho Game & Sidebar
+    const levels = ['n5', 'n4', 'n3', 'n2', 'n1'];
+    const levelPromises = levels.map(l => fetch(`./data/kanji${l}.json`));
+    const levelResponses = await Promise.all(levelPromises);
+
     let kanjiDb = null;
     let onkunDb = null;
     let vocabDb = null;
+    let kanjiLevels = {}; // Object chứa danh sách theo cấp độ
 
+    // Xử lý DB chính
     if (dbResponse.ok) kanjiDb = await dbResponse.json();
     else console.warn("Không tải được kanji_db.json");
 
     if (onkunResponse.ok) onkunDb = await onkunResponse.json();
-    else console.warn("Không tải được onkun.json (sẽ dùng API online)");
+    else console.warn("Không tải được onkun.json");
 
-    if (vocabResponse.ok) {
-        vocabDb = await vocabResponse.json();
-    } else {
-        console.warn("Chưa có file vocab.json, chế độ từ vựng sẽ trống.");
-        vocabDb = {};
+    if (vocabResponse.ok) vocabDb = await vocabResponse.json();
+    else vocabDb = {};
+
+    // Xử lý 5 file cấp độ
+    for (let i = 0; i < levels.length; i++) {
+        const lvlKey = levels[i].toUpperCase(); // N5, N4...
+        if (levelResponses[i].ok) {
+            const text = await levelResponses[i].text();
+            // Làm sạch dữ liệu (xóa xuống dòng, dấu câu...) để thành mảng ký tự
+            kanjiLevels[lvlKey] = Array.from(new Set(text.replace(/["\n\r\s,\[\]]/g, '').split('')));
+        } else {
+            console.warn(`Không tải được file kanji${levels[i]}.json`);
+            kanjiLevels[lvlKey] = [];
+        }
     }
 
-    return { ...kanjiDb, ONKUN_DB: onkunDb, VOCAB_DB: vocabDb }; 
+    // Trả về dữ liệu gộp, thêm KANJI_LEVELS vào
+    return { ...kanjiDb, ONKUN_DB: onkunDb, VOCAB_DB: vocabDb, KANJI_LEVELS: kanjiLevels }; 
   } catch (error) {
     console.error("Lỗi tải dữ liệu hệ thống:", error);
     return null;
   }
 };
-
     // --- UTILS & DATA FETCHING ---
 
     const getHex = (char) => char.codePointAt(0).toString(16).toLowerCase().padStart(5, '0');
