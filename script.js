@@ -1237,7 +1237,7 @@ return (
         </div>
     );
     };
-// --- COMPONENT MỚI: TRÒ CHƠI HỌC TẬP (UI UPDATED: KANJI BIGGER + BUTTONS BOTTOM) ---
+// --- COMPONENT MỚI: TRÒ CHƠI HỌC TẬP (FINAL ADJUSTMENT: BUTTONS STICK BOTTOM) ---
 const LearnGameModal = ({ isOpen, onClose, text, dbData, onSwitchToFlashcard }) => {
     const [queue, setQueue] = useState([]);
     const [currentIndex, setCurrentIndex] = useState(0);
@@ -1456,10 +1456,9 @@ const LearnGameModal = ({ isOpen, onClose, text, dbData, onSwitchToFlashcard }) 
 
     return (
         <div className="fixed inset-0 z-[500] flex items-center justify-center bg-slate-900/95 backdrop-blur-md p-4 animate-in fade-in select-none">
-            {/* GIẢM min-h XUỐNG CÒN 380px ĐỂ COMPACT HƠN */}
             <div className="w-full max-w-sm bg-white rounded-2xl shadow-2xl overflow-hidden min-h-[380px] flex flex-col relative">
                 
-                {/* --- HEADER COMPACT (py-2) --- */}
+                {/* --- HEADER --- */}
                 {gameState !== 'finished' && (
                     <div className="px-4 py-2 flex items-center gap-3 border-b border-gray-100 bg-white">
                         <div className="flex-1 flex items-center gap-3">
@@ -1476,17 +1475,19 @@ const LearnGameModal = ({ isOpen, onClose, text, dbData, onSwitchToFlashcard }) 
                     </div>
                 )}
 
-                {/* --- PHẦN NỘI DUNG CHÍNH --- */}
-                <div className="flex-1 flex flex-col pt-3 px-3 pb-0 bg-white h-full">
+                {/* --- CONTENT CONTAINER --- */}
+                {/* Sử dụng flex-col và h-full để quản lý layout dọc */}
+                <div className="flex-1 flex flex-col px-3 pb-0 bg-white h-full">
     
-                    {/* 1. QUIZ (UPDATED: KANJI BIG + BUTTONS BOTTOM) */}
+                    {/* 1. QUIZ (BOTH TYPES) */}
                     {(gameState === 'quiz_sound' || gameState === 'quiz_meaning') && currentQuizData && (
-                        <div className="w-full h-full flex flex-col">
+                        <div className="w-full h-full flex flex-col justify-between">
                             
-                            {/* KANJI AREA: Căn giữa tuyệt đối trong không gian còn lại */}
-                            <div className="flex-1 flex flex-col items-center justify-center w-full">
-                                {/* Tăng kích thước font lên 100px */}
-                                <div className="text-[100px] leading-tight font-['Klee_One'] text-slate-800 drop-shadow-sm transition-all">
+                            {/* KANJI & MEANING AREA */}
+                            {/* flex-grow: Chiếm toàn bộ khoảng trống còn lại */}
+                            {/* pb-4: Tạo khoảng cách an toàn với khu vực nút bấm phía dưới */}
+                            <div className="flex-grow flex flex-col items-center justify-center w-full pb-4 relative">
+                                <div className="text-[100px] leading-none font-['Klee_One'] text-slate-800 drop-shadow-sm transition-all text-center">
                                     {currentQuizData.targetChar}
                                 </div>
                                 
@@ -1497,14 +1498,16 @@ const LearnGameModal = ({ isOpen, onClose, text, dbData, onSwitchToFlashcard }) 
                                 )}
                             </div>
                             
-                            {/* BUTTONS AREA: Dịch chuyển sát đáy (pb-2) */}
-                            <div className="w-full mt-auto pb-2"> 
+                            {/* BUTTONS AREA */}
+                            {/* flex-none: Không co giãn */}
+                            {/* mt-auto: Đẩy xuống đáy container */}
+                            {/* pb-1: Sát lề dưới */}
+                            <div className="flex-none w-full mt-auto pb-1"> 
                                 <div className="grid grid-cols-2 gap-2 w-full">
                                     {currentQuizData.options.map((opt, i) => (
                                         <button 
                                             key={i} 
                                             onClick={() => handleAnswer(opt.correct, currentQuizData)} 
-                                            // Giảm chiều cao nút một chút (h-12) để cân đối nếu cần, hoặc giữ h-14
                                             className="h-14 w-full px-2 bg-white border-2 border-slate-100 text-slate-700 rounded-xl font-bold text-xs flex items-center justify-center text-center shadow-sm active:scale-95 transition-all outline-none md:hover:bg-blue-50 md:hover:border-blue-300"
                                         >
                                             {opt.label}
@@ -1515,7 +1518,7 @@ const LearnGameModal = ({ isOpen, onClose, text, dbData, onSwitchToFlashcard }) 
                         </div>
                     )}
 
-                    {/* 2. PENALTY (COMPACT) */}
+                    {/* 2. PENALTY */}
                     {gameState === 'penalty' && wrongItem && (
                         <div className="w-full flex flex-col items-center justify-center h-full animate-in slide-in-from-right">
                             <h3 className="text-base font-black text-slate-800 mb-3 mt-2">Viết lại để ghi nhớ</h3>
@@ -1528,7 +1531,7 @@ const LearnGameModal = ({ isOpen, onClose, text, dbData, onSwitchToFlashcard }) 
                         </div>
                     )}
 
-                    {/* 3. MATCHING (COMPACT) */}
+                    {/* 3. MATCHING */}
                     {gameState === 'match' && (
                         <div className="w-full h-full flex flex-col items-center justify-center">
                             <div className="grid grid-cols-3 gap-1.5 w-full">
@@ -1561,10 +1564,9 @@ const LearnGameModal = ({ isOpen, onClose, text, dbData, onSwitchToFlashcard }) 
                         </div>
                     )}
 
-                    {/* 4. FINISHED (COMPACT) */}
+                    {/* 4. FINISHED */}
                     {gameState === 'finished' && (
                         <div className="w-full h-full flex flex-col items-center justify-center animate-in zoom-in duration-300">
-                            
                             <div className="text-5xl mb-3 animate-bounce">🎉</div>
                             <h2 className="text-2xl font-black text-slate-800 uppercase tracking-tight mb-1">
                                 XUẤT SẮC!
@@ -1578,11 +1580,9 @@ const LearnGameModal = ({ isOpen, onClose, text, dbData, onSwitchToFlashcard }) 
                                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
                                     FLASHCARD
                                 </button>
-                                
                                 <button onClick={handleRestart} className="w-full py-2.5 bg-slate-100 text-slate-600 font-bold rounded-xl active:scale-95 transition-all uppercase tracking-wide text-[10px] outline-none md:hover:bg-slate-200">
                                     Học lại từ đầu
                                 </button>
-                                
                                 <button onClick={onClose} className="w-full py-1.5 text-slate-400 font-bold text-[10px] uppercase tracking-widest transition-colors outline-none md:hover:text-red-500">
                                     Thoát
                                 </button>
