@@ -1237,14 +1237,13 @@ return (
         </div>
     );
     };
-// --- COMPONENT MỚI: TRÒ CHƠI HỌC TẬP (FINAL: BUTTONS ALMOST TOUCH BOTTOM) ---
 const LearnGameModal = ({ isOpen, onClose, text, dbData, onSwitchToFlashcard }) => {
     const [queue, setQueue] = useState([]);
     const [currentIndex, setCurrentIndex] = useState(0);
     const [gameState, setGameState] = useState('loading'); 
     
     // State Tiến độ
-    const [totalKanji, setTotalKanji] = useState(0);      
+    const [totalKanji, setTotalKanji] = useState(0);       
     const [finishedCount, setFinishedCount] = useState(0); 
 
     // State xử lý lỗi & phạt
@@ -1450,145 +1449,150 @@ const LearnGameModal = ({ isOpen, onClose, text, dbData, onSwitchToFlashcard }) 
         }
     };
 
+    // Kích hoạt pháo hoa khi hoàn thành
+    const triggerConfetti = React.useCallback(() => { if (typeof confetti === 'undefined') return; const count = 200; const defaults = { origin: { y: 0.6 }, zIndex: 1500 }; function fire(particleRatio, opts) { confetti({ ...defaults, ...opts, particleCount: Math.floor(count * particleRatio) }); } fire(0.25, { spread: 26, startVelocity: 55 }); fire(0.2, { spread: 60 }); fire(0.35, { spread: 100, decay: 0.91, scalar: 0.8 }); fire(0.1, { spread: 120, startVelocity: 25, decay: 0.92, scalar: 1.2 }); fire(0.1, { spread: 120, startVelocity: 45 }); }, []);
+    useEffect(() => { if (gameState === 'finished' && isOpen) { triggerConfetti(); } }, [gameState, isOpen, triggerConfetti]);
+
+
     if (!isOpen) return null;
 
     const visualPercent = queue.length > 0 ? ((currentIndex + 1) / queue.length) * 100 : 0;
 
     return (
-        <div className="fixed inset-0 z-[500] flex items-center justify-center bg-slate-900/95 backdrop-blur-md p-4 animate-in fade-in select-none">
-            <div className="w-full max-w-sm bg-white rounded-2xl shadow-2xl overflow-hidden min-h-[380px] flex flex-col relative">
-                
-                {/* --- HEADER --- */}
-                {gameState !== 'finished' && (
-                    <div className="px-4 py-2 flex items-center gap-3 border-b border-gray-100 bg-white">
-                        <div className="flex-1 flex items-center gap-3">
-                            <div className="flex-1 h-2 bg-gray-100 rounded-full overflow-hidden">
-                                <div className="h-full bg-blue-600 transition-all duration-500 ease-out" style={{ width: `${visualPercent}%` }}></div>
-                            </div>
-                            <div className="text-[10px] font-black text-blue-900 bg-blue-50 px-2 py-0.5 rounded-md min-w-[36px] text-center">
-                                {finishedCount}/{totalKanji}
-                            </div>
+        <div className="fixed inset-0 z-[500] flex flex-col items-center justify-center bg-gray-900/95 backdrop-blur-xl p-4 animate-in fade-in select-none">
+            
+            {/* --- KẾT THÚC (FINISHED SCREEN) - Style giống hệt Flashcard --- */}
+            {gameState === 'finished' ? (
+                <div className="bg-white rounded-[2rem] p-8 w-full max-w-[280px] text-center shadow-2xl border-4 border-indigo-50 animate-in zoom-in-95">
+                    <div className="text-5xl mb-4 animate-bounce cursor-pointer hover:scale-125 transition-transform" onClick={triggerConfetti}>🎉</div>
+                    <h3 className="text-lg font-black text-gray-800 mb-1 uppercase">XUẤT SẮC!</h3>
+                    <p className="text-gray-400 mb-6 text-[11px] font-medium italic">Bạn đã hoàn thành bài luyện tập.</p>
+                    <div className="space-y-2">
+                        <button onClick={onSwitchToFlashcard} className="w-full py-3.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl font-black text-[11px] shadow-lg active:scale-95 transition-colors">
+                            VỀ FLASHCARD
+                        </button>
+                        <button onClick={handleRestart} className="w-full py-3.5 bg-blue-50 border-2 border-blue-100 text-blue-500 hover:bg-blue-100 hover:border-blue-300 hover:text-blue-700 rounded-xl font-black text-[11px] transition-all active:scale-95">
+                            HỌC LẠI TỪ ĐẦU
+                        </button>
+                        <button onClick={onClose} className="w-full py-3.5 bg-white border-2 border-gray-200 text-gray-400 hover:text-red-600 hover:border-red-600 font-black text-[11px] uppercase tracking-widest rounded-xl transition-all active:scale-95">
+                            THOÁT
+                        </button>
+                    </div>
+                </div>
+            ) : (
+                /* --- GIAO DIỆN CHƠI GAME --- */
+                <div className="w-full max-w-sm flex flex-col items-center h-full max-h-[80vh]">
+                    
+                    {/* 1. THANH TIẾN ĐỘ & NÚT ĐÓNG (Header) */}
+                    <div className="w-full flex items-center gap-3 mb-6 px-2">
+                        <div className="flex-1 h-1.5 bg-white/10 rounded-full overflow-hidden">
+                            <div className="h-full bg-blue-500 transition-all duration-500 ease-out" style={{ width: `${visualPercent}%` }}></div>
                         </div>
-                        <button onClick={onClose} className="text-gray-300 hover:text-red-500 transition-colors font-black text-xl leading-none ml-1">
+                        <div className="text-white/40 text-[10px] font-bold min-w-[30px] text-center">
+                            {finishedCount}/{totalKanji}
+                        </div>
+                        <button onClick={onClose} className="text-white/40 hover:text-red-500 transition-colors font-black text-lg leading-none ml-1">
                             ✕
                         </button>
                     </div>
-                )}
 
-                {/* --- PHẦN NỘI DUNG CHÍNH --- */}
-                {/* Lưu ý: px-3 ở đây để giữ lề trái phải, pb-0 để cho phép phần tử con chạm đáy */}
-                <div className="flex-1 flex flex-col pt-3 px-3 pb-0 bg-white h-full">
-    
-                    {/* 1. QUIZ (CẢ 2 LOẠI) */}
-                    {(gameState === 'quiz_sound' || gameState === 'quiz_meaning') && currentQuizData && (
-                        <div className="w-full h-full flex flex-col justify-between">
-                            
-                            {/* KANJI AREA */}
-                            {/* flex-grow để chiếm hết khoảng trống phía trên */}
-                            <div className="flex-grow flex flex-col items-center justify-center w-full relative">
-                                <div className="text-[100px] leading-none font-['Klee_One'] text-slate-800 drop-shadow-sm transition-all text-center">
-                                    {currentQuizData.targetChar}
+                    {/* 2. NỘI DUNG CHÍNH (Quiz / Match / Penalty) */}
+                    <div className="flex-1 w-full flex flex-col items-center justify-center relative">
+
+                        {/* --- TRƯỜNG HỢP 1: QUIZ (Hỏi đáp) --- */}
+                        {(gameState === 'quiz_sound' || gameState === 'quiz_meaning') && currentQuizData && (
+                            <>
+                                {/* HÌNH ẢNH KANJI (Nền trắng - Giống thẻ Flashcard) */}
+                                <div className="bg-white rounded-[2rem] w-64 h-64 flex flex-col items-center justify-center shadow-2xl mb-8 relative animate-in zoom-in-95 duration-300">
+                                     <div className="text-8xl font-['Klee_One'] text-gray-800 leading-none mb-2">
+                                        {currentQuizData.targetChar}
+                                    </div>
+                                    {/* Nếu hỏi âm đọc thì hiện nghĩa gợi ý nhỏ */}
+                                    {gameState === 'quiz_sound' && (
+                                        <div className="absolute bottom-6 px-4 py-1 bg-gray-50 text-gray-400 text-[10px] font-bold uppercase rounded-full border border-gray-100">
+                                            {currentQuizData.targetInfo.meaning}
+                                        </div>
+                                    )}
                                 </div>
-                                
-                                {gameState === 'quiz_sound' && (
-                                    <p className="mt-2 text-xs font-bold text-slate-500 italic bg-slate-50 px-3 py-1 rounded-full border border-slate-100">
-                                        {currentQuizData.targetInfo.meaning}
-                                    </p>
-                                )}
-                            </div>
-                            
-                            {/* BUTTONS AREA */}
-                            {/* mt-auto: Đẩy xuống đáy */}
-                            {/* pb-1: Chỉ để hở đúng 4px (một chút xíu) so với đáy */}
-                            <div className="flex-none w-full mt-auto pb-1"> 
-                                <div className="grid grid-cols-2 gap-2 w-full">
+
+                                {/* 4 NÚT ĐÁP ÁN (Nằm dưới) */}
+                                <div className="grid grid-cols-2 gap-3 w-full">
                                     {currentQuizData.options.map((opt, i) => (
                                         <button 
                                             key={i} 
                                             onClick={() => handleAnswer(opt.correct, currentQuizData)} 
-                                            className="h-14 w-full px-2 bg-white border-2 border-slate-100 text-slate-700 rounded-xl font-bold text-xs flex items-center justify-center text-center shadow-sm active:scale-95 transition-all outline-none md:hover:bg-blue-50 md:hover:border-blue-300"
+                                            className="h-14 w-full px-2 bg-white/10 hover:bg-white/20 active:bg-white/30 text-white border border-white/10 rounded-xl font-bold text-xs flex items-center justify-center text-center shadow-lg backdrop-blur-sm transition-all active:scale-95"
                                         >
                                             {opt.label}
                                         </button>
                                     ))}
                                 </div>
-                            </div>
-                        </div>
-                    )}
+                            </>
+                        )}
 
-                    {/* 2. PENALTY */}
-                    {gameState === 'penalty' && wrongItem && (
-                        <div className="w-full flex flex-col items-center justify-center h-full animate-in slide-in-from-right pb-4">
-                            <h3 className="text-base font-black text-slate-800 mb-3 mt-2">Viết lại để ghi nhớ</h3>
-                            <div className="text-6xl font-['Klee_One'] text-slate-800 mb-1">{wrongItem.targetChar}</div>
-                            <p className="text-blue-600 font-black text-xl uppercase tracking-widest mb-0.5">{wrongItem.targetInfo.sound}</p>
-                            <p className="text-xs text-slate-400 font-medium italic mb-5">({wrongItem.targetInfo.meaning})</p>
+                        {/* --- TRƯỜNG HỢP 2: PENALTY (Phạt viết lại) --- */}
+                        {gameState === 'penalty' && wrongItem && (
+                             <div className="bg-white rounded-[2rem] w-full max-w-[300px] p-6 flex flex-col items-center justify-center shadow-2xl animate-in slide-in-from-right duration-300">
+                                <h3 className="text-sm font-black text-gray-400 uppercase mb-2">Viết lại để ghi nhớ</h3>
+                                <div className="text-7xl font-['Klee_One'] text-gray-800 mb-2">{wrongItem.targetChar}</div>
+                                <p className="text-blue-600 font-black text-lg uppercase tracking-widest mb-1">{wrongItem.targetInfo.sound}</p>
+                                <p className="text-xs text-gray-400 font-medium italic mb-6">({wrongItem.targetInfo.meaning})</p>
 
-                            <input type="text" autoFocus value={penaltyInput} onChange={(e) => setPenaltyInput(e.target.value)} onKeyDown={(e) => e.key === 'Enter' && checkPenalty()} placeholder="Nhập âm Hán Việt..." className={`w-full p-3 text-center text-base font-bold border-2 rounded-xl outline-none transition-all shadow-inner ${penaltyFeedback === 'incorrect' ? 'border-red-500 bg-red-50' : penaltyFeedback === 'correct' ? 'border-green-500 bg-green-50' : 'border-slate-200 focus:border-blue-500 focus:ring-4 focus:ring-blue-50'}`} />
-                            <button onClick={checkPenalty} className="w-full mt-3 py-3 bg-blue-600 text-white font-bold rounded-xl active:scale-95 shadow-md shadow-blue-200 transition-all uppercase tracking-widest text-[10px] outline-none md:hover:bg-blue-700">KIỂM TRA</button>
-                        </div>
-                    )}
-
-                    {/* 3. MATCHING */}
-                    {gameState === 'match' && (
-                        <div className="w-full h-full flex flex-col items-center justify-center pb-2">
-                            <div className="grid grid-cols-3 gap-1.5 w-full">
-                                {matchCards.map((card) => {
-                                    const isMatched = matchedIds.includes(card.id);
-                                    const isSelected = selectedCardId === card.id;
-                                    const isWrong = wrongPairIds.includes(card.id);
-
-                                    return (
-                                        <button 
-                                            key={card.id} 
-                                            onClick={() => handleCardClick(card)} 
-                                            disabled={isMatched} 
-                                            className={`h-16 rounded-xl border font-bold flex items-center justify-center transition-all duration-200 p-1 shadow-sm outline-none
-                                                ${isMatched ? 'opacity-0 scale-50 pointer-events-none' : 
-                                                  isWrong ? 'bg-red-500 border-red-500 text-white animate-shake' : 
-                                                  isSelected ? 'bg-blue-600 border-blue-600 text-white scale-105 shadow-md' : 
-                                                  'bg-white border-slate-200 text-slate-700 active:scale-95 md:hover:border-blue-300'} 
-                                                
-                                                ${card.type === 'kanji' 
-                                                    ? "font-['Klee_One'] text-2xl"  
-                                                    : "uppercase text-[10px] leading-tight break-words"
-                                                }`}
-                                        >
-                                            {card.content}
-                                        </button>
-                                    );
-                                })}
-                            </div>
-                        </div>
-                    )}
-
-                    {/* 4. FINISHED */}
-                    {gameState === 'finished' && (
-                        <div className="w-full h-full flex flex-col items-center justify-center animate-in zoom-in duration-300 pb-4">
-                            <div className="text-5xl mb-3 animate-bounce">🎉</div>
-                            <h2 className="text-2xl font-black text-slate-800 uppercase tracking-tight mb-1">
-                                XUẤT SẮC!
-                            </h2>
-                            <p className="text-slate-500 font-medium text-xs mb-6">
-                                Bạn đã hoàn thành phiên học.
-                            </p>
-                            
-                            <div className="flex flex-col items-center gap-2.5 w-full px-2">
-                                <button onClick={onSwitchToFlashcard} className="w-full py-3 bg-blue-600 text-white font-black rounded-xl shadow-md shadow-blue-200 active:scale-95 transition-all flex items-center justify-center gap-2 uppercase tracking-wide text-xs outline-none md:hover:bg-blue-700">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
-                                    FLASHCARD
-                                </button>
-                                <button onClick={handleRestart} className="w-full py-2.5 bg-slate-100 text-slate-600 font-bold rounded-xl active:scale-95 transition-all uppercase tracking-wide text-[10px] outline-none md:hover:bg-slate-200">
-                                    Học lại từ đầu
-                                </button>
-                                <button onClick={onClose} className="w-full py-1.5 text-slate-400 font-bold text-[10px] uppercase tracking-widest transition-colors outline-none md:hover:text-red-500">
-                                    Thoát
+                                <input 
+                                    type="text" 
+                                    autoFocus 
+                                    value={penaltyInput} 
+                                    onChange={(e) => setPenaltyInput(e.target.value)} 
+                                    onKeyDown={(e) => e.key === 'Enter' && checkPenalty()} 
+                                    placeholder="Nhập âm Hán Việt..." 
+                                    className={`w-full p-3 text-center text-base font-bold border-2 rounded-xl outline-none transition-all ${penaltyFeedback === 'incorrect' ? 'border-red-500 bg-red-50' : penaltyFeedback === 'correct' ? 'border-green-500 bg-green-50' : 'border-gray-200 focus:border-blue-500'}`} 
+                                />
+                                <button onClick={checkPenalty} className="w-full mt-3 py-3 bg-gray-900 text-white font-bold rounded-xl active:scale-95 transition-all uppercase text-[10px] tracking-widest">
+                                    KIỂM TRA
                                 </button>
                             </div>
-                        </div>
-                    )}
+                        )}
+
+                        {/* --- TRƯỜNG HỢP 3: MATCHING (Ghép thẻ) --- */}
+                        {gameState === 'match' && (
+                            <div className="w-full flex flex-col items-center justify-center">
+                                {/* Khung bao quanh mỏng, không nền trắng */}
+                                <div className="border-2 border-dashed border-white/20 rounded-2xl p-4 w-full">
+                                    <div className="grid grid-cols-3 gap-2 w-full">
+                                        {matchCards.map((card) => {
+                                            const isMatched = matchedIds.includes(card.id);
+                                            const isSelected = selectedCardId === card.id;
+                                            const isWrong = wrongPairIds.includes(card.id);
+
+                                            return (
+                                                <button 
+                                                    key={card.id} 
+                                                    onClick={() => handleCardClick(card)} 
+                                                    disabled={isMatched} 
+                                                    className={`h-20 rounded-xl font-bold flex items-center justify-center transition-all duration-200 p-1 shadow-lg
+                                                        ${isMatched ? 'opacity-0 scale-50 pointer-events-none' : 
+                                                          isWrong ? 'bg-red-500 text-white animate-shake' : 
+                                                          isSelected ? 'bg-blue-500 text-white scale-105 ring-2 ring-white/50' : 
+                                                          'bg-white text-gray-800 hover:bg-gray-50 active:scale-95'} 
+                                                        
+                                                        ${card.type === 'kanji' 
+                                                            ? "font-['Klee_One'] text-3xl"  
+                                                            : "uppercase text-[10px] leading-tight break-words"
+                                                        }`}
+                                                >
+                                                    {card.content}
+                                                </button>
+                                            );
+                                        })}
+                                    </div>
+                                </div>
+                                <p className="mt-4 text-white/50 text-[10px] font-bold uppercase tracking-widest animate-pulse">Chọn cặp tương ứng</p>
+                            </div>
+                        )}
+
+                    </div>
                 </div>
-            </div>
+            )}
         </div>
     );
 };
