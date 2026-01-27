@@ -1274,7 +1274,7 @@ const LearnGameModal = ({ isOpen, onClose, text, dbData, onSwitchToFlashcard }) 
         return newArr;
     };
 
-    // 1. KHỞI TẠO DỮ LIỆU
+    // 1. KHỞI TẠO DỮ LIỆU (CẬP NHẬT LOGIC DẠNG 2)
     useEffect(() => {
         if (isOpen && text && dbData) {
             let validChars = Array.from(new Set(text.split('').filter(c => dbData.KANJI_DB && dbData.KANJI_DB[c])));
@@ -1290,9 +1290,15 @@ const LearnGameModal = ({ isOpen, onClose, text, dbData, onSwitchToFlashcard }) 
 
             for (let i = 0; i < validChars.length; i += CHUNK_SIZE) {
                 const chunk = validChars.slice(i, i + CHUNK_SIZE);
+                
+                // Dạng 1: Nhìn Kanji đoán Âm/Nghĩa
                 chunk.forEach(char => newQueue.push({ type: 'quiz_sound', char }));
+                
+                // Game ghép thẻ
                 if (chunk.length >= 2) newQueue.push({ type: 'match', chars: chunk });
-                chunk.forEach(char => newQueue.push({ type: 'quiz_meaning', char }));
+                
+                // Dạng 2 (MỚI): Nhìn Âm/Nghĩa đoán Kanji
+                chunk.forEach(char => newQueue.push({ type: 'quiz_reverse', char })); 
             }
 
             setQueue(newQueue); 
@@ -1304,7 +1310,7 @@ const LearnGameModal = ({ isOpen, onClose, text, dbData, onSwitchToFlashcard }) 
         }
     }, [isOpen, text, dbData]);
 
-    // Hàm Restart
+    // Hàm Restart (Cũng cập nhật logic tương tự)
     const handleRestart = () => {
         setQueue([]);
         setFinishedCount(0); 
@@ -1319,7 +1325,7 @@ const LearnGameModal = ({ isOpen, onClose, text, dbData, onSwitchToFlashcard }) 
                 const chunk = validChars.slice(i, i + CHUNK_SIZE);
                 chunk.forEach(char => newQueue.push({ type: 'quiz_sound', char }));
                 if (chunk.length >= 2) newQueue.push({ type: 'match', chars: chunk });
-                chunk.forEach(char => newQueue.push({ type: 'quiz_meaning', char }));
+                chunk.forEach(char => newQueue.push({ type: 'quiz_reverse', char })); // Dạng 2 mới
             }
             setQueue(newQueue); 
             setCurrentIndex(0); 
@@ -1330,44 +1336,72 @@ const LearnGameModal = ({ isOpen, onClose, text, dbData, onSwitchToFlashcard }) 
         }, 100);
     };
 
-    // 2. SINH DỮ LIỆU QUIZ
+    // 2. SINH DỮ LIỆU QUIZ (XỬ LÝ 2 DẠNG BÀI)
     const currentQuizData = useMemo(() => {
         const currentItem = queue[currentIndex];
-        if (!currentItem || (currentItem.type !== 'quiz_sound' && currentItem.type !== 'quiz_meaning')) return null;
+        // Chấp nhận cả quiz_reverse
+        if (!currentItem || !['quiz_sound', 'quiz_reverse'].includes(currentItem.type)) return null;
         
         const targetChar = currentItem.char;
         const targetInfo = dbData.KANJI_DB[targetChar];
         const allKanji = Object.keys(dbData.KANJI_DB);
         
+        // Tạo danh sách đáp án nhiễu
         const distractors = [];
         while (distractors.length < 3) {
             const r = allKanji[Math.floor(Math.random() * allKanji.length)];
             if (r !== targetChar && !distractors.includes(r)) distractors.push(r);
         }
 
-        const getLabel = (info) => {
-            if (currentItem.type === 'quiz_sound') {
-                return info.sound;
-            } else {
-                const shortMeaning = info.meaning ? info.meaning.split(',')[0] : '';
-                return `${info.sound} (${shortMeaning})`;
-            }
-        };
+        let questionDisplay = {}; // Nội dung hiển thị trên thẻ câu hỏi
+        let options = [];         // Danh sách nút đáp án
 
-        const options = [
-            { label: getLabel(targetInfo), correct: true },
-            ...distractors.map(d => ({ label: getLabel(dbData.KANJI_DB[d]), correct: false }))
-        ];
+        // --- DẠNG 2: NHÌN ÂM ĐOÁN KANJI (REVERSE) ---
+        if (currentItem.type === 'quiz_reverse') {
+            // Câu hỏi: Âm Hán Việt + Nghĩa
+            questionDisplay = {
+                main: targetInfo.sound,
+                sub: targetInfo.meaning,
+                isKanji: false // Để chỉnh font chữ
+            };
 
+            // Đáp án: Các chữ Kanji
+            options = [
+                { label: targetChar, correct: true, isKanji: true },
+                ...distractors.map(d => ({ label: d, correct: false, isKanji: true }))
+            ];
+        } 
+        // --- DẠNG 1: NHÌN KANJI ĐOÁN ÂM (SOUND) ---
+        else {
+            // Câu hỏi: Chữ Kanji
+            questionDisplay = {
+                main: targetChar,
+                sub: targetInfo.meaning, // Gợi ý nhỏ (nếu cần)
+                isKanji: true
+            };
+
+            // Đáp án: Âm Hán Việt (+ Nghĩa rút gọn)
+            const getLabel = (info) => {
+                 const shortMeaning = info.meaning ? info.meaning.split(',')[0] : '';
+                 return `${info.sound} (${shortMeaning})`;
+            };
+
+            options = [
+                { label: getLabel(targetInfo), correct: true, isKanji: false },
+                ...distractors.map(d => ({ label: getLabel(dbData.KANJI_DB[d]), correct: false, isKanji: false }))
+            ];
+        }
+
+        // Trộn đáp án
         for (let i = options.length - 1; i > 0; i--) { 
             const j = Math.floor(Math.random() * (i + 1)); 
             [options[i], options[j]] = [options[j], options[i]]; 
         }
 
-        return { targetChar, targetInfo, options, quizType: currentItem.type };
+        return { targetChar, targetInfo, options, questionDisplay, quizType: currentItem.type };
     }, [queue, currentIndex, dbData]);
 
-    // 3. SINH DỮ LIỆU MATCH
+    // 3. SINH DỮ LIỆU MATCH (GIỮ NGUYÊN)
     useEffect(() => {
         if (queue[currentIndex]?.type === 'match') {
             const chars = queue[currentIndex].chars;
@@ -1383,13 +1417,15 @@ const LearnGameModal = ({ isOpen, onClose, text, dbData, onSwitchToFlashcard }) 
 
     const handleAnswer = (isCorrect, itemData) => {
         if (isCorrect) {
-            if (itemData.quizType === 'quiz_meaning') {
+            // Nếu làm đúng dạng đảo ngược (khó hơn) thì tính là hoàn thành
+            if (itemData.quizType === 'quiz_reverse') {
                 setFinishedCount(prev => prev + 1);
             }
             goNext();
         } else {
             setWrongItem(itemData); 
             setGameState('penalty');
+            // Phạt: Chèn lại câu hỏi này vào sau vài lượt nữa
             const currentQ = queue[currentIndex];
             const nextQ = [...queue];
             const insertIndex = Math.min(currentIndex + 5, nextQ.length);
@@ -1449,7 +1485,6 @@ const LearnGameModal = ({ isOpen, onClose, text, dbData, onSwitchToFlashcard }) 
         }
     };
 
-    // Kích hoạt pháo hoa khi hoàn thành
     const triggerConfetti = React.useCallback(() => { if (typeof confetti === 'undefined') return; const count = 200; const defaults = { origin: { y: 0.6 }, zIndex: 1500 }; function fire(particleRatio, opts) { confetti({ ...defaults, ...opts, particleCount: Math.floor(count * particleRatio) }); } fire(0.25, { spread: 26, startVelocity: 55 }); fire(0.2, { spread: 60 }); fire(0.35, { spread: 100, decay: 0.91, scalar: 0.8 }); fire(0.1, { spread: 120, startVelocity: 25, decay: 0.92, scalar: 1.2 }); fire(0.1, { spread: 120, startVelocity: 45 }); }, []);
     useEffect(() => { if (gameState === 'finished' && isOpen) { triggerConfetti(); } }, [gameState, isOpen, triggerConfetti]);
 
@@ -1461,7 +1496,7 @@ const LearnGameModal = ({ isOpen, onClose, text, dbData, onSwitchToFlashcard }) 
     return (
         <div className="fixed inset-0 z-[500] flex flex-col items-center justify-center bg-gray-900/95 backdrop-blur-xl p-4 animate-in fade-in select-none">
             
-            {/* --- KẾT THÚC (FINISHED SCREEN) - Style giống hệt Flashcard --- */}
+            {/* --- KẾT THÚC (FINISHED SCREEN) --- */}
             {gameState === 'finished' ? (
                 <div className="bg-white rounded-[2rem] p-8 w-full max-w-[280px] text-center shadow-2xl border-4 border-indigo-50 animate-in zoom-in-95">
                     <div className="text-5xl mb-4 animate-bounce cursor-pointer hover:scale-125 transition-transform" onClick={triggerConfetti}>🎉</div>
@@ -1483,7 +1518,7 @@ const LearnGameModal = ({ isOpen, onClose, text, dbData, onSwitchToFlashcard }) 
                 /* --- GIAO DIỆN CHƠI GAME --- */
                 <div className="w-full max-w-sm flex flex-col items-center h-full max-h-[80vh]">
                     
-                    {/* 1. THANH TIẾN ĐỘ & NÚT ĐÓNG (Header) */}
+                    {/* 1. THANH TIẾN ĐỘ & NÚT ĐÓNG */}
                     <div className="w-full flex items-center gap-3 mb-6 px-2">
                         <div className="flex-1 h-1.5 bg-white/10 rounded-full overflow-hidden">
                             <div className="h-full bg-blue-500 transition-all duration-500 ease-out" style={{ width: `${visualPercent}%` }}></div>
@@ -1499,18 +1534,21 @@ const LearnGameModal = ({ isOpen, onClose, text, dbData, onSwitchToFlashcard }) 
                     {/* 2. NỘI DUNG CHÍNH (Quiz / Match / Penalty) */}
                     <div className="flex-1 w-full flex flex-col items-center justify-center relative">
 
-                        {/* --- TRƯỜNG HỢP 1: QUIZ (Hỏi đáp) --- */}
-                        {(gameState === 'quiz_sound' || gameState === 'quiz_meaning') && currentQuizData && (
+                        {/* --- TRƯỜNG HỢP: QUIZ (Cả 2 dạng) --- */}
+                        {(gameState === 'quiz_sound' || gameState === 'quiz_reverse') && currentQuizData && (
                             <>
-                                {/* HÌNH ẢNH KANJI (Nền trắng - Giống thẻ Flashcard) */}
+                                {/* HÌNH ẢNH CÂU HỎI (Nền trắng) */}
                                 <div className="bg-white rounded-[2rem] w-64 h-64 flex flex-col items-center justify-center shadow-2xl mb-8 relative animate-in zoom-in-95 duration-300">
-                                     <div className="text-8xl font-['Klee_One'] text-gray-800 leading-none mb-2">
-                                        {currentQuizData.targetChar}
+                                     
+                                     {/* Text Chính */}
+                                     <div className={`text-center leading-none mb-2 text-gray-800 ${currentQuizData.questionDisplay.isKanji ? "text-8xl font-['Klee_One']" : "text-6xl font-black uppercase tracking-wider"}`}>
+                                        {currentQuizData.questionDisplay.main}
                                     </div>
-                                    {/* Nếu hỏi âm đọc thì hiện nghĩa gợi ý nhỏ */}
-                                    {gameState === 'quiz_sound' && (
-                                        <div className="absolute bottom-6 px-4 py-1 bg-gray-50 text-gray-400 text-[10px] font-bold uppercase rounded-full border border-gray-100">
-                                            {currentQuizData.targetInfo.meaning}
+
+                                    {/* Text Phụ (Nghĩa) */}
+                                    {currentQuizData.questionDisplay.sub && (
+                                        <div className="absolute bottom-6 px-4 py-1 bg-gray-50 text-gray-400 text-[10px] font-bold uppercase rounded-full border border-gray-100 max-w-[80%] truncate">
+                                            {currentQuizData.questionDisplay.sub}
                                         </div>
                                     )}
                                 </div>
@@ -1521,7 +1559,8 @@ const LearnGameModal = ({ isOpen, onClose, text, dbData, onSwitchToFlashcard }) 
                                         <button 
                                             key={i} 
                                             onClick={() => handleAnswer(opt.correct, currentQuizData)} 
-                                            className="h-14 w-full px-2 bg-white/10 hover:bg-white/20 active:bg-white/30 text-white border border-white/10 rounded-xl font-bold text-xs flex items-center justify-center text-center shadow-lg backdrop-blur-sm transition-all active:scale-95"
+                                            className={`h-14 w-full px-2 bg-white/10 hover:bg-white/20 active:bg-white/30 text-white border border-white/10 rounded-xl font-bold flex items-center justify-center text-center shadow-lg backdrop-blur-sm transition-all active:scale-95
+                                                ${opt.isKanji ? "text-3xl font-['Klee_One']" : "text-xs font-sans"}`}
                                         >
                                             {opt.label}
                                         </button>
@@ -1530,7 +1569,7 @@ const LearnGameModal = ({ isOpen, onClose, text, dbData, onSwitchToFlashcard }) 
                             </>
                         )}
 
-                        {/* --- TRƯỜNG HỢP 2: PENALTY (Phạt viết lại) --- */}
+                        {/* --- TRƯỜNG HỢP: PENALTY (Phạt viết lại) --- */}
                         {gameState === 'penalty' && wrongItem && (
                              <div className="bg-white rounded-[2rem] w-full max-w-[300px] p-6 flex flex-col items-center justify-center shadow-2xl animate-in slide-in-from-right duration-300">
                                 <h3 className="text-sm font-black text-gray-400 uppercase mb-2">Viết lại để ghi nhớ</h3>
@@ -1553,10 +1592,10 @@ const LearnGameModal = ({ isOpen, onClose, text, dbData, onSwitchToFlashcard }) 
                             </div>
                         )}
 
-                        {/* --- TRƯỜNG HỢP 3: MATCHING (Ghép thẻ) --- */}
+                        {/* --- TRƯỜNG HỢP: MATCHING (Ghép thẻ) --- */}
                         {gameState === 'match' && (
                             <div className="w-full flex flex-col items-center justify-center">
-                                {/* Khung bao quanh mỏng, không nền trắng */}
+                                {/* Khung bao quanh mỏng (Dashed) */}
                                 <div className="border-2 border-dashed border-white/20 rounded-2xl p-4 w-full">
                                     <div className="grid grid-cols-3 gap-2 w-full">
                                         {matchCards.map((card) => {
