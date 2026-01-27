@@ -1573,32 +1573,45 @@ const LearnGameModal = ({ isOpen, onClose, text, dbData, onSwitchToFlashcard }) 
         setSelectedIdx(null);
         setIsChecking(false);
 
-        // 2. Thực hiện lại logic khởi tạo dữ liệu (giống useEffect)
-        let validChars = Array.from(new Set(text.split('').filter(c => getCharInfo(c))));
-        validChars = shuffleArray(validChars);
+const handleRestart = () => {
+    // 1. Reset các trạng thái phụ về giá trị ban đầu ngay lập tức
+    setFinishedCount(0);
+    setWrongItem(null);
+    setPenaltyInput('');
+    setMatchedIds([]);
+    setWrongPairIds([]);
+    setSelectedIdx(null);
+    setIsChecking(false);
 
-        if (validChars.length === 0) { onClose(); return; }
+    // 2. Tính toán lại dữ liệu hàng chờ (Queue) mới ngay tại đây
+    let validChars = Array.from(new Set(text.split('').filter(c => getCharInfo(c))));
+    validChars = shuffleArray(validChars);
 
-        setTotalKanji(validChars.length);
-        
-        let newQueue = [];
-        const CHUNK_SIZE = 6; 
+    if (validChars.length === 0) { 
+        onClose(); 
+        return; 
+    }
 
-        for (let i = 0; i < validChars.length; i += CHUNK_SIZE) {
-            const chunk = validChars.slice(i, i + CHUNK_SIZE);
-            chunk.forEach(char => newQueue.push({ type: 'quiz_sound', char }));
-            if (chunk.length >= 2) newQueue.push({ type: 'match', chars: chunk });
-            chunk.forEach(char => newQueue.push({ type: 'quiz_reverse', char })); 
-        }
+    setTotalKanji(validChars.length);
+    
+    let newQueue = [];
+    const CHUNK_SIZE = 6; 
 
-        setQueue(newQueue); 
-        setCurrentIndex(0); 
-        
-        // 3. Chuyển trạng thái sang game
-        setTimeout(() => {
-            if (newQueue.length > 0) setGameState(newQueue[0].type);
-        }, 50);
-    };
+    for (let i = 0; i < validChars.length; i += CHUNK_SIZE) {
+        const chunk = validChars.slice(i, i + CHUNK_SIZE);
+        chunk.forEach(char => newQueue.push({ type: 'quiz_sound', char }));
+        if (chunk.length >= 2) newQueue.push({ type: 'match', chars: chunk });
+        chunk.forEach(char => newQueue.push({ type: 'quiz_reverse', char }));
+    }
+
+    // 3. CẬP NHẬT TẤT CẢ TRONG MỘT LƯỢT RENDER
+    // Không set 'loading' nữa, mà chuyển thẳng sang kiểu game đầu tiên
+    setQueue(newQueue);
+    setCurrentIndex(0);
+    setGameState(newQueue[0].type); // Chuyển trực tiếp sang Quiz hoặc Match
+
+    // Loại bỏ hoàn toàn setTimeout 50ms
+};
 // --- PHẦN RENDER GIAO DIỆN (GIỮ NGUYÊN UI, CHỈ FIX LỖI LOGIC) ---
     if (!isOpen) return null;
     if (gameState === 'loading') return null;
