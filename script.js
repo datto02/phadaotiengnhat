@@ -1483,8 +1483,6 @@ const LearnGameModal = ({ isOpen, onClose, text, dbData, onSwitchToFlashcard }) 
                     {(gameState === 'quiz_sound' || gameState === 'quiz_meaning') && currentQuizData && (
                         <div className="w-full h-full flex flex-col justify-between">
                             
-                            {/* KANJI & MEANING AREA */}
-                            {/* flex-grow: Chiếm toàn bộ khoảng trống còn lại */}
                             {/* pb-4: Tạo khoảng cách an toàn với khu vực nút bấm phía dưới */}
                             <div className="flex-grow flex flex-col items-center justify-center w-full pb-4 relative">
                                 <div className="text-[100px] leading-none font-['Klee_One'] text-slate-800 drop-shadow-sm transition-all text-center">
@@ -1499,10 +1497,7 @@ const LearnGameModal = ({ isOpen, onClose, text, dbData, onSwitchToFlashcard }) 
                             </div>
                             
                             {/* BUTTONS AREA */}
-                            {/* flex-none: Không co giãn */}
-                            {/* mt-auto: Đẩy xuống đáy container */}
-                            {/* pb-1: Sát lề dưới */}
-                            <div className="flex-none w-full mt-auto pb-1"> 
+                            <div className="flex-none w-full mt-auto -pb-1"> 
                                 <div className="grid grid-cols-2 gap-2 w-full">
                                     {currentQuizData.options.map((opt, i) => (
                                         <button 
