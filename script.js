@@ -1667,8 +1667,9 @@ const visualPercent = queue.length > 0 ? (currentIndex / queue.length) * 100 : 0
                                     {currentQuizData.options.map((opt, i) => (
                                         <button 
                                             key={i} 
+                                            e.currentTarget.blur();
                                             onClick={() => handleAnswer(opt.correct, currentQuizData)} 
-                                            className={`h-14 w-full px-2 bg-white/10 hover:bg-white/20 active:bg-white/30 text-white border border-white/10 rounded-xl font-bold flex items-center justify-center text-center shadow-lg backdrop-blur-sm transition-all active:scale-95
+                                            className={`h-14 w-full px-2 bg-white/10 md:hover:bg-white/20 active:bg-white/30 text-white border border-white/10 rounded-xl font-bold flex items-center justify-center text-center shadow-lg backdrop-blur-sm transition-all active:scale-95
                                                 ${opt.isKanji 
                                                     ? "text-3xl font-['Klee_One']" 
                                                     : getDynamicFontSize(opt.label, 'button') + " font-sans uppercase break-words leading-tight" 
