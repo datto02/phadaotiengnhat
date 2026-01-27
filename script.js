@@ -1477,7 +1477,7 @@ const LearnGameModal = ({ isOpen, onClose, text, dbData, onSwitchToFlashcard }) 
 
                 {/* --- CONTENT CONTAINER --- */}
                 {/* Sử dụng flex-col và h-full để quản lý layout dọc */}
-                <div className="flex-1 flex flex-col px-3 pb-0 bg-white h-full">
+                <div className="flex-1 flex flex-col pb-0 bg-white h-full">
     
                     {/* 1. QUIZ (BOTH TYPES) */}
                     {(gameState === 'quiz_sound' || gameState === 'quiz_meaning') && currentQuizData && (
@@ -1497,7 +1497,7 @@ const LearnGameModal = ({ isOpen, onClose, text, dbData, onSwitchToFlashcard }) 
                             </div>
                             
                             {/* BUTTONS AREA */}
-                            <div className="flex-none w-full mt-auto -pb-1"> 
+                            <div className="flex-none w-full mt-auto pb-0"> 
                                 <div className="grid grid-cols-2 gap-2 w-full">
                                     {currentQuizData.options.map((opt, i) => (
                                         <button 
