@@ -1540,13 +1540,48 @@ const getCharInfo = (c) => {
 
     const triggerConfetti = React.useCallback(() => { if (typeof confetti === 'undefined') return; const count = 200; const defaults = { origin: { y: 0.6 }, zIndex: 1500 }; function fire(particleRatio, opts) { confetti({ ...defaults, ...opts, particleCount: Math.floor(count * particleRatio) }); } fire(0.25, { spread: 26, startVelocity: 55 }); fire(0.2, { spread: 60 }); fire(0.35, { spread: 100, decay: 0.91, scalar: 0.8 }); fire(0.1, { spread: 120, startVelocity: 25, decay: 0.92, scalar: 1.2 }); fire(0.1, { spread: 120, startVelocity: 45 }); }, []);
     useEffect(() => { if (gameState === 'finished' && isOpen) { triggerConfetti(); } }, [gameState, isOpen, triggerConfetti]);
+// --- FIX LỖI: THÊM HÀM XỬ LÝ HỌC LẠI TỪ ĐẦU ---
+    const handleRestart = () => {
+        // 1. Reset các trạng thái về ban đầu
+        setGameState('loading');
+        setFinishedCount(0);
+        setWrongItem(null);
+        setPenaltyInput('');
+        setMatchedIds([]);
+        setWrongPairIds([]);
 
+        // 2. Thực hiện lại logic khởi tạo dữ liệu (giống useEffect)
+        let validChars = Array.from(new Set(text.split('').filter(c => getCharInfo(c))));
+        validChars = shuffleArray(validChars);
+
+        if (validChars.length === 0) { onClose(); return; }
+
+        setTotalKanji(validChars.length);
+        
+        let newQueue = [];
+        const CHUNK_SIZE = 6; 
+
+        for (let i = 0; i < validChars.length; i += CHUNK_SIZE) {
+            const chunk = validChars.slice(i, i + CHUNK_SIZE);
+            chunk.forEach(char => newQueue.push({ type: 'quiz_sound', char }));
+            if (chunk.length >= 2) newQueue.push({ type: 'match', chars: chunk });
+            chunk.forEach(char => newQueue.push({ type: 'quiz_reverse', char })); 
+        }
+
+        setQueue(newQueue); 
+        setCurrentIndex(0); 
+        
+        // 3. Chuyển trạng thái sang game
+        setTimeout(() => {
+            if (newQueue.length > 0) setGameState(newQueue[0].type);
+        }, 50);
+    };
 // --- PHẦN RENDER GIAO DIỆN (GIỮ NGUYÊN UI, CHỈ FIX LỖI LOGIC) ---
     if (!isOpen) return null;
     if (gameState === 'loading') return null;
 
     // Tính phần trăm tiến độ
-    const visualPercent = queue.length > 0 ? ((currentIndex + 1) / queue.length) * 100 : 0;
+const visualPercent = queue.length > 0 ? (currentIndex / queue.length) * 100 : 0;
 
     return (
         <div className="fixed inset-0 z-[500] flex flex-col items-center justify-center bg-gray-900/95 backdrop-blur-xl p-4 animate-in fade-in select-none">
