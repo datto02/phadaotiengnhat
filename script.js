@@ -1541,16 +1541,17 @@ const getCharInfo = (c) => {
     const triggerConfetti = React.useCallback(() => { if (typeof confetti === 'undefined') return; const count = 200; const defaults = { origin: { y: 0.6 }, zIndex: 1500 }; function fire(particleRatio, opts) { confetti({ ...defaults, ...opts, particleCount: Math.floor(count * particleRatio) }); } fire(0.25, { spread: 26, startVelocity: 55 }); fire(0.2, { spread: 60 }); fire(0.35, { spread: 100, decay: 0.91, scalar: 0.8 }); fire(0.1, { spread: 120, startVelocity: 25, decay: 0.92, scalar: 1.2 }); fire(0.1, { spread: 120, startVelocity: 45 }); }, []);
     useEffect(() => { if (gameState === 'finished' && isOpen) { triggerConfetti(); } }, [gameState, isOpen, triggerConfetti]);
 
-
+// --- PHẦN RENDER GIAO DIỆN (GIỮ NGUYÊN UI, CHỈ FIX LỖI LOGIC) ---
     if (!isOpen) return null;
     if (gameState === 'loading') return null;
 
+    // Tính phần trăm tiến độ
     const visualPercent = queue.length > 0 ? ((currentIndex + 1) / queue.length) * 100 : 0;
 
     return (
         <div className="fixed inset-0 z-[500] flex flex-col items-center justify-center bg-gray-900/95 backdrop-blur-xl p-4 animate-in fade-in select-none">
             
-            {/* --- KẾT THÚC (FINISHED SCREEN) --- */}
+            {/* --- TRƯỜNG HỢP 1: KẾT THÚC (FINISHED SCREEN) --- */}
             {gameState === 'finished' ? (
                 <div className="bg-white rounded-[2rem] p-8 w-full max-w-[280px] text-center shadow-2xl border-4 border-indigo-50 animate-in zoom-in-95">
                     <div className="text-5xl mb-4 animate-bounce cursor-pointer hover:scale-125 transition-transform" onClick={triggerConfetti}>🎉</div>
@@ -1569,10 +1570,10 @@ const getCharInfo = (c) => {
                     </div>
                 </div>
             ) : (
-                /* --- GIAO DIỆN CHƠI GAME --- */
+                /* --- TRƯỜNG HỢP 2: ĐANG CHƠI GAME --- */
                 <div className="w-full max-w-sm flex flex-col items-center h-full max-h-[80vh]">
                     
-                    {/* 1. THANH TIẾN ĐỘ & NÚT ĐÓNG */}
+                    {/* THANH TIẾN ĐỘ */}
                     <div className="w-full flex items-center gap-3 mb-6 px-2">
                         <div className="flex-1 h-1.5 bg-white/10 rounded-full overflow-hidden">
                             <div className="h-full bg-blue-500 transition-all duration-500 ease-out" style={{ width: `${visualPercent}%` }}></div>
@@ -1585,25 +1586,25 @@ const getCharInfo = (c) => {
                         </button>
                     </div>
 
-                    {/* 2. NỘI DUNG CHÍNH (Quiz / Match / Penalty) */}
+                    {/* NỘI DUNG CHÍNH */}
                     <div className="flex-1 w-full flex flex-col items-center justify-center relative">
 
-                        {/* --- TRƯỜNG HỢP: QUIZ (Cả 2 dạng) --- */}
+                        {/* --- DẠNG BÀI: QUIZ (Trắc nghiệm) --- */}
                         {(gameState === 'quiz_sound' || gameState === 'quiz_reverse') && currentQuizData && (
                             <>
-                                {/* HÌNH ẢNH CÂU HỎI (Nền trắng) */}
+                                {/* HÌNH ẢNH CÂU HỎI */}
                                 <div className="bg-white rounded-[2rem] w-64 h-64 flex flex-col items-center justify-center shadow-2xl mb-8 relative animate-in zoom-in-95 duration-300">
                                      
-                                     {/* Text Chính (Tự động co dãn) */}
+                                     {/* Text Chính */}
                                      <div className={`text-center leading-none mb-2 text-gray-800 
                                         ${currentQuizData.questionDisplay.isKanji 
-                                            ? "text-8xl font-['Klee_One'] -translate-y-4" // Kanji: Dịch lên 1 chút
-                                            : getDynamicFontSize(currentQuizData.questionDisplay.main, 'title') + " font-black uppercase tracking-wider px-2 break-words" // Âm Hán Việt: Co dãn
+                                            ? "text-8xl font-['Klee_One'] -translate-y-4" 
+                                            : getDynamicFontSize(currentQuizData.questionDisplay.main, 'title') + " font-black uppercase tracking-wider px-2 break-words"
                                         }`}>
                                         {currentQuizData.questionDisplay.main}
-                                    </div>
+                                     </div>
 
-                                    {/* Text Phụ (Nghĩa) */}
+                                    {/* Text Phụ (Nghĩa) - FIX LỖI: Chỉ hiện nếu có nghĩa (tránh crash với Hiragana) */}
                                     {currentQuizData.questionDisplay.sub && (
                                         <div className="absolute bottom-6 px-4 py-1 bg-gray-50 text-gray-400 text-[10px] font-bold uppercase rounded-full border border-gray-100 max-w-[90%] truncate">
                                             {currentQuizData.questionDisplay.sub}
@@ -1611,7 +1612,7 @@ const getCharInfo = (c) => {
                                     )}
                                 </div>
 
-                                {/* 4 NÚT ĐÁP ÁN (Nằm dưới - Tự động co dãn) */}
+                                {/* 4 NÚT ĐÁP ÁN */}
                                 <div className="grid grid-cols-2 gap-3 w-full">
                                     {currentQuizData.options.map((opt, i) => (
                                         <button 
@@ -1630,13 +1631,23 @@ const getCharInfo = (c) => {
                             </>
                         )}
 
-                        {/* --- TRƯỜNG HỢP: PENALTY (Phạt viết lại) --- */}
+                        {/* --- DẠNG BÀI: PENALTY (Phạt viết lại) --- */}
                         {gameState === 'penalty' && wrongItem && (
                              <div className="bg-white rounded-[2rem] w-full max-w-[300px] p-6 flex flex-col items-center justify-center shadow-2xl animate-in slide-in-from-right duration-300">
                                 <h3 className="text-sm font-black text-gray-400 uppercase mb-2">Viết lại để ghi nhớ</h3>
+                                
+                                {/* Chữ to chính giữa */}
                                 <div className="text-7xl font-['Klee_One'] text-gray-800 mb-2">{wrongItem.targetChar}</div>
+                                
+                                {/* Âm đọc (Màu xanh) */}
                                 <p className="text-blue-600 font-black text-lg uppercase tracking-widest mb-1">{wrongItem.targetInfo.sound}</p>
-                                <p className="text-xs text-gray-400 font-medium italic mb-6">({wrongItem.targetInfo.meaning})</p>
+                                
+                                {/* FIX LỖI: Chỉ hiện nghĩa nếu là KANJI (Hiragana/Katakana sẽ ẩn dòng này đi để tránh lỗi) */}
+                                {wrongItem.targetInfo.type === 'kanji' && (
+                                    <p className="text-xs text-gray-400 font-medium italic mb-6">({wrongItem.targetInfo.meaning})</p>
+                                )}
+                                {/* Nếu không phải Kanji thì chỉ cần khoảng trống nhỏ cho đẹp */}
+                                {wrongItem.targetInfo.type !== 'kanji' && <div className="mb-6"></div>}
 
                                 <input 
                                     type="text" 
@@ -1644,7 +1655,7 @@ const getCharInfo = (c) => {
                                     value={penaltyInput} 
                                     onChange={(e) => setPenaltyInput(e.target.value)} 
                                     onKeyDown={(e) => e.key === 'Enter' && checkPenalty()} 
-                                    placeholder="Nhập âm Hán Việt..." 
+                                    placeholder="Nhập cách đọc..." 
                                     className={`w-full p-3 text-center text-base font-bold border-2 rounded-xl outline-none transition-all ${penaltyFeedback === 'incorrect' ? 'border-red-500 bg-red-50' : penaltyFeedback === 'correct' ? 'border-green-500 bg-green-50' : 'border-gray-200 focus:border-blue-500'}`} 
                                 />
                                 <button onClick={checkPenalty} className="w-full mt-3 py-3 bg-gray-900 text-white font-bold rounded-xl active:scale-95 transition-all uppercase text-[10px] tracking-widest">
@@ -1653,10 +1664,9 @@ const getCharInfo = (c) => {
                             </div>
                         )}
 
-                        {/* --- TRƯỜNG HỢP: MATCHING (Ghép thẻ - Co dãn chữ) --- */}
+                        {/* --- DẠNG BÀI: MATCHING (Ghép thẻ) --- */}
                         {gameState === 'match' && (
                             <div className="w-full flex flex-col items-center justify-center">
-                                {/* Khung bao quanh mỏng (Dashed) */}
                                 <div className="border-2 border-dashed border-white/20 rounded-2xl p-4 w-full">
                                     <div className="grid grid-cols-3 gap-2 w-full">
                                         {matchCards.map((card) => {
