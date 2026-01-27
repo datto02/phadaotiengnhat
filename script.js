@@ -1381,26 +1381,54 @@ const currentQuizData = useMemo(() => {
     // 1. Lấy danh sách toàn bộ chữ người dùng đã nhập vào (đã lọc trùng và hợp lệ)
     const userChars = Array.from(new Set(text.split('').filter(c => getCharInfo(c))));
 
-    // 2. Xác định "Bể bơi" (Pool) để lấy đáp án nhiễu
+   // 2. Xác định "Bể bơi" (Pool) để lấy đáp án nhiễu
     let distractorPool = [];
 
-    // ƯU TIÊN: Nếu người dùng nhập >= 4 chữ, lấy từ danh sách của người dùng
+    // ƯU TIÊN 1: Nếu người dùng nhập >= 4 chữ, lấy từ danh sách của người dùng
     if (userChars.length >= 4) {
         distractorPool = userChars.filter(c => c !== targetChar);
     } 
-    // Nếu ít hơn 4 chữ, lấy từ DB hệ thống (theo JLPT hoặc ngẫu nhiên)
+    // ƯU TIÊN 2: Nếu ít hơn 4 chữ, lấy từ nguồn dữ liệu CÙNG LOẠI
     else {
-        if (targetInfo.type === 'hiragana') distractorPool = Object.keys(dbData.ALPHABETS.hiragana);
-        else if (targetInfo.type === 'katakana') distractorPool = Object.keys(dbData.ALPHABETS.katakana);
-        else {
-            distractorPool = Object.keys(dbData.KANJI_DB);
+        if (targetInfo.type === 'hiragana') {
+            distractorPool = Object.keys(dbData.ALPHABETS.hiragana);
+        } else if (targetInfo.type === 'katakana') {
+            distractorPool = Object.keys(dbData.ALPHABETS.katakana);
+        } else {
+            // Chế độ Kanji/Bộ thủ: Thử tìm trong JLPT trước
+            let foundInLevel = false;
             if (dbData.KANJI_LEVELS) {
                 for (const [lvl, chars] of Object.entries(dbData.KANJI_LEVELS)) {
                     if (chars.includes(targetChar)) {
                         distractorPool = chars;
+                        foundInLevel = true;
                         break;
                     }
                 }
+            }
+            // Nếu không thấy trong JLPT (là Bộ thủ), lấy pool là toàn bộ Kanji/Bộ thủ
+            if (!foundInLevel) distractorPool = Object.keys(dbData.KANJI_DB);
+        }
+    }
+
+    // 3. Chọn ra 3 đáp án nhiễu (FIX LỖI BACKUP CÙNG LOẠI)
+    const distractors = [];
+    const shuffledPool = shuffleArray(distractorPool.filter(c => c !== targetChar));
+    
+    for (let i = 0; i < 3; i++) {
+        if (shuffledPool[i]) {
+            distractors.push(shuffledPool[i]);
+        } else {
+            // FIX TẠI ĐÂY: Backup phải cùng loại với targetChar để không bị lẫn Hiragana vào Kanji
+            let backupSource = [];
+            if (targetInfo.type === 'hiragana') backupSource = Object.keys(dbData.ALPHABETS.hiragana);
+            else if (targetInfo.type === 'katakana') backupSource = Object.keys(dbData.ALPHABETS.katakana);
+            else backupSource = Object.keys(dbData.KANJI_DB);
+
+            const backupChar = backupSource.find(c => c !== targetChar && !distractors.includes(c));
+            distractors.push(backupChar);
+        }
+    }
             }
         }
     }
