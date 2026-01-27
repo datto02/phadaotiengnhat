@@ -587,7 +587,7 @@ const FlashcardModal = ({ isOpen, onClose, text, dbData, onSrsUpdate, srsData, o
                     return prevIndex; 
                 } 
             }); 
-        }, 180); 
+        }, 175); 
     }, [currentIndex, queue, exitDirection, isFinished, srsData]);
     const handleBack = (e) => { 
         if (e) { e.preventDefault(); e.stopPropagation(); e.currentTarget.blur(); } 
@@ -1617,7 +1617,7 @@ const visualPercent = queue.length > 0 ? (currentIndex / queue.length) * 100 : 0
                     <p className="text-gray-400 mb-6 text-[11px] font-medium italic">Bạn đã hoàn thành bài luyện tập.</p>
                     <div className="space-y-2">
                         <button onClick={onSwitchToFlashcard} className="w-full py-3.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl font-black text-[11px] shadow-lg active:scale-95 transition-colors">
-                            VỀ FLASHCARD
+                            ÔN FLASHCARD
                         </button>
                         <button onClick={handleRestart} className="w-full py-3.5 bg-blue-50 border-2 border-blue-100 text-blue-500 hover:bg-blue-100 hover:border-blue-300 hover:text-blue-700 rounded-xl font-black text-[11px] transition-all active:scale-95">
                             HỌC LẠI TỪ ĐẦU
@@ -1701,7 +1701,7 @@ const visualPercent = queue.length > 0 ? (currentIndex / queue.length) * 100 : 0
                                                         handleAnswer(opt.correct, currentQuizData);
                                                         setSelectedIdx(null);
                                                         setIsChecking(false);
-                                                    }, 400);
+                                                    }, 350);
                                                 }} 
                                                 className={`h-14 w-full px-2 border rounded-xl font-bold flex items-center justify-center text-center shadow-lg backdrop-blur-sm transition-all duration-200 active:scale-95
                                                     ${statusClass}
